@@ -15,7 +15,8 @@ class dataController extends Controller
     {
         //
         $data_items=\App\data::all();
-        return view('index',compact('data_items'));
+
+        return view('data/index',compact('data_items'));
     }
 
     /**
@@ -26,7 +27,7 @@ class dataController extends Controller
     public function create()
     {
         //
-        return view('create');
+        return view('data/create');
     }
 
     /**
@@ -68,7 +69,7 @@ class dataController extends Controller
     {
         //
         $data = \App\data::find($id);
-        return view('edit',compact('data','id'));
+        return view('data/edit',compact('data','id'));
     }
 
     /**
