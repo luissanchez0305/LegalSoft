@@ -1,0 +1,80 @@
+.components-main, .elements-main{
+	.conter-wrapper{
+		input{
+			background-color: #fff!important;
+			border: 1px solid lightgrey;
+		}
+		.has-success{
+			input{
+				background-color: #fff!important;
+				border: 1px solid $brand-success;
+			}	
+		}
+		.has-warning{
+			input{
+				background-color: #fff!important;
+				border: 1px solid $brand-warning;
+			}	
+		}
+		.has-error{
+			input{
+				background-color: #fff!important;
+				border: 1px solid $brand-danger;
+			}	
+		}
+		
+		.underline {
+		    background: none !important;
+		    background-image: none;
+		    border: 1px solid #c8c7cc;
+		    border-top: none;
+		    border-left: none;
+		    border-right: none;
+		    border-radius: 0 0 0 0 !important;
+		    color: #5b5b60;
+		    font-family: inherit;
+		    font-size: 14px;
+		    line-height: 1.2;
+		    padding: 5px 4px;
+		    transition-duration: 0.1s;
+		    box-shadow: none !important;
+		    transition: border 300ms ease-out;
+		    &:focus{
+		    	border-color: $brand-primary;
+		    }
+		}
+		.go-btn{
+			padding: 7px;
+			margin: 0px -1px 0 0px;
+			border: 0;
+		}
+	}
+	input[type=checkbox].form-items-checkbox{
+		position:absolute;
+		clip: rect(0 0 0 0);
+		display: none;
+	}
+	input[type=checkbox].form-items-checkbox + .form-items-title{
+		padding-left:30px;
+		height:25px; 
+		display:inline-block;
+		line-height:25px;
+		background-repeat:no-repeat;
+		background-position: 0 0;
+		vertical-align:middle;
+		cursor:pointer;
+	}
+	input[type=checkbox].form-items-checkbox:checked + .form-items-title{
+		background-position: 0 -25px;
+	}
+	.form-items-title{
+		background-image:url(http://csscheckbox.com/checkboxes/u/csscheckbox_af222cf169085089b9cefc5536c819cb.png);
+		-webkit-touch-callout: none;
+		-webkit-user-select: none;
+		-khtml-user-select: none;
+		-moz-user-select: none;
+		-ms-user-select: none;
+		user-select: none;
+	}
+	
+}

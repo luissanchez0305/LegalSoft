@@ -1,0 +1,136 @@
+.stats{
+	position: relative;
+	padding-top: 16px;
+	padding-bottom: 16px;
+    /* top: 1px; */
+    width: 100%;
+    margin-left: 0px;
+    margin-right: 0px;
+    height: 90px;
+	.font-styling{
+		font-size: 34px;
+	    font-weight: 100;
+	    font-family: sans-serif;
+	    line-height: 1.6;
+	}
+	.date-time-wrapper{
+		position: relative;
+		#time-widget{
+			.ampm{
+	    	    font-size: 21px;
+	    	    margin-left: 3px;
+		    }
+		}
+		#date-widget{
+	        line-height: 0;
+	        color: $brand-primary;
+		}
+		.settings-icon{
+			position: absolute;
+		    right: 7px;
+		    top: 25px;
+		    font-size: 16px;
+		    .icons{
+		    	color: $gray-light;
+		    }
+		    &:hover{
+		    	.icons{
+			    	color: $brand-primary;
+			    }	
+		    }
+		}
+	}
+	.temperature-wrapper{
+		.settings-icon{
+			position: absolute;
+		    left: 7px;
+		    top: 25px;
+		    font-size: 16px;
+		    .icons{
+		    	color: $gray-light;
+		    }
+		    &:hover{
+		    	.icons{
+			    	color: $brand-primary;
+			    }	
+		    }
+		}	
+		.temperature-widget{
+			margin-left: 35px;
+			.temperature-title{    
+			    .degree-symbol{
+			    	font-size: 20px;
+				    vertical-align: super;
+			    }
+		    }
+		    .degree-unit{    
+		    	position: absolute;
+			    font-size: 14px;
+			    font-weight: 400;
+			    left: 90px;
+			    &.farhenheit{
+			        bottom: 25px;
+			        opacity: 0.5;
+				}
+				&.celsius{
+					top: 9px;
+				}
+		    }
+		    .weather-location{
+		    	color: $icons-color;
+		    	font-size: 12px;
+			    font-weight: 500;
+		    }
+		}
+	}
+	.weather-type-wrapper{
+		padding-right: 0px;
+		.weather-row{
+			margin-left: 0px!important;
+			margin-right: 0px!important;
+			height: inherit;
+			.weather-icon{
+			    top: -8px;
+			    height: 88px;
+			    background-color: $brand-primary;
+				color: #fff;
+				.wi{
+					font-size: 54px;
+					margin-top: 16px;
+				}
+			}
+			.weather-details{
+				.weather-title{
+				    font-size: 16px;
+			    	color: $brand-primary;
+				}
+				.weather-wind{
+					padding-top: 2px;
+					font-size: 13px;
+				}
+				.weather-humi{
+					font-size: 13px;
+				}
+			}
+		}
+	}
+	.items{
+		height: 75px;
+		padding-left: 0px;
+		top: -8px;
+		.border-line{
+			top: 11px;
+		    height: 50px;
+		    left: 0px;
+		    position: absolute;
+		    background-color: #FFF;
+		    border-right: 1px solid darken($gray-lighter, 20%);
+		    opacity: 0.7;
+		}
+	}
+	.weather-msg{
+		text-align: right;
+		color: darken($gray-lighter, 20%);
+	    padding-left: 25px;
+	}
+}

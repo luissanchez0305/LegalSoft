@@ -1,0 +1,118 @@
+.todo{
+	position: relative;
+	width: 100%;
+    .todo-header{
+		.todo-header-title{
+			display: inline-block;
+		}
+		.todo-header-icons{
+			position: relative;
+			font-size: 16px;
+			display: inline-block;
+			.icons{
+				position: absolute;
+				color: $brand-primary;
+				&:hover{
+					cursor: pointer;
+					color: #000;
+				}
+				&.fa-trash{
+					right: 55px;
+				}
+				&.fa-pencil-square-o{
+					right: 25px;
+					top: 1px;
+				}
+				&.fa-times{
+					right: 0px;
+				}
+			}
+		}
+	}
+	.todo-list{
+		ul{
+			padding-left: 0px;
+			list-style-type: none;
+			margin-bottom: 10px;
+		}
+		.todo-items{
+			width: 100%;
+			height: 40px;
+			padding-top: 7px;
+			input[type=checkbox].todo-items-checkbox{
+				position:absolute;
+				clip: rect(0 0 0 0);
+				display: none;
+			}
+			input[type=checkbox].todo-items-checkbox + .todo-items-title{
+				padding-left:30px;
+				height:25px; 
+				display:inline-block;
+				line-height:25px;
+				background-repeat:no-repeat;
+				background-position: 0 0;
+				vertical-align:middle;
+				cursor:pointer;
+			    width: 100%;
+			    div{
+			    	color: #000;
+					font-size:16px;
+					font-weight: 100;
+			    	text-overflow: ellipsis;
+				    overflow: hidden;
+				    white-space: nowrap;
+			    }
+			}
+			input[type=checkbox].todo-items-checkbox:checked + .todo-items-title{
+				background-position: 0 -25px;
+				div{
+				    background-color: #EBEFF1;
+				    color: #93AAB4;
+				}
+			}
+			.todo-items-title{
+				background-image:url(http://csscheckbox.com/checkboxes/u/csscheckbox_af222cf169085089b9cefc5536c819cb.png);
+				-webkit-touch-callout: none;
+				-webkit-user-select: none;
+				-khtml-user-select: none;
+				-moz-user-select: none;
+				-ms-user-select: none;
+				user-select: none;
+				div{
+					padding-left: 6px;
+				    margin-left: 5px;
+				    background-color: #e2f5fd;
+				}
+			}
+		}
+		.todo-input{
+			.todo-input-box{
+				display: inline-block;
+				padding: 10px;
+				padding-bottom: 0px;
+				border: none;
+				border-bottom: dashed 3px #c9c9c9;
+				transition: border 0.3s;
+				width: 91%;
+			    margin-left: 7px;
+		        font-size: 16px;
+			    color: #000;
+			    font-weight: 100;
+			}
+			.todo-input-box:focus, .todo-input-box.focus {
+				outline: 0;
+			  	border-bottom: dashed 3px #5a6095;
+			}
+			.todo-input-btn{
+				display: inline-block;
+				border: 6px solid #e2f5fd;
+				background-color: #5a6095;
+				width: 15px;
+			    height: 22px;
+			}
+			.todo-input-btn:focus, .todo-input-btn.focus {
+				outline: 0;
+			}
+		}
+	}
+}

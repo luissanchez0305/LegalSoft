@@ -1,0 +1,385 @@
+.invoice-main{
+	.btn-bordered{
+		&.btn-primary{
+			color: $brand-primary;
+			border-color: $brand-primary;
+		}
+	}
+	@media print{
+		margin-top: 0px;
+		.client-address-wrap{
+			width: 49%;
+			display: inline-block;
+		}
+		.blank-wrap{
+			display: none;
+		}
+		.payment-detals-wrap{
+			width: 49%;
+			display: inline-block;
+		    float: none!important;
+		}
+	}
+	@media screen and (max-width: 767px){
+		.client-address-wrap{
+			width: 49%;
+			display: inline-block;
+		}
+		.blank-wrap{
+			display: none;
+		}
+		.payment-detals-wrap{
+			width: 49%;
+			display: inline-block;
+		    float: none!important;
+		}
+	}
+}
+
+.inbox-main, .compose-main{
+	.btn-primary {
+	    border-color: $brand-primary;
+	    color: #fff;
+	    background-color: $brand-primary;
+	}
+	
+	.btn-block {
+	    font-size: 20px;
+	    display: block;
+	    width: 100%;
+	}
+	
+	.inbox-container-wrap {
+	    display: table;
+	    width: 100%;
+	    height: 100%;
+	    background-color: #fff;
+	    border-radius: 5px;
+		.inbox-container, .message-list-wrapper, .text-wrapper {
+		    display: table-cell;
+		    vertical-align: top;
+		}
+		.inbox-container {
+			border-radius: 5px 0 0 5px;
+		    min-width: 170px;
+		    background: $gray-dark;
+		    color: $gray-lighter;
+		    .butt-container {
+			    padding: 16px;
+			    .btn-block {
+				    height: 30px;
+				    font-size: 13px;
+				}
+			}
+			.email-options .main-options {
+			    padding-left: 0;
+			    list-style-type: none;
+			    li {
+				    padding-left: 5px;
+				    padding-right: 10px;
+				    font-size: 15px;
+				    line-height: 40px;
+				    padding-top: 3px;
+				    &.activeli {
+					    background: $gray;
+					    .badge {
+						    background: $brand-primary;
+						}
+					}
+					.badge {
+					    background: #d57d6d;
+					    margin-top: 9px;
+					}
+					a {
+					    color: $gray-lighter;
+					    font-size: 13px;
+					    opacity: 0.9;
+					    transition: all 0.1s ease-in-out;
+					    display: block;
+					    background-color: transparent;
+					}
+				}
+			}
+			.poor {
+			    margin-top: 10px;
+			    margin-bottom: 10px;
+			    opacity: 0.7;
+			    border-top: 1px solid #848484;
+			}
+			ul.main-options h5 {
+			    margin-top: 15px;
+			    margin-bottom: 5px;
+			    font-size: 13px;
+			    font-weight: 600;
+			    padding-left: 13px;
+			    opacity: 0.5;
+			}
+			.fa-stop {
+			    margin-top: 10px;
+			}
+		}
+	}
+}
+.inbox-main{
+	.inbox-container-wrap {
+		.message-list-wrapper {
+		    width: 300px;
+		    background: $gray-lighter;
+		    overflow: hidden;
+		    position: relative;
+		    padding-top: 107px;
+		    border-right: solid 1px #ddd;
+		    .searchbox {
+			    height: 107px;
+			    position: absolute;
+			    top: 0;
+			    left: 0;
+			    right: 0;
+			    padding: 15px;
+			    text-align: center;
+			    font-size: 15px;
+			    opacity: 0.8;
+			    .sebox {
+				    font-size: 26px;
+				}
+				.fa {
+				    font-size: 13px;
+				    opacity: 0.7;
+				}
+				.form-control {
+				    margin-top: 6px;
+				    padding: 6px 12px!important;
+				    font-size: 14px!important;
+				    color: $gray-dark;
+				    background-color: #fff!important;
+				    border: 1px solid $gray-light;
+				    box-shadow: inset 0 1px 1px rgba(0,0,0,0.075);
+				    transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+				}
+			}
+			.wrap-list {
+			    background: $gray-lightest;
+			    list-style-type: none;
+			    position: relative;
+			    .messages-list {
+				    max-height: 400px;
+				    overflow: auto;
+				    ul {
+					    padding-left: 0px;
+					    list-style-type: none;
+					    li.active-message {
+						    background: $brand-primary;
+						    color: #FFF !important;
+						    &:hover{
+						    background: lighten($brand-primary, 10%);
+						    }
+						    .messages-item-subject, .date-class, .fa {
+							    color: #fff;
+							}
+						}
+					    .messages-item {
+						    padding-top: 10px;
+						    border-bottom: 1px solid #C6C6C6;
+						    padding-left: 30px;
+						    padding-right: 10px;
+						    height: 60px;
+						    .fa {
+							    color: $gray-light;
+							    font-size: 11px;
+							}
+						}
+					}
+					.messages-item-subject {
+					    font-size: 13px;
+					    font-weight: 600;
+					    color: $gray;
+					}
+					.messages-item .date-class {
+					    font-size: 11px;
+					    margin-top: 3px;
+					}
+					.messages-item-content p {
+					    width: 240px;
+					    white-space: nowrap;
+					    overflow: hidden;
+					    text-overflow: ellipsis;
+					    margin-bottom: 0;
+					    line-height: 18px;
+					}
+					.leftist {
+					    width: 8px;
+					    float: left;
+					    margin-left: -17px;
+					    margin-top: -2px;
+					    .checkbox1 {
+						    margin-left: -2px;
+						    position: relative;
+						    padding-right: 15px;
+						    display: inline-block;
+						    vertical-align: middle;
+						    cursor: pointer;
+					        max-width: 100%;
+						    margin-bottom: 5px;
+						    font-weight: bold;
+						}
+					}
+				}
+				a {
+				    color: #424242;
+				}
+			}
+		}
+		.text-wrapper {
+			.wrap-message {
+			    overflow: hidden;
+			    .message-topic {
+				    padding: 15px;
+				    border-bottom: 1px solid #DEDEDE;
+				    font-size: 18px;
+				    line-height: 20px;
+				    color: #565656;
+				    .pull-right{
+					    a {
+						    color: inherit;
+						}
+						.fa {
+						    font-size: 14px;
+						    padding-left: 16px;
+						    color: #B9B9B9;
+						}
+					}
+				}
+				.message-sender {
+				    padding: 5px 15px;
+				    border-bottom: 1px solid #DEDEDE;
+				    color: #B5B5B5;
+				    .sender-img {
+					    width: 40px;
+					    border: 1px solid #ddd;
+					}
+					a {
+					    font-size: 14px;
+					}
+				}
+			}
+			.message-content {
+			    padding: 15px;
+			    overflow: auto;
+			    opacity: 0.88;
+			}
+			.messagefooter {
+			    height: 70px;
+			    padding-top: 10px;
+			    padding-right: 15px;
+			    .btn-rounded {
+				    font-size: 13px;
+				    height: 30px;
+				    width: 100px;
+				}
+			}
+		}
+	}
+	@media (max-width: 1065px){
+		.text-wrapper {
+		    display: none !important;
+		}
+		.inbox-container {
+		    width: 30%;
+		}
+		.message-list-wrapper {
+		    width: 70%;
+		}
+		.inbox-container-wrap .message-list-wrapper .wrap-list .messages-list .messages-item-content p {
+		    width: 100%;
+		}
+	}
+	@media (max-width: 625px){
+		.inbox-container {
+		    width: 30%;
+		}
+		.message-list-wrapper {
+		    width: 70%;
+		}
+		.inbox-container-wrap .message-list-wrapper .wrap-list .messages-list .messages-item-content p {
+		    width: 240px;
+		}
+	}
+}
+.compose-main{
+	.inbox-container{
+		width: 230px;
+	}
+	.compose-container {
+		.wrap-compose {
+		    overflow: hidden;
+		    border: solid 1px #ddd;
+		    border-radius: 0 5px 5px 0;
+		    .editor{
+		    	margin-top: 0;
+		    }
+		}
+		.mail-header {
+		    height: 50px;
+		    border-bottom: 1px solid #D8D8D8;
+		    padding: 15px;
+		    background: #EFEFEF;
+		    h4 {
+			    margin-top: 3px;
+			    font-size: 16px;
+			    color: #616161;
+			}
+		}
+		.receipient {
+		    height: 45px;
+		    padding: 11px 15px;
+		    border-bottom: 1px solid #D8D8D8;
+		    strong.to {
+			    opacity: 0.7;
+			    font-size: 11.5px;
+			}
+			.label-primary {
+			    padding-top: 5px;
+			    padding-left: 12px;
+			    padding-bottom: 5px;
+			    padding-right: 12px;
+			    margin-left: 50px;
+			    border-radius: 20px;
+			}
+		}
+		.subject {
+			height: 40px;
+		    border-bottom: 1px solid #D8D8D8;
+		    padding: 8px 15px;
+			strong.strong-header {
+			    opacity: 0.7;
+			    font-size: 11.5px;
+			}
+			strong.subjetc {
+			    margin-left: 15px;
+			    font-size: 12px;
+			}
+		}
+		.send-footer {
+		    border-top: 1px solid #D8D8D8;
+		    padding: 15px;
+		    .btn {
+			    width: 75px;
+			}
+			.fa {
+			    font-size: 19px;
+			}
+			.fa-trash-o {
+			    color: $brand-danger;
+			    margin-top: 7px;
+			    margin-right: 10px;
+			}
+		}
+	}
+}
+
+
+
+
+
+
+

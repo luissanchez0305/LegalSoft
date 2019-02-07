@@ -1,0 +1,119 @@
+.container-fluid{
+	.404-main{
+		background: red;
+	}
+	.login-container, .signup-container{
+		.card{
+			border:none;
+		}
+		.login-box, .signup-box,.four-not-four-box{
+			width: 40%;
+			height: 100vh;
+			margin: 0 auto;
+			display: table;
+
+			.login-wrapper, .signup-wrapper{
+				display: table-cell;
+				vertical-align: middle;
+				.card-header{
+					padding: 10px;
+				}
+				.login-title, .signup-title{
+				    color: #fff;
+				    font-family: cursive;
+				    background-color: $navbar-inverse-color;
+				}
+				.login-body, .signup-body{
+					.four-body{
+						padding: 100px 0;
+					}
+					.go-to-home{
+						color: #546E7A;
+						margin-top: 60px;
+						padding: 0 1.5rem 1rem 0;
+						font-family: 'Roboto',sans-serif;
+						&:hover{
+							text-decoration: none;
+						}
+					}
+					form{
+						margin-top: 0;
+					    padding: 40px 80px 30px 80px;
+					    .icons{
+					    	color: #fff;
+						    background-color: $navbar-inverse-color;
+					    }
+					    .username-input{
+					    	margin-bottom: 25px;
+					    	input {
+					    		line-height: 2.5;
+					    	}
+					    }
+						.password-input{
+					    	margin-bottom: 25px;
+					    	input {
+					    		line-height: 2.5;
+					    	}
+					    }
+					    .checkbox-wrapper{
+					    	margin-bottom: 25px;
+					    	.remember-btn{
+					    		display: inline-block;
+					    		margin-right: 5px;
+					    	}
+					    	.remember-title{
+					    		display: inline-block;
+					    	}
+					    }
+					    .login-btn, .signup-btn{
+					    	background-color: $brand-primary;
+				    	    outline: none;
+				    	    border: 0px;
+							box-shadow: none;
+							&:hover{
+								background-color: darken($brand-primary, 10%);
+							}
+							&:active{
+								box-shadow: inset 0 3px 5px rgba(0,0,0,.125);
+								background-color: darken($brand-primary, 20%);
+							}
+					    }
+					}
+					
+					.input-box{
+						padding-left: 15px!important;
+						border: 0px;
+					    box-shadow: none;
+						
+					    &:focus{
+						    outline: none!important;
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+@media screen and (max-width: 992px) {
+	.login-box, .signup-box,.four-not-four-box{
+		width: 60% !important;
+	}
+}
+
+@media screen and (max-width: 800px) {
+	.login-box, .signup-box,.four-not-four-box{
+		width: 70%!important;
+	}
+}
+
+@media screen and (max-width: 600px) {
+	.login-box, .signup-box,.four-not-four-box{
+		width: 90%!important;
+	}
+	.login-body, .signup-body{
+		form{
+			padding: 40px 15px 30px 15px!important;
+		}
+	}
+}

@@ -1,0 +1,277 @@
+/* responsive dashboard */
+
+@media screen and (max-width: 1425px) {
+    .main-body-container{
+        .stats .weather-type-wrapper .weather-row {
+            .weather-icon .wi {
+                font-size: 40px;
+                margin-top: 23px;
+            }
+            .weather-details .weather-humi, .weather-wind {
+                font-size: 10px;
+            }
+        }
+    }
+}
+@media screen and (max-width:1367px) {
+    .main-body-container .storage-visitor-wrapper .visitor-wrapper .visitor-body {
+        position: relative;
+        left: -20px;
+    }
+}
+
+
+@media screen and (max-width: 1348px) {
+    .main-body-container{
+        .storage-visitor-wrapper{
+            .storage-wrapper{
+                height: 300px;
+                .storage-body{ 
+                    .storage-circle{
+                        width: initial;
+                    }
+                    text-align: center;
+                    .progress-wrapper {
+                        display: none;
+                    }
+                    .storage-label{
+                        left: 0;
+                        right: 0;
+                        margin-right: 20px;
+                        margin-left: 20px;
+                    }
+                }
+            }
+            .visitor-wrapper .visitor-body {
+                text-align: center;
+                .visitor-week-chart {
+                    display: none;
+                }
+                .visitor-chart{
+                    position: inherit;
+                    float: none!important;
+                }
+            }
+        }
+    }
+}
+
+@media screen and (max-width: 1166px) {
+    .main-body-container{
+       .todo .todo-list .todo-input .todo-input-box {
+        width: 89%;
+       }
+       .stats .temperature-wrapper .temperature-widget .weather-location {
+        font-size: 10px;
+       }
+       .storage-visitor-wrapper .visitor-wrapper .visitor-body .visitor-period-wrapper .visitor-period {
+            margin-left: 55%;
+       }
+    }
+    /* .visitor-week-chart{
+        display: none;
+    }
+    .visitor-chart{
+        
+    } */
+}
+
+@media screen and (max-width: 1050px) {
+    .stats .font-styling {
+        font-size: 25px;
+        margin-top: 15px;
+    } 
+    .stats{ 
+        .settings-icon{
+            display: none;
+        }
+        .date-time-wrapper {
+            padding-right: 0px;
+            #date-widget{
+                display: none;
+            } 
+        }
+        .temperature-wrapper {
+            .weather-location {
+                display: none;
+            }
+            .temperature-widget .degree-unit{
+                left: 75px;
+                &.celsius{
+                    top: 18px;
+                } 
+                &.farhenheit{
+                    bottom: 18px;
+                }
+            }
+        }
+        .weather-row{
+            .weather-details{
+                display: none;
+            }
+            .weather-icon{
+                width: 100%
+            }
+        }
+        .weather-msg{
+            font-size: 11px;
+            padding-left: 10px;
+        }
+    } 
+    .main-body-container{
+        .header-icons{
+            .icons{
+                padding-left: 0px;
+            }
+        }
+        .storage-visitor-wrapper {
+            .visitor-wrapper .visitor-body {
+                .visitor-period-wrapper .visitor-period{
+                    margin-left: 10%;
+                }
+                .visitor-total{
+                    display: none;
+                }
+            }
+        }
+        .todo .todo-list .todo-input .todo-input-box {
+            width: 85%!important;
+        }
+    }
+}
+@media screen and (max-width: 480px) {
+    .main-body-container{    
+        .stats{
+            .date-time-wrapper, .weather-type-wrapper{
+                width: 50%!important;
+            }
+            .temperature-wrapper{
+                display: none!important;
+            }
+        }
+        .storage-visitor-wrapper {
+            .visitor-wrapper .visitor-body {
+                .visitor-period-wrapper .visitor-period{
+                    margin-left: 10%;
+                }
+                .visitor-total{
+                    display: none!important;
+                }
+            }
+           .storage-wrapper {
+                .storage-body .progress-outer {
+                   display: none !important;
+                }
+                .storage-body .storage-label{
+                    left: 0!important;
+                    right: 0!important;
+                    margin-right: 20px!important;
+                    margin-left: 20px!important;
+                }
+            }
+        }
+        .purchase-wrapper .purchase-body .purchase-date {
+            left: -25px;
+        }
+    }
+}
+
+@media screen and (max-width: 767px) {
+    .side-menu {
+        left: -250px;
+        transition: all .2s linear;
+    }
+    .visible {
+        .side-menu {
+            left: 0 !important;
+        }
+    }
+    .main-body-container{
+        .header-icons{
+            .icons{
+                padding-left: 6px;
+            }
+        }
+        .todo .todo-list .todo-input .todo-input-box {
+            width: 93%;
+        }
+        .stats{
+            .font-styling {
+                font-size: 35px;
+                margin-top: 0px;
+            }
+            #date-widget{
+                display: block;
+            }
+            .temperature-widget{
+                .degree-unit{
+                    left: 90px;
+                    &.celsius{
+                        top: 9px;
+                    }
+                    &.farhenheit{
+                        bottom: 25px;
+                    }
+                }
+                .weather-location{
+                    display: block;
+                }
+            }
+            .weather-row{
+                .weather-icon{
+                    width: 42%;
+                }
+                .weather-details{
+                    display: block;
+                    width: 58%;
+                    .weather-title{
+                        font-size: 18px;
+                    }
+                }
+            }
+            .weather-msg {
+                display: none;
+            }
+            .date-time-wrapper, .temperature-wrapper{
+                width: 33%;
+            }
+            .weather-type-wrapper{
+                width: 34%;
+            }
+        }
+        .storage-visitor-wrapper{
+            .storage-wrapper{
+                .progress-wrapper{
+                    display: inline-block!important;
+                }
+                .storage-label{
+                    left: 15px!important;
+                    right: initial!important;
+                }
+            }
+            .visitor-wrapper{
+                .visitor-total{
+                    display: block!important;
+                }
+                .visitor-week-chart {
+                    display: block!important;
+                }
+            }
+        }
+    }
+}
+@media screen and (max-width: 545px) {
+    .stats{
+        .weather-row{
+            .weather-icon{
+                width: 100%!important;
+            }
+            .weather-details{
+                display: none!important;
+            }
+        }
+        .border-line{
+            display: none;
+        }
+    }
+}
