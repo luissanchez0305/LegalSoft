@@ -11,6 +11,10 @@ body {
     background-color: #222;
 }
 
+.hidden{
+    display: none !important;
+}
+
 .navbar-brand {
     color: #999!important;
     padding: 10px;

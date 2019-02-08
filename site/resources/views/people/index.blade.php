@@ -1,43 +1,63 @@
 <!-- index.blade.php -->
-@section('index-title')
-Clientes | LegalSoft
-@stop
-@extends('layout.main')
-@section('index-context')
-    <br />
-    @if (\Session::has('success'))
-      <div class="alert alert-success">
-        <p>{{ \Session::get('success') }}</p>
-      </div><br />
-     @endif
-    <table class="table table-striped">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Nombre</th>
-          <th>Apellido</th>
-        </tr>
-      </thead>
-      <tbody>
+@extends('layout.plain')
+@section('page-title', 'Listado de Inscritos - LegalSoft507')
 
-        @foreach($people as $item)
-        <tr>
-          <td>{{$item['id']}}</td>
-          <td>{{$item['name']}}</td>
-          <td>{{$item['last_name']}}</td>
+@section('body')
+    @section('page-heading')
+    <!-- Page Heading -->
+    <div class="row">
+        <div class="col-lg-12">
+            <h1 class="page-header">
+                Listado de inscritos <small>Statistics Overview</small>
+            </h1>
+            <ol class="breadcrumb">
+                <li class="active">
+                    <i class="fa fa-dashboard"></i> Listado General
+                </li>
+            </ol>
+        </div>
+    </div>
+    <!-- /.row -->
+    @endsection
+    <div class="row">
+      @if (\Session::has('success'))
+        <div class="alert alert-success">
+          <p>{{ \Session::get('success') }}</p>
+        </div><br />
+       @endif
+       <div class="table-responsive">
+          <table class="table table-bordered table-hover table-striped">
+              <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Apellido</th>
+                    <th colspan="2"></th>
+                  </tr>
+              </thead>
+              <tbody>
 
-          <td><a href="{{action('PeopleController@edit', $item['id'])}}" class="btn btn-warning">Edit</a></td>
-          <td>
-            <form action="{{action('PeopleController@destroy', $item['id'])}}" method="post">
-              <input type="hidden" name="_token" value="{{ csrf_token() }}">
-              <input name="_method" type="hidden" value="DELETE">
-              <button class="btn btn-danger" type="submit">Borrar</button>
-            </form>
-          </td>
-        </tr>
-        @endforeach
-      </tbody>
-    </table>
+              @foreach($people as $item)
+                <tr>
+                  <td>{{$item['id']}}</td>
+                  <td>{{$item['name']}}</td>
+                  <td>{{$item['last_name']}}</td>
+
+                  <td><a href="{{action('PeopleController@edit', $item['id'])}}" class="btn btn-warning">Edit</a></td>
+                  <td>
+                    <form action="{{action('PeopleController@destroy', $item['id'])}}" method="post">
+                      <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                      <input name="_method" type="hidden" value="DELETE">
+                      <button class="btn btn-danger" type="submit">Borrar</button>
+                    </form>
+                  </td>
+                </tr>
+                @endforeach
+              </tbody>
+          </table>
+      </div>
+    </div>
+    <!-- /.row -->
   @stop
 
 @section('index-javascript')

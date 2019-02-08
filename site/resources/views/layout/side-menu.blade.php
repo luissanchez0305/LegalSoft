@@ -3,24 +3,24 @@
             <div class="collapse navbar-collapse navbar-toggleable-sm navbar-ex1-collapse">
                 <ul class="nav navbar-nav side-nav list-group">
                     <li class="list-group-item">
-                        <a href="index.html"><i class="fa fa-fw fa-dashboard"></i> Dashboard</a>
+                        <a href="/"><i class="fa fa-fw fa-dashboard"></i> Dashboard</a>
                     </li>
                     <li class="list-group-item">
-                        <a href="charts.html"><i class="fa fa-fw fa-bar-chart-o"></i> Charts</a>
+                        <a href="/people"><i class="fa fa-fw fa-bar-chart-o"></i> Inscritos</a>
                     </li>
-                    <li class="list-group-item">
+                    <li class="list-group-item hidden">
                         <a href="tables.html"><i class="fa fa-fw fa-table"></i> Tables</a>
                     </li>
-                    <li class="list-group-item">
+                    <li class="list-group-item hidden">
                         <a href="forms.html"><i class="fa fa-fw fa-edit"></i> Forms</a>
                     </li>
-                    <li class="list-group-item">
+                    <li class="list-group-item hidden">
                         <a href="bootstrap-elements.html"><i class="fa fa-fw fa-desktop"></i> Bootstrap Elements</a>
                     </li>
-                    <li class="list-group-item">
+                    <li class="list-group-item hidden">
                         <a href="bootstrap-grid.html"><i class="fa fa-fw fa-wrench"></i> Bootstrap Grid</a>
                     </li>
-                    <li class="list-group-item">
+                    <li class="list-group-item hidden">
                         <a href="javascript:;" data-toggle="collapse" data-target="#demo"><i class="fa fa-fw fa-arrows-v"></i> Dropdown <i class="fa fa-fw fa-caret-down"></i></a>
                         <ul id="demo" class="list-group collapse">
                             <li class="list-group-item">
@@ -31,10 +31,10 @@
                             </li>
                         </ul>
                     </li>
-                    <li class="list-group-item">
+                    <li class="list-group-item hidden">
                         <a href="blank-page.html"><i class="fa fa-fw fa-file"></i> Blank Page</a>
                     </li>
-                    <li class="list-group-item">
+                    <li class="list-group-item hidden">
                         <a href="index-rtl.html"><i class="fa fa-fw fa-dashboard"></i> RTL Dashboard</a>
                     </li>
                 </ul>

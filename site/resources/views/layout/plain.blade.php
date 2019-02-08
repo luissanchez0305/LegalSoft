@@ -12,13 +12,13 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-	<title>{{\Config::get('app.brand')}}</title>
+	<title>@yield('page-title')</title>
 
     <!-- Bootstrap Core CSS -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Custom CSS -->
-    <link href="css/sb-admin.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
 
     <!-- Morris Charts CSS -->
     <link href="css/plugins/morris.css" rel="stylesheet">
@@ -36,7 +36,24 @@
 </head>
 <body>
 
-    @yield('body')
+    <div id="wrapper">
+        <!-- Navigation -->
+        <nav class="navbar navbar-dark bg-inverse navbar-fixed-top">
+            @include('layout.top_menu')
+            @include('layout.side-menu')
+            <!-- /.navbar-collapse -->
+        </nav>
+        <div id="page-wrapper">
+            <div class="container-fluid">
+                @yield('page-heading')
+
+                @yield('body')
+            </div>
+            <!-- /.container-fluid -->
+        </div>
+        <!-- /#page-wrapper -->
+    </div>
+    <!-- /#wrapper -->
 
     <!-- jQuery -->
     <script src="js/jquery.js"></script>
