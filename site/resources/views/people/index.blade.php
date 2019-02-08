@@ -8,7 +8,7 @@
     <div class="row">
         <div class="col-lg-12">
             <h1 class="page-header">
-                Listado de inscritos <small>Statistics Overview</small>
+                Listado de inscritos <a href="{{ action('PeopleController@create') }}" class="btn btn-warning">Nuevo</a>
             </h1>
             <ol class="breadcrumb">
                 <li class="active">
@@ -23,41 +23,50 @@
       @if (\Session::has('success'))
         <div class="alert alert-success">
           <p>{{ \Session::get('success') }}</p>
-        </div><br />
-       @endif
-       <div class="table-responsive">
-          <table class="table table-bordered table-hover table-striped">
-              <thead>
+        </div>
+      @endif
+        <div class="col-xl-6 col-lg-12">
+          <div class="table-responsive">
+            <table class="table table-bordered table-hover table-striped">
+                <thead>
+                    <tr>
+                      <th>Nombre</th>
+                      <th>Apellido</th>
+                      <th colspan="2"></th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                @foreach($people as $item)
                   <tr>
-                    <th>ID</th>
-                    <th>Nombre</th>
-                    <th>Apellido</th>
-                    <th colspan="2"></th>
+                    <td>{{$item['name']}}</td>
+                    <td>{{$item['last_name']}}</td>
+
+                    <td>
+                      <div class="row">
+                          <div class="col-xl-6 text-xs-center">
+                              <a href="{{ action('PeopleController@edit', $item['id']) }}" class="btn btn-warning">Editar</a>
+                          </div>
+                          <div class="col-xl-6 text-xs-center">
+                              <form action="{{ action('PeopleController@destroy', $item['id']) }}" method="post">
+                                <input type="hidden" name="_token" value="{{ csrf_token() }}"/>
+                                <input name="_method" type="hidden" value="DELETE"/>
+                                <button class="btn btn-danger" type="submit">Borrar</button>
+                              </form>
+                          </div>
+                      </div>
+                      <!-- /.row -->
+                    </td>
+                    <td>
+                    </td>
                   </tr>
-              </thead>
-              <tbody>
-
-              @foreach($people as $item)
-                <tr>
-                  <td>{{$item['id']}}</td>
-                  <td>{{$item['name']}}</td>
-                  <td>{{$item['last_name']}}</td>
-
-                  <td><a href="{{action('PeopleController@edit', $item['id'])}}" class="btn btn-warning">Edit</a></td>
-                  <td>
-                    <form action="{{action('PeopleController@destroy', $item['id'])}}" method="post">
-                      <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                      <input name="_method" type="hidden" value="DELETE">
-                      <button class="btn btn-danger" type="submit">Borrar</button>
-                    </form>
-                  </td>
-                </tr>
-                @endforeach
-              </tbody>
-          </table>
-      </div>
+                  @endforeach
+                </tbody>
+            </table>
+          </div>
+        </div>
     </div>
-    <!-- /.row -->
+      <!-- /.row -->
   @stop
 
 @section('index-javascript')
