@@ -7,7 +7,7 @@
             </div>
             <!-- Top Menu Items -->
             <ul class="nav navbar-nav top-nav navbar-right pull-xs-right">
-                <li class="dropdown nav-item active">
+                <li class="dropdown nav-item active hidden">
                     <!-- <div class="dropdown"> -->
                         <a class="nav-link dropdown-toggle" href="javascript:;" id="dropdownMenu4" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-envelope"></i> <b class="caret"></b><span class="sr-only">(current)</span></a>
                         <ul class="dropdown-menu message-dropdown">
@@ -62,7 +62,7 @@
                         </ul>
                     <!-- </div> -->
                 </li>
-                <li class="dropdown nav-item">
+                <li class="dropdown nav-item hidden">
                     <!-- <div class="dropdown"> -->
                         <a href="javascript:;" class="nav-link dropdown-toggle" data-toggle="dropdown"  aria-haspopup="true" aria-expanded="false"><i class="fa fa-bell"></i> <b class="caret"></b><span class="sr-only">(current)</span></a>
                         <ul class="dropdown-menu alert-dropdown">
@@ -91,22 +91,61 @@
                         </ul>
                     <!-- </div> -->
                 </li>
-                <li class="dropdown nav-item">
-                    <a href="javascript:;" class="nav-link dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> John Smith <b class="caret"></b></a>
-                    <ul class="dropdown-menu">
-                        <li class="dropdown-item">
-                            <a href="javascript:;"><i class="fa fa-fw fa-user"></i> Profile</a>
+
+                @guest
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
+                    </li>
+                    @if (Route::has('register'))
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
                         </li>
-                        <li class="dropdown-item">
-                            <a href="javascript:;"><i class="fa fa-fw fa-envelope"></i> Inbox</a>
-                        </li>
-                        <li class="dropdown-item">
-                            <a href="javascript:;"><i class="fa fa-fw fa-gear"></i> Settings</a>
-                        </li>
-                        <li class="divider"></li>
-                        <li class="dropdown-item">
-                            <a href="javascript:;"><i class="fa fa-fw fa-power-off"></i> Log Out</a>
-                        </li>
-                    </ul>
-                </li>
+                    @endif
+                @else
+                    <li class="dropdown nav-item">
+                        <a href="javascript:;" class="nav-link dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> {{ Auth::user()->name }} <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            <li class="dropdown-item">
+                                <a href="/profile"><i class="fa fa-fw fa-user"></i> Profile</a>
+                            </li>
+                            <li class="dropdown-item hidden">
+                                <a href="javascript:;"><i class="fa fa-fw fa-envelope"></i> Inbox</a>
+                            </li>
+                            <li class="dropdown-item hidden">
+                                <a href="javascript:;"><i class="fa fa-fw fa-gear"></i> Settings</a>
+                            </li>
+                            <li class="divider"></li>
+                            <li class="dropdown-item">
+
+                                    <a class="dropdown-item" href="{{ route('logout') }}"
+                                       onclick="event.preventDefault();
+                                                     document.getElementById('logout-form').submit();">
+                                        {{ __('Logout') }}
+                                    </a>
+
+                                    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                                        @csrf
+                                    </form>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <!--<li class="nav-item dropdown">
+                        <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                            {{ Auth::user()->name }} <span class="caret"></span>
+                        </a>
+
+                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                            <a class="dropdown-item" href="{{ route('logout') }}"
+                               onclick="event.preventDefault();
+                                             document.getElementById('logout-form').submit();">
+                                {{ __('Logout') }}
+                            </a>
+
+                            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                                @csrf
+                            </form>
+                        </div>
+                    </li>-->
+                @endguest
             </ul>

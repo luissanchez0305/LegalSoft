@@ -24,7 +24,7 @@
     <!-- /.row -->
     @endsection
     <div class="row">
-        <form method="post" action="{{ action('PeopleController@update', $id) }}">
+        <form method="POST" action="{{ action('PeopleController@update', $id) }}">
           <input type="hidden" name="_token" value="{{ csrf_token() }}"/>
           <input type="hidden" name="type" value="{{ $action_type }}"/>
           <input name="_method" type="hidden" value="PATCH">

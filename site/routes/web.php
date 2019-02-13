@@ -13,6 +13,11 @@
 
 Route::get('/', function () {
     return view('welcome');
-});
+})->middleware('auth');
 
 Route::resource('people', 'PeopleController');
+Route::resource('profile', 'ProfileController');
+Auth::routes();
+
+//Route::get('/home', 'HomeController@index')->name('home');
+
