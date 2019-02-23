@@ -1,6 +1,6 @@
 <!-- index.blade.php -->
 @extends('layout.plain')
-@section('page-title', 'Listado de Inscritos - LegalSoft507')
+@section('page-title', 'Listado de Clientes - LegalSoft507')
 
 @section('body')
     @section('page-heading')
@@ -8,7 +8,7 @@
     <div class="row">
         <div class="col-lg-12">
             <h1 class="page-header">
-                Listado de inscritos <a href="{{ action('PeopleController@create') }}" class="btn btn-warning">Nuevo</a>
+                Listado de clientes <a href="{{ action('PeopleController@create') }}" class="btn btn-warning">Nuevo</a>
             </h1>
             <ol class="breadcrumb">
                 <li class="active">

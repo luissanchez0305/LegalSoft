@@ -1,6 +1,6 @@
 <!-- index.blade.php -->
 @extends('layout.plain')
-@section('page-title', 'Listado de Inscritos - LegalSoft507')
+@section('page-title', 'Mi perfil - LegalSoft507')
 
 @section('body')
     @section('page-heading')
@@ -18,14 +18,23 @@
         <div class="row justify-content-center">
             <div class="col-md-6">
                 <div class="card">
-                    <div class="card-header">{{ __('Reset Password') }}</div>
+                    <div class="card-header">{{ __('Change Password') }}</div>
 
                     <div class="card-body">
-                        <form method="POST" action="{{ route('password.update') }}">
+                        <form method="POST" action="{{ action('ProfileController@updatePassword') }}">
                             @csrf
 
                             <input type="hidden" name="token" value="{{ app('auth.password.broker')->createToken(Auth::user()) }}">
-
+                        @if (session('error_password'))
+                            <div class="alert alert-danger">
+                                {{ session('error_password') }}
+                            </div>
+                        @endif
+                        @if (session('success_password'))
+                            <div class="alert alert-success">
+                                {{ session('success_password') }}
+                            </div>
+                        @endif
                             <div class="form-group row">
                                 <label for="email" class="col-md-4 col-form-label text-md-right">{{ __('E-Mail Address') }}</label>
 
@@ -78,6 +87,18 @@
                     <div class="card-header">Informacion General</div>
                     <div class="card-body">
                         <form method="POST" action="{{ action('ProfileController@update', Auth::user()->id) }}">
+                            @csrf
+                            <input name="_method" type="hidden" value="PATCH">
+                        @if (session('error_profile'))
+                            <div class="alert alert-danger">
+                                {{ session('error_profile') }}
+                            </div>
+                        @endif
+                        @if (session('success_profile'))
+                            <div class="alert alert-success">
+                                {{ session('success_profile') }}
+                            </div>
+                        @endif
                             <div class="form-group row">
                                 <label for="name" class="col-md-4 col-form-label text-md-right">Nombre</label>
 

@@ -22,11 +22,28 @@ class ProfileController extends Controller
         return view('profile/index'/*,compact('token')*/);
     }
 
-    public function update(Request $request){
-        $user = \App\User::find(Auth::user()->id);
+    public function show($id){
+        return view('profile/index');
+    }
+
+    public function update($id, Request $request){
+        $user = Auth::user();
         $user->name = $request->name;
-        $user->save($user);
-        return redirect('welcome');
+        $user->save();
+        //flash('Su perfil ha sido actualizada');
+        return redirect()->back()->with("success_profile","El perfil ha sido cambiado con éxito.");
+    }
+
+    public function updatePassword(Request $request){
+        if(strcmp($request->get('password'), $request->get('password_confirmation')) != 0){
+            //Current password and new password are same
+            return redirect()->back()->with("error_password","Las contraseñas deben ser iguales.");
+        }
+        //Change Password
+        $user = Auth::user();
+        $user->password = bcrypt($request->get('password'));
+        $user->save();
+        return redirect()->back()->with("success_password","La contraseña ha sido cambiada con éxito.");
     }
 
 }

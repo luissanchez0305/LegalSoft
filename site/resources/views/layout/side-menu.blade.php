@@ -6,7 +6,7 @@
                         <a href="/"><i class="fa fa-fw fa-dashboard"></i> Dashboard</a>
                     </li>
                     <li class="list-group-item">
-                        <a href="/people"><i class="fa fa-fw fa-bar-chart-o"></i> Inscritos</a>
+                        <a href="/people"><i class="fa fa-fw fa-bar-chart-o"></i> Clientes</a>
                     </li>
                     <li class="list-group-item hidden">
                         <a href="tables.html"><i class="fa fa-fw fa-table"></i> Tables</a>

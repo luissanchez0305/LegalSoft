@@ -33,13 +33,14 @@
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
 
+    @yield('style')
 </head>
 <body>
 
     <div id="wrapper">
         <!-- Navigation -->
         <nav class="navbar navbar-dark bg-inverse navbar-fixed-top">
-            @include('layout.top_menu')
+            @include('layout.top-menu')
             @include('layout.side-menu')
             <!-- /.navbar-collapse -->
         </nav>
@@ -60,7 +61,9 @@
 
     <!-- Bootstrap Core JavaScript -->
     <script src="/js/bootstrap.min.js"></script>
-
+    <script type="text/javascript">
+        $('body input[type="text"]').attr('autocomplete', 'false');
+    </script>
 	@yield('js')
 
 </body>
