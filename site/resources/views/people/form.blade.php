@@ -39,6 +39,9 @@
           <li class="nav-item">
             <a class="nav-link" id="pills-services-tab" data-toggle="pill" href="#pills-services" role="tab" aria-controls="pills-services" aria-selected="false">Per. Jurídica, Directores y Accionistas</a>
           </li>
+          <li class="nav-item">
+            <a class="nav-link" id="pills-services-tab" data-toggle="pill" href="#pills-files" role="tab" aria-controls="pills-files" aria-selected="false">Documentos</a>
+          </li>
         </ul>
         <div class="tab-content" id="pills-tabContent">
           <div class="tab-pane fade show active in" id="pills-general" role="tabpanel" aria-labelledby="pills-general-tab">
@@ -49,6 +52,9 @@
           </div>
           <div class="tab-pane fade" id="pills-services" role="tabpanel" aria-labelledby="pills-services-tab">
             @include('people.relations-info')
+          </div>
+          <div class="tab-pane fade" id="pills-files" role="tabpanel" aria-labelledby="pills-files-tab">
+            @include('people.files-info')
           </div>
         </div>
 
@@ -72,6 +78,9 @@
     .ac-container{
       position: absolute;
     }
+    .ac-control{
+      border-color: #f0ad4e;
+    }
   </style>
 @endsection
 
@@ -87,7 +96,16 @@
         }
 
       });
-      $('#nationality, #birth, #residence, #final_recipient_text, #country_activity_financial, #relation_legal_name').keyup(function(){
+      $('body').on('click','input[name="is_agent_resident"]', function(e){
+        if($(this).val() == "0"){
+          $('#agent_resident_container').removeClass('hidden');
+        }
+        else{
+          $('#agent_resident_container').addClass('hidden');
+        }
+
+      });
+      $('.ac-control').keyup(function(){
         if(xhr){
             xhr.abort();
         }
@@ -98,18 +116,19 @@
         if(query != ''){
           var _token = $('input[name="_token"]').val();
           var _url;
-          var _data = { q: query, _token: _token, id:  };
+          var _data = { q: query, _token: _token };
           switch($this.attr('ac-method')){
             case 'countries':
               _url = "{{ route('helper.autocomplete_countries') }}";
-              _data = { q: query, _token: _token };
               break;
             case 'clients':
               _url = "{{ route('helper.autocomplete_clients') }}";
-              _data = { q: query, _token: _token, id: $('#client_id').val() };
               break;
             case 'producs':
               _url = "{{ route('helper.autocomplete_products') }}";
+              break;
+            case 'types_share':
+              _url = "{{ route('helper.autocomplete_types_share') }}";
               break;
           }
           xhr = $.ajax({
@@ -131,6 +150,55 @@
         $this.closest('.ac-container').prev().val($this.html());
         $this.closest('.ac-container').prev().prev().val($this.attr('data-val'));
         $this.closest('.ac-container').fadeOut();
+      });
+      $('body').on('click', '#addFileButton', function(){
+          $('#file-item-type option:eq(0)').prop('selected', true);
+          $('#file-name').val('');
+          $('#file-item-description').val('');
+          var $fileSection = $('.new-file-section');
+          if($fileSection.hasClass('hidden'))
+              $fileSection.removeClass('hidden');
+          else
+              $fileSection.addClass('hidden');
+      });
+
+      $('body').on('click', '#add-new-file-button', function(){
+          var file_data = $('#file-name').prop('files')[0];
+          var form_data = new FormData();
+          form_data.append('file', file_data);
+
+          $.ajax({
+              url: '/api/upload.php', // point to server-side PHP script
+              dataType: 'text',  // what to expect back from the PHP script, if anything
+              cache: false,
+              contentType: false,
+              processData: false,
+              data: form_data,
+              type: 'post',
+              success: function(php_script_response){
+                  if(php_script_response.toLowerCase().indexOf('error') == -1 && php_script_response.toLowerCase().indexOf('warning') == -1)
+                      $.post("{{ route('people.add_file') }}",
+                          {
+                              _token: '{{ csrf_token() }}',
+                              file_name: php_script_response,
+                              client_id: {{ $people->id }},
+                              file_item_type: $('#file-item-type').val(),
+                              file_description: $('#file-item-description').val()
+                          },
+                          function(response){
+                            $('#files_container').html(response);
+                          }
+                      );
+                  else{
+                      if(php_script_response.indexOf('file type') > -1)
+                          $('#file-upload-result').html('Tipo de archivo incorrecto');
+                      else
+                          $('#file-upload-result').html('Error al subir archivo');
+
+                      setTimeout(function(){ $('#file-upload-result').html(''); }, 5000);
+                  }
+              }
+           });
       });
     </script>
 @endsection

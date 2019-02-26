@@ -16,11 +16,13 @@ Route::get('/', function () {
 })->middleware('auth');
 
 Route::resource('people', 'PeopleController');
+Route::post('/people/add_file', 'PeopleController@add_file')->name('people.add_file');
 Route::resource('profile', 'ProfileController')->middleware('auth');
 Route::post('/updatePassword', 'ProfileController@updatePassword')->name('updatePassword');
 Route::post('/helper/autocomplete_countries', 'HelperController@autocomplete_countries')->name('helper.autocomplete_countries');
 Route::post('/helper/autocomplete_clients', 'HelperController@autocomplete_clients')->name('helper.autocomplete_clients');
 Route::post('/helper/autocomplete_products', 'HelperController@autocomplete_products')->name('helper.autocomplete_products');
+Route::post('/helper/autocomplete_types_share', 'HelperController@autocomplete_types_share')->name('helper.autocomplete_types_share');
 Auth::routes();
 
 //Route::get('/home', 'HomeController@index')->name('home');

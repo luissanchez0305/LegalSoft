@@ -1,0 +1,4 @@
+- vista y accion de agregar files
+- accion de agregar accionistas
+- accion de borrar accionista
+- accion de agregar cliente

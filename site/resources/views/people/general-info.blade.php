@@ -50,7 +50,7 @@
             <div class="{{ $final_recipient != null ? '' : 'hidden' }}" id="final_recipient_container">
               <label for="final_recipient_text">Ingrese el nombre del beneficiario</label>
               <input type="hidden" value="{{ $people->final_recipientId }}" name="final_recipientId">
-              <input type="text" class="form-control" name="final_recipient_text" id="final_recipient_text" value="{{$people->final_recipient}}" ac-method="clients">
+              <input type="text" class="form-control ac-control" name="final_recipient_text" id="final_recipient_text" value="{{$people->final_recipient}}" ac-method="clients">
               <div class="ac-container"></div>
             </div>
           </div>
@@ -89,19 +89,19 @@
       <fieldset class="form-group col-md-4">
         <label for="name">Nacionalidad</label>
         <input type="hidden" value="{{ $people->country_nationalityId }}" name="country_nationalityId">
-        <input type="text" class="form-control" id="nationality" name="nationality" value="{{ $country_nationality }}" ac-method="countries">
+        <input type="text" class="form-control ac-control" id="nationality" name="nationality" value="{{ $country_nationality }}" ac-method="countries">
         <div class="ac-container"></div>
       </fieldset>
       <fieldset class="form-group col-md-4">
         <label for="name">Lugar de Nacimiento</label>
         <input type="hidden" value="{{ $people->country_birthId }}" name="country_birthId">
-        <input type="text" class="form-control" id="birth" name="birth" value="{{ $country_birth }}" ac-method="countries">
+        <input type="text" class="form-control ac-control" id="birth" name="birth" value="{{ $country_birth }}" ac-method="countries">
         <div class="ac-container"></div>
       </fieldset>
       <fieldset class="form-group col-md-4">
         <label for="name">Lugar de Residencia</label>
         <input type="hidden" value="{{ $people->country_residenceId }}" name="country_residenceId">
-        <input type="text" class="form-control" id="residence" name="residence" value="{{ $country_residence }}" ac-method="countries">
+        <input type="text" class="form-control ac-control" id="residence" name="residence" value="{{ $country_residence }}" ac-method="countries">
         <div class="ac-container"></div>
       </fieldset>
       <fieldset class="form-group col-md-6">

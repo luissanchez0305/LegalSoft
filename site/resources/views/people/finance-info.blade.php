@@ -20,7 +20,7 @@
       <fieldset class="form-group col-md-6">
         <label for="name">País donde realiza su actividad económica</label>
         <input type="hidden" value="{{ $people->country_activity_financialId }}" name="country_activity_financialId">
-        <input type="text" class="form-control" id="country_activity_financial" name="country_activity_financial" value="{{ $country_activity_financial }}" ac-method="countries">
+        <input type="text" class="form-control ac-control" id="country_activity_financial" name="country_activity_financial" value="{{ $country_activity_financial }}" ac-method="countries">
         <div class="ac-container"></div>
 
 
