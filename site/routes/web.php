@@ -17,6 +17,9 @@ Route::get('/', function () {
 
 Route::resource('people', 'PeopleController');
 Route::post('/people/add_file', 'PeopleController@add_file')->name('people.add_file');
+Route::post('/people/delete_file', 'PeopleController@delete_file')->name('people.delete_file');
+Route::post('/people/add_shareholder', 'PeopleController@add_shareholder')->name('people.add_shareholder');
+Route::post('/people/delete_shareholder', 'PeopleController@delete_shareholder')->name('people.delete_shareholder');
 Route::resource('profile', 'ProfileController')->middleware('auth');
 Route::post('/updatePassword', 'ProfileController@updatePassword')->name('updatePassword');
 Route::post('/helper/autocomplete_countries', 'HelperController@autocomplete_countries')->name('helper.autocomplete_countries');

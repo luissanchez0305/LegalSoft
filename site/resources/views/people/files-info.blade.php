@@ -45,7 +45,7 @@
                         {{ $item->file_type_name }}
                     </td>
                     <td>
-                        <button type="button" class="btn btn-danger" data-id="{{ $item->file_id }}">Borrar</button>
+                        <button type="button" class="btn btn-danger document_delete" data-id="{{ $item->file_id }}">Borrar</button>
                     </td>
                 </tr>
             @endforeach

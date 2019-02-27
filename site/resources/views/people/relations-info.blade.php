@@ -113,50 +113,57 @@
                   <th>Porcentaje (%)</th>
                 </tr>
             </thead>
-            <tbody>
-              <tr>
-                <td>
-                  <input type="text" class="form-control ac-control" id="shareholder_certification_number" name="shareholder_certification_number" value="">
-                </td>
-                <td>
-                  <input type="hidden" value="" name="shareholder_action_typeId">
-                  <input type="text" class="form-control ac-control" id="shareholder_type_name" name="shareholder_type_name" value="" ac-metdod="types_share">
-                  <div class="ac-container"></div>
-                </td>
-                <td>
-                  <input type="hidden" value="" name="shareholder_peopleId">
-                  <input type="text" class="form-control ac-control" id="shareholder_name" name="shareholder_name" value="" ac-metdod="clients">
-                  <div class="ac-container"></div>
-                </td>
-                <td>
-                  <input type="text" class="form-control" id="shareholder_people_ruc" name="shareholder_people_ruc" value="">
-                </td>
-                <td>
-                  <input type="hidden" value="" name="shareholder_people_country_birthId">
-                  <input type="text" class="form-control ac-control" id="shareholder_people_country_birth_name" name="shareholder_people_country_birth_name" value="" ac-metdod="countries">
-                  <div class="ac-container"></div>
-                </td>
-                <td>
-                  <input type="hidden" value="" name="shareholder_people_country_nationalityId">
-                  <input type="text" class="form-control ac-control" id="shareholder_people_country_nationality_name" name="shareholder_people_country_nationality_name" value="" ac-metdod="countries">
-                  <div class="ac-container"></div>
-                </td>
-                <td>
-                  <input type="text" class="form-control" id="shareholder_people_phone_number" name="shareholder_people_phone_number" value="">
-                </td>
-                <td>
-                  <input type="text" class="form-control ac-control" id="shareholder_people_email" name="shareholder_people_email" value="">
-                </td>
-                <td>
-                  <input type="text" class="form-control ac-control" id="shareholder_percentage" name="shareholder_percentage" value="">
-                </td>
-                <td>
-                  <button type="button" class="btn btn-success">Agregar</button>
-                </td>
-              </tr>
+            <tbody id="shareholder_container">
+              <form id="new_shareholder_container">
+                <tr>
+                  <td>
+                    @csrf
+                    <input type="hidden" id="shareholder_clientId" value="{{ $people->id }}">
+                    <input type="text" class="form-control" id="shareholder_client_people_certification_number" value="">
+                  </td>
+                  <td>
+                    <select id="shareholder_client_people_action_typeId">
+                      <option></option>
+                      @foreach($share_types as $item)
+                        <option value="{{ $item['id'] }}">{{ $item['name'] }}</option>
+                      @endforeach
+                    </select>
+                  </td>
+                  <td>
+                    <input type="hidden" value="0" name="shareholder_client_peopleId" id="shareholder_client_peopleId">
+                    <input type="text" class="form-control ac-control" id="shareholder_client_people_name" name="shareholder_client_people_name" value="" ac-method="clients">
+                    <div class="ac-container"></div>
+                  </td>
+                  <td>
+                    <input type="text" class="form-control" id="shareholder_client_people_ruc" value="">
+                  </td>
+                  <td>
+                    <input type="hidden" value="" id="shareholder_client_people_country_birthId">
+                    <input type="text" class="form-control ac-control" id="shareholder_people_country_birth_name" name="shareholder_people_country_birth_name" value="" ac-method="countries">
+                    <div class="ac-container"></div>
+                  </td>
+                  <td>
+                    <input type="hidden" value="" id="shareholder_client_people_country_nationalityId">
+                    <input type="text" class="form-control ac-control" id="shareholder_people_country_nationality_name" name="shareholder_people_country_nationality_name" value="" ac-method="countries">
+                    <div class="ac-container"></div>
+                  </td>
+                  <td>
+                    <input type="text" class="form-control" id="shareholder_client_people_phone_number" value="">
+                  </td>
+                  <td>
+                    <input type="text" class="form-control" id="shareholder_client_people_email" value="">
+                  </td>
+                  <td>
+                    <input type="text" class="form-control" id="shareholder_client_people_percentage" value="">
+                  </td>
+                  <td>
+                    <button type="button" class="btn btn-success" id="add-shareholder-btn">Agregar</button>
+                  </td>
+                </tr>
+              </form>
               @if($shareholders != null && count($shareholders) > 0)
               @foreach($shareholders as $item)
-              <tr>
+              <tr class="shareholder_row_container">
                 <td>
                   {{ $item->cert_number }}
                 </td>
@@ -167,7 +174,7 @@
                   {{ $item->people_name . ' ' . $item->people_last_name }}
                 </td>
                 <td>
-                  {{ $item->ruc }}
+                  {{ $item->people_ruc }}
                 </td>
                 <td>
                   {{ $item->people_country_birth_name }}
@@ -185,7 +192,7 @@
                   {{ $item->share_percentage }}
                 </td>
                 <td>
-                  <button type="button" class="btn btn-danger">Borrar</button>
+                  <button type="button" class="btn btn-danger shareholder-delete">Borrar</button>
                 </td>
               </tr>
               @endforeach

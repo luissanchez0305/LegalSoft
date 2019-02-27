@@ -105,6 +105,60 @@
         }
 
       });
+
+      $('body').on('click', '#add-shareholder-btn', function(e){
+        let data = {
+            _token: '{{ csrf_token() }}',
+            shareholder_clientId: $('#shareholder_clientId').val(),
+            shareholder_client_peopleId: $('#shareholder_client_peopleId').val(),
+            shareholder_client_people_name: $('#shareholder_client_people_name').val(),
+            shareholder_client_people_certification_number: $('#shareholder_client_people_certification_number').val(),
+            shareholder_client_people_action_typeId: $('#shareholder_client_people_action_typeId').val(),
+            shareholder_client_people_ruc: $('#shareholder_client_people_ruc').val(),
+            shareholder_client_people_country_birthId: $('#shareholder_client_people_country_birthId').val(),
+            shareholder_client_people_country_nationalityId: $('#shareholder_client_people_country_nationalityId').val(),
+            shareholder_client_people_phone_number: $('#shareholder_client_people_phone_number').val(),
+            shareholder_client_people_email: $('#shareholder_client_people_email').val(),
+            shareholder_client_people_percentage: $('#shareholder_client_people_percentage').val()
+        };
+
+        $.post("{{ route('people.add_shareholder') }}",
+              data,
+              function(response){
+                $('.shareholder_row_container').remove();
+                $('#shareholder_container').append(response);
+
+                $('#shareholder_client_peopleId').val('0');
+                $('#shareholder_client_people_name').val('');
+                $('#shareholder_client_people_certification_number').val('');
+                $('#shareholder_client_people_action_typeId').find('option:eq(0)').prop('selected', true);
+                $('#shareholder_client_people_ruc').val('');
+                $('#shareholder_client_people_country_birthId').val('0');
+                $('#shareholder_people_country_birth_name').val('');
+                $('#shareholder_client_people_country_nationalityId').val('0');
+                $('#shareholder_people_country_nationality_name').val('');
+                $('#shareholder_client_people_phone_number').val('');
+                $('#shareholder_client_people_email').val('');
+                $('#shareholder_client_people_percentage').val('');
+              }
+          );
+      });
+
+      $('body').on('click', '.shareholder-delete', function(e){
+        $.post("{{ route('people.delete_shareholder') }}",
+                          {
+                              _token: '{{ csrf_token() }}',
+                              id: $(this).attr('data-id'),
+                              client_id: $('#client_id').val()
+                          },
+                          function(response){
+                            $('.shareholder_row_container').remove();
+                            $('#shareholder_container').append(response);
+                          }
+                      );
+
+      });
+
       $('.ac-control').keyup(function(){
         if(xhr){
             xhr.abort();
@@ -145,12 +199,14 @@
           });
         }
       });
+
       $('body').on('click', '.ac-item', function(){
         var $this = $(this);
         $this.closest('.ac-container').prev().val($this.html());
         $this.closest('.ac-container').prev().prev().val($this.attr('data-val'));
         $this.closest('.ac-container').fadeOut();
       });
+
       $('body').on('click', '#addFileButton', function(){
           $('#file-item-type option:eq(0)').prop('selected', true);
           $('#file-name').val('');
@@ -160,6 +216,19 @@
               $fileSection.removeClass('hidden');
           else
               $fileSection.addClass('hidden');
+      });
+
+      $('body').on('click', '.document_delete', function(){
+        $.post("{{ route('people.delete_file') }}",
+                          {
+                              _token: '{{ csrf_token() }}',
+                              id: $(this).attr('data-id'),
+                              client_id: $('#client_id').val()
+                          },
+                          function(response){
+                            $('#files_container').html(response);
+                          }
+                      );
       });
 
       $('body').on('click', '#add-new-file-button', function(){

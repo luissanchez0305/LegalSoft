@@ -1,4 +1,8 @@
-- vista y accion de agregar files
-- accion de agregar accionistas
-- accion de borrar accionista
+x vista y accion de agregar files
+    - visualizar archivos subidos
+    - validacion de campos
+x accion de agregar accionistas
+    - validacion de campos
+x accion de borrar accionista
 - accion de agregar cliente
+    - validacion de campos
