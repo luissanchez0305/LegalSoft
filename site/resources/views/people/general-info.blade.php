@@ -5,8 +5,8 @@
         <label for="name">Nombre</label>
         <input type="text" class="form-control" name="name" value="{{ $people->name }}">
 
-        <label for="name">Cédula</label>
-        <input type="text" class="form-control" name="unique_id" value="{{ $people->unique_id_number }}">
+        <label for="name" class="persona-natural">Cédula</label>
+        <input type="text" class="form-control persona-natural" name="unique_id" value="{{ $people->unique_id_number }}">
 
         <label for="name">Teléfono Principal</label>
         <input type="text" class="form-control" name="phone_fixed" value="{{ $people->phone_fixed }}">
@@ -15,8 +15,8 @@
         <label for="last_name">Apellido</label>
         <input type="text" class="form-control" name="last_name" value="{{ $people->last_name }}">
 
-        <label for="name">Pasaporte</label>
-        <input type="text" class="form-control" name="passport_number" value="{{ $people->passport_number }}">
+        <label for="name" class="persona-natural">Pasaporte</label>
+        <input type="text" class="form-control persona-natural" name="passport_number" value="{{ $people->passport_number }}">
 
         <label for="name">Teléfono Móvil</label>
         <input type="text" class="form-control" name="phone_mobile" value="{{ $people->phone_mobile }}">
@@ -26,10 +26,10 @@
         <input type="text" class="form-control" name="email" value="{{ $people->email }}">
 
         <label for="last_name">Sexo</label>
-        <select class="form-control">
+        <select class="form-control" name="gender">
           <option></option>
-          <option {{ $people->genderId == 2 ? 'selected="selected"' : '' }}>Hombre</option>
-          <option {{ $people->genderId == 1 ? 'selected="selected"' : '' }}>Mujer</option>
+          <option value="1" {{ $people->genderId == 1 ? 'selected="selected"' : '' }}>Mujer</option>
+          <option value="2" {{ $people->genderId == 2 ? 'selected="selected"' : '' }}>Hombre</option>
         </select>
 
         <label for="name">Actividad Profesional</label>

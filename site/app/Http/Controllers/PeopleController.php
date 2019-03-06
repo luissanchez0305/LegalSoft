@@ -16,7 +16,7 @@ class PeopleController extends Controller
     public function index()
     {
         //
-        $people=\App\People::all();
+        $people=\App\People::where('type_clientId','=',1)->orWhere('type_clientId','=','2')->get();
 
         return view('people/index',compact('people'));
     }
@@ -46,9 +46,13 @@ class PeopleController extends Controller
         $board = null;
         $shareholders = null;
         $people = new \App\People;
+        $legal_structures = \App\Legal_Structure::all();
+        $share_types = \App\Type_Share::all();
+        $file_types = \App\Type_File::all();
+        $files = $this->get_files_array(0);;
         return view('people/form',compact('people', 'action_type', 'action_type_text', 'id', 'country_residence', 'country_birth',
             'final_recipient', 'country_nationality', 'country_activity_financial', 'product', 'legal_relation','board', 'shareholders',
-            'share_types', 'file_types', 'files'));
+            'share_types', 'file_types', 'files', 'legal_structures'));
     }
 
     /**
@@ -81,11 +85,13 @@ class PeopleController extends Controller
 
         $product = \App\Product::find($people->productId)->name;
 
-        $legal_relation = DB::table('relation_client_legal')
-                        ->join('people', 'relation_client_legal.client_relatedId', '=', 'people.id')
-                        ->select('people.*')
+        $legal_structures = \App\Legal_Structure::all();
+
+        $legal_relations = DB::table('relation_client_legal')
+                        ->leftJoin("people", 'relation_client_legal.resident_agent_id', '=', 'people.id')
+                        ->select(DB::raw('relation_client_legal.id as id, relation_client_legal.legal_person_name as legal_person_name, relation_client_legal.ruc as ruc, relation_client_legal.resident_agent_id as resident_agent_id, people.name as people_name, people.last_name as people_last_name'))
                         ->where('relation_client_legal.clientId', '=', $people->id)
-                        ->first();
+                        ->get();
 
         $board = DB::table('relation_client_board')
                         ->join('people', 'relation_client_board.client_relatedId', '=', 'people.id')
@@ -104,8 +110,71 @@ class PeopleController extends Controller
         $files = $this->get_files_array($people->id);
 
         return view('people/form',compact('people','id', 'action_type', 'action_type_text', 'country_residence', 'country_birth',
-            'final_recipient', 'country_nationality', 'country_activity_financial', 'product', 'legal_relation','board', 'shareholders',
+            'final_recipient', 'country_nationality', 'country_activity_financial', 'product', 'legal_structures', 'legal_relations','board', 'shareholders',
             'share_types', 'file_types', 'files'));
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function update(Request $request)
+    {            //
+        $people = \App\People::find($request->client_id);
+         /* GENERAL */
+        $people->name = $request->name;
+        $people->last_name = $request->last_name;
+        $people->unique_id_number = $request->unique_id;
+        $people->phone_fixed = $request->phone_fixed;
+        $people->passport_number = $request->passport_number;
+        $people->phone_mobile = $request->phone_mobile;
+        $people->email = $request->email;
+        $people->genderId = $request->gender;
+        $people->ocuppation = $request->ocuppation;
+        if($request->final_recipientId != '0'){
+            $people->final_recipientId = $request->final_recipientId;
+        }
+        else if($request->final_recipient == '1' ){
+            $final_recipient = new \App\People;
+            $final_recipient->name = $request->final_recipient_text;
+            $final_recipient->last_name = $request->final_recipient_text;
+            // TODO llenar campos not null de final_recipient
+
+            $final_recipient->save();
+        }
+
+        $people->is_pep = $request->is_pep;
+        $people->is_pep_family = $request->is_pep_family;
+        $people->country_nationalityId = $request->country_nationalityId;
+        $people->country_birthId = $request->country_birthId;
+        $people->country_residenceId = $request->country_residenceId;
+        $people->address_physical = $request->address_physical;
+        $people->address_mail = $request->address_mail;
+
+        /* FINANZAS */
+        $people->activity_financial = $request->activity_financial;
+        $people->annual_income_lower_limit = explode('-',$request->annual_income_limits)[0];
+        $people->annual_income_upper_limit = explode('-',$request->annual_income_limits)[1];
+        $people->country_activity_financialId = $request->country_activity_financialId;
+        $people->legacy_lower_limit = explode('-', $request->legacy_limits)[0];
+        $people->legacy_upper_limit = explode('-', $request->legacy_limits)[1];
+        $people->productId = $request->productId;
+        $people->relation_objectives = $request->relation_objectives_txt;
+        $people->legal_structureId = $request->legal_structure;
+
+        /* RELACION */
+        $people_legal = \App\Relation_People_Legal::where('clientId', '=', $request->client_id)->first();
+        if($people_legal){
+            if($request->legal_person_name != ''){
+                 $people_legal->legal_person_name = $request->legal_person_name;
+                 $people_legal->ruc = $request->relation_objectives;
+            }
+        }
+
+        $people->save();
+        return redirect('people');
     }
 
     public function add_shareholder(Request $request){
@@ -208,20 +277,23 @@ class PeopleController extends Controller
         return $output;
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  int  $id
-     * @return Response
-     */
-    public function update($id, Request $request)
-    {            //
-        $people = \App\People::find($id);
+    public function edit_legal_relation($id){
 
-        $people->name = $request->name;
+        $legal_relation = DB::table('relation_client_legal')
+                        ->leftJoin("people", 'relation_client_legal.resident_agent_id', '=', 'people.id')
+                        ->select(DB::raw('relation_client_legal.id as id, relation_client_legal.legal_person_name as legal_person_name, relation_client_legal.ruc as ruc, relation_client_legal.resident_agent_id as resident_agent_id, people.name as people_name, people.last_name as people_last_name'))
+                        ->where('relation_client_legal.id', '=', $id)
+                        ->first();
+        return $legal_relation;
+    }
 
-        $people->save();
-        return redirect('people');
+    public function delete_legal_relation($id){
+        $legal_relation = DB::table('relation_client_legal')
+                        ->leftJoin("people", 'relation_client_legal.resident_agent_id', '=', 'people.id')
+                        ->select(DB::raw('relation_client_legal.*, people.name as people_name, people.last_name as people_last_name'))
+                        ->where('relation_client_legal.id', '=', $id)
+                        ->first();
+        return $legal_relation;
     }
 
     /**
@@ -264,7 +336,7 @@ class PeopleController extends Controller
     public function show($id)
     {
         //
-        $people = People::find($id);
+        $people = \App\People::find($id);
         return view('people.show', array('people' => $people));
     }
 }

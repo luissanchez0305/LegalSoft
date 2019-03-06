@@ -24,7 +24,7 @@
     <!-- /.row -->
     @endsection
     <div class="row">
-        <form method="POST" action="{{ action('PeopleController@update', $id) }}">
+        <form method="POST" action="{{ route('people.update') }}">
           <input type="hidden" name="_token" value="{{ csrf_token() }}"/>
           <input type="hidden" name="type" value="{{ $action_type }}"/>
           <input type="hidden" name="client_id" id="client_id" value="{{ $people->id }}"
@@ -268,6 +268,37 @@
                   }
               }
            });
+      });
+
+      $('body').on('click','#legal_relation_create_btn', function(){
+          $('.legal_relation_container').removeClass('hidden')
+      });
+
+      $('body').on('click','#legal_relation_cancel', function(){
+          $('.legal_relation_container').addClass('hidden')
+      });
+
+      $('body').on('click','.legal_relation_edit', function (){
+        $.post("{{ route('people.edit_legal_relation') }}",
+          {
+            _token: '{{ csrf_token() }}',
+            $id: $(this).attr('data-id')
+          },
+          function(data){
+            console.log(data);
+          });
+      });
+
+      $('body').on('click','.legal_relation_delete', function (){
+        $.post("{{ route('people.delete_legal_relation') }}",
+          {
+            _token: '{{ csrf_token() }}',
+            $id: $(this).attr('data-id')
+          },
+          function(data){
+            console.log(data);
+          });
+
       });
     </script>
 @endsection

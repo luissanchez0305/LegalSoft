@@ -4,5 +4,12 @@ x vista y accion de agregar files
 x accion de agregar accionistas
     - validacion de campos
 x accion de borrar accionista
-- accion de agregar cliente
+- accion de agregar persona juridica a persona natural
     - validacion de campos
+- accion de borrar persona juridica a persona natural
+- accion de agregar persona natural
+    - validacion de campos
+- accion de agregar persona juridica
+
+
+- revisar si la cuenta aun sigue conectada al correr cualquier pagina

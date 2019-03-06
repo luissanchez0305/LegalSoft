@@ -9,12 +9,12 @@
         <input type="text" class="form-control" name="activity_financial" value="{{ $people->activity_financial }}">
 
         <label for="last_name">Monto aproximado de su renta anual</label>
-        <select class="form-control">
+        <select class="form-control" name="annual_income_limits">
           <option></option>
-          <option {{ $people->annual_income_lower_limit != null && $people->annual_income_lower_limit == 0 ? 'selected="selected"' : '' }}>0 - 50k</option>
-          <option {{ $people->annual_income_lower_limit == 51 ? 'selected="selected"' : '' }}>51k - 100k</option>
-          <option {{ $people->annual_income_lower_limit == 101 ? 'selected="selected"' : '' }}>101k - 150k</option>
-          <option {{ $people->annual_income_lower_limit == 151 ? 'selected="selected"' : '' }}>151k+</option>
+          <option value="1-50" {{ $people->annual_income_lower_limit != null && $people->annual_income_lower_limit == 1 ? 'selected="selected"' : '' }}>0 - 50k</option>
+          <option value="51-100" {{ $people->annual_income_lower_limit == 51 ? 'selected="selected"' : '' }}>51k - 100k</option>
+          <option value="101-150" {{ $people->annual_income_lower_limit == 101 ? 'selected="selected"' : '' }}>101k - 150k</option>
+          <option value="151-" {{ $people->annual_income_lower_limit == 151 ? 'selected="selected"' : '' }}>151k+</option>
         </select>
       </fieldset>
       <fieldset class="form-group col-md-6">
@@ -24,13 +24,13 @@
         <div class="ac-container"></div>
 
 
-        <label for="last_name">Monto aproximado de su patrimonio</label>
-        <select class="form-control">
+        <label for="last_name">Monto aproximado de su patrimonio {{$people->legacy_lower_limit}}</label>
+        <select class="form-control" name="legacy_limits">
           <option></option>
-          <option {{ $people->legacy_lower_limit != null && $people->legacy_lower_limit == 0 ? 'selected="selected"' : '' }}>0 - 100k</option>
-          <option {{ $people->legacy_lower_limit == 101 ? 'selected="selected"' : '' }}>101k - 200k</option>
-          <option {{ $people->legacy_lower_limit == 201 ? 'selected="selected"' : '' }}>201k - 300k</option>
-          <option {{ $people->legacy_lower_limit == 301 ? 'selected="selected"' : '' }}>301k+</option>
+          <option value="1-100" {{ $people->legacy_lower_limit != null && $people->legacy_lower_limit == 1 ? 'selected="selected"' : '' }}>0 - 100k</option>
+          <option value="101-200" {{ $people->legacy_lower_limit == 101 ? 'selected="selected"' : '' }}>101k - 200k</option>
+          <option value="201-300" {{ $people->legacy_lower_limit == 201 ? 'selected="selected"' : '' }}>201k - 300k</option>
+          <option value="301-" {{ $people->legacy_lower_limit == 301 ? 'selected="selected"' : '' }}>301k+</option>
         </select>
       </fieldset>
     </div>
@@ -46,19 +46,15 @@
         <input type="text" class="form-control" id="product" name="product" value="{{ $product }}" ac-method="products">
         <div class="ac-container"></div>
         <label for="name">Propósito de la relación</label>
-        <input type="text" class="form-control" name="relation_objectives" value="{{ $people->relation_objectives }}">
+        <input type="text" class="form-control" name="relation_objectives_txt" value="{{ $people->relation_objectives }}">
       </fieldset>
       <fieldset class="form-group col-md-6">
         <label for="last_name">Estructura jurídica, solicitada</label>
-        <select class="form-control">
+        <select class="form-control" name="legal_structure">
           <option></option>
-          <option {{ $people->legal_structureId == 1 ? 'selected="selected"' : '' }}>SA</option>
-          <option {{ $people->legal_structureId == 2 ? 'selected="selected"' : '' }}>SA extranjera registrada en Panamá</option>
-          <option {{ $people->legal_structureId == 3 ? 'selected="selected"' : '' }}>Fundación</option>
-          <option {{ $people->legal_structureId == 4 ? 'selected="selected"' : '' }}>SRL</option>
-          <option {{ $people->legal_structureId == 5 ? 'selected="selected"' : '' }}>Fideicomiso</option>
-          <option {{ $people->legal_structureId == 6 ? 'selected="selected"' : '' }}>Sin fines de lucro</option>
-          <option {{ $people->legal_structureId == 7 ? 'selected="selected"' : '' }}>Otras estructuras</option>
+          @foreach($legal_structures as $item)
+          <option value="{{ $item->id }}" {{ $people->legal_structureId == $item->id ? 'selected="selected"' : '' }}>{{ $item->name }}</option>
+          @endforeach
         </select>
       </fieldset>
     </div>
