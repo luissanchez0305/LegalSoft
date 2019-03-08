@@ -13,7 +13,7 @@ class HelperController extends Controller
         if($request->get('q'))
         {
             $query = $request->get('q');
-            $data = \App\Country::where('name', 'LIKE', '%'.$query.'%')->orderBy('name', 'asc')->get();
+            $data = \App\Country::where('name', 'LIKE', '%'.$query.'%')->where('isDummy', '=', '1')->orderBy('name', 'asc')->get();
             $output = '';
             foreach ($data as $row) {$output .= '<li><a class="ac-item" data-val="'.$row->id.'">'.$row->name.'</a></li>';
             }

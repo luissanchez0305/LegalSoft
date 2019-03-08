@@ -21,6 +21,7 @@ Route::post('/people/add_file', 'PeopleController@add_file')->name('people.add_f
 Route::post('/people/delete_file', 'PeopleController@delete_file')->name('people.delete_file');
 Route::post('/people/add_shareholder', 'PeopleController@add_shareholder')->name('people.add_shareholder');
 Route::post('/people/delete_shareholder', 'PeopleController@delete_shareholder')->name('people.delete_shareholder');
+Route::post('/people/add_legal_relation', 'PeopleController@add_legal_relation')->name('people.add_legal_relation');
 Route::post('/people/edit_legal_relation', 'PeopleController@edit_legal_relation')->name('people.edit_legal_relation');
 Route::post('/people/delete_legal_relation', 'PeopleController@delete_legal_relation')->name('people.delete_legal_relation');
 Route::resource('profile', 'ProfileController')->middleware('auth');

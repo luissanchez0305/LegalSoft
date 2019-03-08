@@ -97,7 +97,7 @@ class PeopleController extends Controller
                         ->join('people', 'relation_client_board.client_relatedId', '=', 'people.id')
                         ->join('types_board', 'relation_client_board.types_boardId', '=', 'types_board.id')
                         ->select(DB::raw('people.id as people_id, people.name as people_name, people.last_name as people_last_name, types_board.name as type_name'))
-                        ->where('relation_client_board.clientId', '=', $people->id)
+                        ->where('relation_client_board.client_legalId', '=', $people->id)
                         ->orderBy('types_board.name', 'asc')
                         ->get();
 
@@ -199,14 +199,88 @@ class PeopleController extends Controller
         }
 
         $relation_client_shareholder = new \App\Relation_People_Shareholder;
-        $relation_client_shareholder->clientId = $request->shareholder_clientId;
+        $relation_client_shareholder->client_legalId = $request->legal_clientId;
         $relation_client_shareholder->client_relatedId = $client->id;
         $relation_client_shareholder->types_shareId = $request->shareholder_client_people_action_typeId;
         $relation_client_shareholder->certification_number = $request->shareholder_client_people_certification_number;
         $relation_client_shareholder->percentage = $request->shareholder_client_people_percentage;
         $relation_client_shareholder->save();
 
-        echo $this->get_shareholders_rows($request->shareholder_clientId);
+        echo $this->get_shareholders_rows($request->legal_clientId);
+    }
+
+    public function add_legal_relation(Request $request){
+        $legal_relation = new \App\Relation_People_Legal;
+        $legal_relation->clientID = $request->client_id;
+        $legal_relation->legal_person_name = $request->name;
+        $legal_relation->ruc = $request->ruc;
+        if($request->is_agent_resident == '0'){
+            if($request->agent_resident_id != '0'){
+                $legal_relation->resident_agent_id = $request->agent_resident_id;
+            }
+            else{
+                $legal_resident_agent = new \App\People;
+                $legal_resident_agent->name = $request->agent_resident_name;
+                $legal_resident_agent->last_name = $request->agent_resident_name;
+                $legal_resident_agent->type_clientId = 4;
+                $legal_resident_agent->save();
+                $legal_relation->resident_agent_id = $legal_resident_agent->id;
+            }
+        }
+        $legal_relation->types_relationId = 1;
+        $legal_relation->save();
+
+        $board_director_member = new \App\Relation_People_Board;
+        $board_director_member->client_legalId = $legal_relation->id;
+        $board_director_member->types_boardId = 1;
+
+        if($request->board_director_id != '0'){
+            $board_director_member->client_relatedId = $request->board_director_id;
+        }
+        else{
+            $board_people = new \App\People;
+            $board_people->name = $request->board_director_name;
+            $board_people->last_name = $request->board_director_name;
+            $board_people->type_clientId = 5;
+            $board_people->save();
+            $board_director_member->client_relatedId = $board_people->id;
+        }
+        $board_director_member->save();
+
+        $board_secretary_member = new \App\Relation_People_Board;
+        $board_secretary_member->client_legalId = $legal_relation->id;
+        $board_secretary_member->types_boardId = 2;
+
+        if($request->board_secretary_id != '0'){
+            $board_secretary_member->client_relatedId = $request->board_secretary_id;
+        }
+        else{
+            $board_people = new \App\People;
+            $board_people->name = $request->board_secretary_name;
+            $board_people->last_name = $request->board_secretary_name;
+            $board_people->type_clientId = 5;
+            $board_people->save();
+            $board_secretary_member->client_relatedId = $board_people->id;
+        }
+        $board_secretary_member->save();
+
+        $board_treasurer_member = new \App\Relation_People_Board;
+        $board_treasurer_member->client_legalId = $legal_relation->id;
+        $board_treasurer_member->types_boardId = 3;
+
+        if($request->board_treasurer_id != '0'){
+            $board_treasurer_member->client_relatedId = $request->board_treasurer_id;
+        }
+        else{
+            $board_people = new \App\People;
+            $board_people->name = $request->board_treasurer_name;
+            $board_people->last_name = $request->board_treasurer_name;
+            $board_people->type_clientId = 5;
+            $board_people->save();
+            $board_treasurer_member->client_relatedId = $board_people->id;
+        }
+        $board_treasurer_member->save();
+        echo json_encode(array('status'=>'success','legal_relation_id'=>$legal_relation->id));
     }
 
     public function delete_shareholder(Request $request){
@@ -223,7 +297,7 @@ class PeopleController extends Controller
                         ->join('countries as countries_birth', 'people.country_birthId', '=', 'countries_birth.id')
                         ->join('countries as countries_nationality', 'people.country_birthId', '=', 'countries_nationality.id')
                         ->select(DB::raw('relation_client_shareholders.id as cert_id, relation_client_shareholders.certification_number as cert_number, people.id as people_id, people.name as people_name, people.last_name as people_last_name, types_share.id as type_id, types_share.name as type_name, people.ruc as people_ruc, people.country_birthId as people_country_birthId, countries_birth.name as people_country_birth_name, people.country_nationalityId as people_country_nationalityId, countries_nationality.name as people_country_nationality_name, people.phone_mobile as people_phone_mobile, people.email as people_email, relation_client_shareholders.percentage as share_percentage'))
-                        ->where('relation_client_shareholders.clientId', '=', $id)
+                        ->where('relation_client_shareholders.client_legalId', '=', $id)
                         ->where('relation_client_shareholders.status', '=', '1')
                         ->get();
         return $shareholders;

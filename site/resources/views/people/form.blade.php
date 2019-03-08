@@ -72,6 +72,9 @@
 
 @section('style')
   <style>
+    .card-default{
+      color: #808080 !important;
+    }
     label{
       padding: 10px 0px 0px 0px;
     }
@@ -87,6 +90,7 @@
 @section('js')
     <script type="text/JavaScript">
       var xhr;
+      var timeout;
       $('body').on('click','input[name="final_recipient"]', function(e){
         if($(this).val() == "0"){
           $('#final_recipient_container').removeClass('hidden');
@@ -109,7 +113,7 @@
       $('body').on('click', '#add-shareholder-btn', function(e){
         let data = {
             _token: '{{ csrf_token() }}',
-            shareholder_clientId: $('#shareholder_clientId').val(),
+            legal_clientId: $('#legal_clientId').val(),
             shareholder_client_peopleId: $('#shareholder_client_peopleId').val(),
             shareholder_client_people_name: $('#shareholder_client_people_name').val(),
             shareholder_client_people_certification_number: $('#shareholder_client_people_certification_number').val(),
@@ -160,6 +164,9 @@
       });
 
       $('.ac-control').keyup(function(){
+        if(timeout){
+          clearTimeout(timeout);
+        }
         if(xhr){
             xhr.abort();
         }
@@ -185,18 +192,20 @@
               _url = "{{ route('helper.autocomplete_types_share') }}";
               break;
           }
-          xhr = $.ajax({
-            url: _url,
-            method: "POST",
-            data: _data,
-            success: function(data){
-              if(data.length > 0){
-                $list_container.fadeIn();
-                ul = '<ul class="dropdown-menu" style="display:block; position:relative;">' + data + '</ul>';
-                $list_container.html(ul);
+          timeout = setTimeout(function(){
+            xhr = $.ajax({
+              url: _url,
+              method: "POST",
+              data: _data,
+              success: function(data){
+                if(data.length > 0){
+                  $list_container.fadeIn();
+                  ul = '<ul class="dropdown-menu" style="display:block; position:relative;">' + data + '</ul>';
+                  $list_container.html(ul);
+                }
               }
-            }
-          });
+            });
+          }, 800);
         }
       });
 
@@ -271,11 +280,45 @@
       });
 
       $('body').on('click','#legal_relation_create_btn', function(){
-          $('.legal_relation_container').removeClass('hidden')
+          $('.legal_relation_container, #legal_relation_cancel').removeClass('hidden')
+
       });
 
       $('body').on('click','#legal_relation_cancel', function(){
-          $('.legal_relation_container').addClass('hidden')
+          $('.legal_relation_container, #legal_relation_cancel').addClass('hidden')
+      });
+
+      $('body').on('click', '#legal_relation_add', function(){
+        let data = {
+          _token: '{{ csrf_token() }}',
+          client_id: $('#client_id').val(),
+          name: $('#legal_person_name').val(),
+          ruc: $('#relation_objectives').val(),
+          is_agent_resident: $('input[name="is_agent_resident"]:checked').val(),
+          agent_resident_id: $('#resident_agent_id').val(),
+          agent_resident_name: $('#resident_agent').val(),
+          board_director_id: $('#board_directorId').val(),
+          board_director_name: $('#board_director_name').val(),
+          board_secretary_id: $('#legal_secretarioId').val(),
+          board_secretary_name: $('#board_secretario_name').val(),
+          board_treasurer_id: $('#legal_tesoreroId').val(),
+          board_treasurer_name: $('#board_tesorero_name').val()
+        };
+        $.post("{{ route('people.add_legal_relation') }}", data ,
+            function(data){
+              data = $.parseJSON(data);
+              if(data.status == 'success'){
+                $('#relation-legal-first-step .card-header').removeClass('card-primary').addClass('card-default');
+                $('#relation-legal-first-step .card-block').addClass('hidden');
+                $('#relation-legal-second-step .card-header').removeClass('card-default').addClass('card-primary');
+                $('#relation-legal-second-step .card-block').removeClass('hidden');
+                $('#legal_clientId').val(data.legal_relation_id);
+              }
+              else{
+                // TODO poner mensaje de error en transaccion
+              }
+            }
+          );
       });
 
       $('body').on('click','.legal_relation_edit', function (){
