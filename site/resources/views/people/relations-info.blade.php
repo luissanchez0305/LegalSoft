@@ -14,7 +14,7 @@
               <th colspan="2">&nbsp;</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody id="legal_relations_container">
             @if($legal_relations != null && count($legal_relations) > 0)
             @foreach($legal_relations as $item)
             <tr>
@@ -28,7 +28,7 @@
                 <a href="#" class="btn btn-warning legal_relation_edit" data-id="{{ $item->id }}">Editar</a>
               </td>
               <td>
-                <a href="#" class="btn btn-danger legal_relation_delete" data-id="{{ $item->id }}">Editar</a>
+                <a href="#" class="btn btn-danger legal_relation_delete" data-id="{{ $item->id }}">Borrar</a>
               </td>
             </tr>
             @endforeach
@@ -45,6 +45,7 @@
         <h5>1er Paso - Informacion General y Junta Directiva</h5>
     </div>
     <div class="card-block legal-first-step-container">
+        <input type="hidden" value="0" id="relation_legalId">
         <div class="col-sm-6">
           <fieldset class="col-md-12">
               <h3>Información</h3>
@@ -118,7 +119,7 @@
           </fieldset>
         </div>
         <div class="col-xl-6">
-          <a href="#" class="btn btn-warning" id="legal_relation_add">Guardar</a>
+          <a href="#" class="btn btn-warning" id="legal_relation_add">Guardar</a><a href="#" class="hidden" id="legal_relation_next">Siguiente</a>
         </div>
     </div>
   </div>
@@ -150,7 +151,6 @@
                 <tr>
                   <td>
                     @csrf
-                    <input type="hidden" id="legal_clientId" value="0">
                     <input type="text" class="form-control" id="shareholder_client_people_certification_number" value="">
                   </td>
                   <td>

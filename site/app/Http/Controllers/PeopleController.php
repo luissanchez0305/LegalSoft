@@ -87,19 +87,7 @@ class PeopleController extends Controller
 
         $legal_structures = \App\Legal_Structure::all();
 
-        $legal_relations = DB::table('relation_client_legal')
-                        ->leftJoin("people", 'relation_client_legal.resident_agent_id', '=', 'people.id')
-                        ->select(DB::raw('relation_client_legal.id as id, relation_client_legal.legal_person_name as legal_person_name, relation_client_legal.ruc as ruc, relation_client_legal.resident_agent_id as resident_agent_id, people.name as people_name, people.last_name as people_last_name'))
-                        ->where('relation_client_legal.clientId', '=', $people->id)
-                        ->get();
-
-        $board = DB::table('relation_client_board')
-                        ->join('people', 'relation_client_board.client_relatedId', '=', 'people.id')
-                        ->join('types_board', 'relation_client_board.types_boardId', '=', 'types_board.id')
-                        ->select(DB::raw('people.id as people_id, people.name as people_name, people.last_name as people_last_name, types_board.name as type_name'))
-                        ->where('relation_client_board.client_legalId', '=', $people->id)
-                        ->orderBy('types_board.name', 'asc')
-                        ->get();
+        $legal_relations = $this->get_legal_relations_array($people->id);
 
         $share_types = \App\Type_Share::all();
 
@@ -110,7 +98,7 @@ class PeopleController extends Controller
         $files = $this->get_files_array($people->id);
 
         return view('people/form',compact('people','id', 'action_type', 'action_type_text', 'country_residence', 'country_birth',
-            'final_recipient', 'country_nationality', 'country_activity_financial', 'product', 'legal_structures', 'legal_relations','board', 'shareholders',
+            'final_recipient', 'country_nationality', 'country_activity_financial', 'product', 'legal_structures', 'legal_relations', 'shareholders',
             'share_types', 'file_types', 'files'));
     }
 
@@ -199,14 +187,64 @@ class PeopleController extends Controller
         }
 
         $relation_client_shareholder = new \App\Relation_People_Shareholder;
-        $relation_client_shareholder->client_legalId = $request->legal_clientId;
+        $relation_client_shareholder->client_legalId = $request->relation_legalId;
         $relation_client_shareholder->client_relatedId = $client->id;
         $relation_client_shareholder->types_shareId = $request->shareholder_client_people_action_typeId;
         $relation_client_shareholder->certification_number = $request->shareholder_client_people_certification_number;
         $relation_client_shareholder->percentage = $request->shareholder_client_people_percentage;
         $relation_client_shareholder->save();
 
-        echo $this->get_shareholders_rows($request->legal_clientId);
+        echo $this->get_shareholders_rows($request->relation_legalId);
+    }
+
+    public function delete_shareholder(Request $request){
+        $shareholder = \App\Relation_People_Shareholder::find($request->id);
+        $shareholder->status = 0;
+        $shareholder->save();
+        echo $this->get_shareholders_rows($request->relation_legalId);
+    }
+
+    public function get_shareholders_array($id){
+        $shareholders = DB::table('relation_client_shareholders')
+                        ->join('people', 'relation_client_shareholders.client_relatedId', '=', 'people.id')
+                        ->join('types_share', 'relation_client_shareholders.types_shareId', '=', 'types_share.id')
+                        ->join('countries as countries_birth', 'people.country_birthId', '=', 'countries_birth.id')
+                        ->join('countries as countries_nationality', 'people.country_birthId', '=', 'countries_nationality.id')
+                        ->select(DB::raw('relation_client_shareholders.id as cert_id, relation_client_shareholders.certification_number as cert_number, people.id as people_id, people.name as people_name, people.last_name as people_last_name, types_share.id as type_id, types_share.name as type_name, people.ruc as people_ruc, people.country_birthId as people_country_birthId, countries_birth.name as people_country_birth_name, people.country_nationalityId as people_country_nationalityId, countries_nationality.name as people_country_nationality_name, people.phone_mobile as people_phone_mobile, people.email as people_email, relation_client_shareholders.percentage as share_percentage'))
+                        ->where('relation_client_shareholders.client_legalId', '=', $id)
+                        ->where('relation_client_shareholders.status', '=', '1')
+                        ->get();
+        return $shareholders;
+    }
+
+    public function get_shareholders_rows($id){
+        $shareholders = $this->get_shareholders_array($id);
+        $output = '';
+        foreach ($shareholders as $item) {
+            $output .= '<tr class="shareholder_row_container"><td>'. $item->cert_number . '</td><td>' . $item->type_name . '</td><td>' . $item->people_name . ' ' . $item->people_last_name . '</td><td>' . $item->people_ruc . '</td><td>' . $item->people_country_birth_name . '</td><td>' . $item->people_country_nationality_name . '</td><td>' . $item->people_phone_mobile . '</td><td>' . $item->people_email . '</td><td>' . $item->share_percentage . '</td><td><button type="button" class="btn btn-danger shareholder-delete" data-id="' . $item->cert_id . '">Borrar</button></td></tr>';
+        }
+        return $output;
+    }
+
+    public function get_legal_relations_array($id){
+        $legal_relations =  DB::table('relation_client_legal')
+                        ->leftJoin("people", 'relation_client_legal.resident_agent_id', '=', 'people.id')
+                        ->select(DB::raw('relation_client_legal.id as id, relation_client_legal.legal_person_name as legal_person_name, relation_client_legal.ruc as ruc, relation_client_legal.resident_agent_id as resident_agent_id, people.name as people_name, people.last_name as people_last_name'))
+                        ->where('relation_client_legal.clientId', '=', $id)
+                        ->get();
+        return $legal_relations;
+    }
+
+    public function get_legal_relations_rows($id){
+        $legal_relations = $this->get_legal_relations_array($id);
+        $output = '';
+        foreach ($legal_relations as $item) {
+            $output .= '<tr><td>' . $item->legal_person_name . '</td><td>' . $item->ruc . '</td><td>' .
+                        '<a href="#" class="btn btn-warning legal_relation_edit" data-id="' . $item->id . '">Editar</a>' .
+                        '</td><td><a href="#" class="btn btn-danger legal_relation_delete" data-id="' . $item->id . '">Borrar</a>' .
+                        '</td></tr>';
+        }
+        return $output;
     }
 
     public function add_legal_relation(Request $request){
@@ -279,37 +317,21 @@ class PeopleController extends Controller
             $board_people->save();
             $board_treasurer_member->client_relatedId = $board_people->id;
         }
+
         $board_treasurer_member->save();
+        $legal_relations = $this.get_legal_relations_rows($request->client_id);
         echo json_encode(array('status'=>'success','legal_relation_id'=>$legal_relation->id));
     }
 
-    public function delete_shareholder(Request $request){
-        $shareholder = \App\Relation_People_Shareholder::find($request->id);
-        $shareholder->status = 0;
-        $shareholder->save();
-        echo $this->get_shareholders_rows($request->client_id);
-    }
-
-    public function get_shareholders_array($id){
-        $shareholders = DB::table('relation_client_shareholders')
-                        ->join('people', 'relation_client_shareholders.client_relatedId', '=', 'people.id')
-                        ->join('types_share', 'relation_client_shareholders.types_shareId', '=', 'types_share.id')
-                        ->join('countries as countries_birth', 'people.country_birthId', '=', 'countries_birth.id')
-                        ->join('countries as countries_nationality', 'people.country_birthId', '=', 'countries_nationality.id')
-                        ->select(DB::raw('relation_client_shareholders.id as cert_id, relation_client_shareholders.certification_number as cert_number, people.id as people_id, people.name as people_name, people.last_name as people_last_name, types_share.id as type_id, types_share.name as type_name, people.ruc as people_ruc, people.country_birthId as people_country_birthId, countries_birth.name as people_country_birth_name, people.country_nationalityId as people_country_nationalityId, countries_nationality.name as people_country_nationality_name, people.phone_mobile as people_phone_mobile, people.email as people_email, relation_client_shareholders.percentage as share_percentage'))
-                        ->where('relation_client_shareholders.client_legalId', '=', $id)
-                        ->where('relation_client_shareholders.status', '=', '1')
+    public function get_boards_array($id){
+        $boards = DB::table('relation_client_board')
+                        ->join('people', 'relation_client_board.client_relatedId', '=', 'people.id')
+                        ->join('types_board', 'relation_client_board.types_boardId', '=', 'types_board.id')
+                        ->select(DB::raw('people.id as people_id, people.name as people_name, people.last_name as people_last_name, types_board.name as type_name'))
+                        ->where('relation_client_board.client_legalId', '=', $id)
+                        ->orderBy('types_board.name', 'asc')
                         ->get();
-        return $shareholders;
-    }
-
-    public function get_shareholders_rows($id){
-        $shareholders = $this->get_shareholders_array($id);
-        $output = '';
-        foreach ($shareholders as $item) {
-            $output .= '<tr class="shareholder_row_container"><td>'. $item->cert_number . '</td><td>' . $item->type_name . '</td><td>' . $item->people_name . ' ' . $item->people_last_name . '</td><td>' . $item->people_ruc . '</td><td>' . $item->people_country_birth_name . '</td><td>' . $item->people_country_nationality_name . '</td><td>' . $item->people_phone_mobile . '</td><td>' . $item->people_email . '</td><td>' . $item->share_percentage . '</td><td><button type="button" class="btn btn-danger shareholder-delete" data-id="' . $item->cert_id . '">Borrar</button></td></tr>';
-        }
-        return $output;
+        return $boards;
     }
 
     public function add_file(Request $request){
@@ -351,14 +373,16 @@ class PeopleController extends Controller
         return $output;
     }
 
-    public function edit_legal_relation($id){
+    public function edit_legal_relation(Request $request){
 
         $legal_relation = DB::table('relation_client_legal')
                         ->leftJoin("people", 'relation_client_legal.resident_agent_id', '=', 'people.id')
-                        ->select(DB::raw('relation_client_legal.id as id, relation_client_legal.legal_person_name as legal_person_name, relation_client_legal.ruc as ruc, relation_client_legal.resident_agent_id as resident_agent_id, people.name as people_name, people.last_name as people_last_name'))
-                        ->where('relation_client_legal.id', '=', $id)
+                        ->select(DB::raw('relation_client_legal.id as id, relation_client_legal.legal_person_name as legal_person_name, relation_client_legal.ruc as ruc, relation_client_legal.resident_agent_id as resident_agent_id, people.name as resident_agent_name, people.last_name as resident_agent_last_name'))
+                        ->where('relation_client_legal.id', '=', $request->id)
                         ->first();
-        return $legal_relation;
+        $boards = $this->get_boards_array($legal_relation->id);
+        $shareholders = $this->get_shareholders_rows($legal_relation->id);
+        return json_encode(array('legal_relation' => $legal_relation, 'boards' => $boards, 'shareholders' => $shareholders));
     }
 
     public function delete_legal_relation($id){

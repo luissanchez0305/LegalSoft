@@ -113,7 +113,7 @@
       $('body').on('click', '#add-shareholder-btn', function(e){
         let data = {
             _token: '{{ csrf_token() }}',
-            legal_clientId: $('#legal_clientId').val(),
+            relation_legalId: $('#relation_legalId').val(),
             shareholder_client_peopleId: $('#shareholder_client_peopleId').val(),
             shareholder_client_people_name: $('#shareholder_client_people_name').val(),
             shareholder_client_people_certification_number: $('#shareholder_client_people_certification_number').val(),
@@ -153,7 +153,7 @@
                           {
                               _token: '{{ csrf_token() }}',
                               id: $(this).attr('data-id'),
-                              client_id: $('#client_id').val()
+                              relation_legalId: $('#relation_legalId').val()
                           },
                           function(response){
                             $('.shareholder_row_container').remove();
@@ -280,12 +280,43 @@
       });
 
       $('body').on('click','#legal_relation_create_btn', function(){
-          $('.legal_relation_container, #legal_relation_cancel').removeClass('hidden')
+          $('#relation-legal-first-step .card-header').removeClass('card-default').addClass('card-primary');
+          $('#relation-legal-first-step .card-block').removeClass('hidden');
+          $('#relation-legal-second-step .card-header').removeClass('card-primary').addClass('card-default');
+          $('#relation-legal-second-step .card-block').addClass('hidden');
 
+          $('.legal_relation_container, #legal_relation_cancel').removeClass('hidden');
+          $('#legal_relation_next').addClass('hidden');
+
+          $('.legal_relation_container, #legal_relation_cancel').removeClass('hidden');
+
+          $('#relation_legalId').val(0);
+          $('#legal_person_name').val('');
+          $('#relation_objectives').val('');
+          $('#is_agent_residentYes').prop('checked',true);
+          $('#is_agent_residentNo').prop('checked',false);
+          $('#resident_agent_id').val('0');
+          $('#resident_agent').val('');
+
+          $('#board_directorId').val(0);
+          $('#board_director_name').val('');
+          $('#legal_secretarioId').val(0);
+          $('#board_secretario_name').val('');
+          $('#legal_tesoreroId').val(0);
+          $('#board_tesorero_name').val('');
+
+          $('.shareholder_row_container').remove();
       });
 
       $('body').on('click','#legal_relation_cancel', function(){
           $('.legal_relation_container, #legal_relation_cancel').addClass('hidden')
+      });
+
+      $('body').on('click','#legal_relation_next', function(){
+          $('#relation-legal-first-step .card-header').removeClass('card-primary').addClass('card-default');
+          $('#relation-legal-first-step .card-block').addClass('hidden');
+          $('#relation-legal-second-step .card-header').removeClass('card-default').addClass('card-primary');
+          $('#relation-legal-second-step .card-block').removeClass('hidden');
       });
 
       $('body').on('click', '#legal_relation_add', function(){
@@ -312,7 +343,7 @@
                 $('#relation-legal-first-step .card-block').addClass('hidden');
                 $('#relation-legal-second-step .card-header').removeClass('card-default').addClass('card-primary');
                 $('#relation-legal-second-step .card-block').removeClass('hidden');
-                $('#legal_clientId').val(data.legal_relation_id);
+                $('#relation_legalId').val(data.legal_relation_id);
               }
               else{
                 // TODO poner mensaje de error en transaccion
@@ -325,10 +356,55 @@
         $.post("{{ route('people.edit_legal_relation') }}",
           {
             _token: '{{ csrf_token() }}',
-            $id: $(this).attr('data-id')
+            id: $(this).attr('data-id'),
           },
           function(data){
-            console.log(data);
+            data = $.parseJSON(data);
+
+            $('#relation-legal-first-step .card-header').removeClass('card-default').addClass('card-primary');
+            $('#relation-legal-first-step .card-block').removeClass('hidden');
+            $('#relation-legal-second-step .card-header').removeClass('card-primary').addClass('card-default');
+            $('#relation-legal-second-step .card-block').addClass('hidden');
+
+            $('.legal_relation_container, #legal_relation_cancel').removeClass('hidden');
+            $('#legal_relation_next').removeClass('hidden');
+
+            $('#relation_legalId').val(data.legal_relation.id);
+            $('#legal_person_name').val(data.legal_relation.legal_person_name);
+            $('#relation_objectives').val(data.legal_relation.ruc);
+            if(data.legal_relation.resident_agent_id != 0){
+              $('#is_agent_residentYes').prop('checked',false);
+              $('#is_agent_residentNo').prop('checked',true);
+              $('#resident_agent_id').val(data.legal_relation.resident_agent_id);
+              $('#resident_agent').val(data.legal_relation.resident_agent_name);
+            }
+            else{
+              $('#is_agent_residentYes').prop('checked',true);
+              $('#is_agent_residentNo').prop('checked',false);
+              $('#resident_agent_id').val('0');
+              $('#resident_agent').val('');
+            }
+
+            for(let i = 0; i < data.boards.length; i++){
+              let board = data.boards[i];
+              switch(board.type_name){
+                case 'Director':
+                  $('#board_directorId').val(board.people_id)
+                  $('#board_director_name').val(board.people_name)
+                  break;
+                case 'Secretario':
+                  $('#legal_secretarioId').val(board.people_id)
+                  $('#board_secretario_name').val(board.people_name)
+                  break;
+                case 'Tesorero':
+                  $('#legal_tesoreroId').val(board.people_id)
+                  $('#board_tesorero_name').val(board.people_name)
+                  break;
+              }
+            }
+
+            $('.shareholder_row_container').remove();
+            $('#shareholder_container').append(data.shareholders);
           });
       });
 
