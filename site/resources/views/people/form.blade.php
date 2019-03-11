@@ -37,7 +37,7 @@
             <a class="nav-link" id="pills-finance-tab" data-toggle="pill" href="#pills-finance" role="tab" aria-controls="pills-finance" aria-selected="false">Finanzas y Servicios</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" id="pills-services-tab" data-toggle="pill" href="#pills-services" role="tab" aria-controls="pills-services" aria-selected="false">Per. Jurídica, Directores y Accionistas</a>
+            <a class="nav-link" id="pills-services-tab" data-toggle="pill" href="#pills-services" role="tab" aria-controls="pills-services" aria-selected="false">Persona Jurídica</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" id="pills-services-tab" data-toggle="pill" href="#pills-files" role="tab" aria-controls="pills-files" aria-selected="false">Documentos</a>
@@ -59,7 +59,7 @@
         </div>
 
           <!-- /.row -->
-          <div class="row">
+          <div class="row" id="action-submit-button">
             <div class="form-group col-md-12">
               <button type="submit" class="btn btn-success">{{ $action_type_text }}</button>
             </div>
@@ -84,6 +84,9 @@
     .ac-control{
       border-color: #f0ad4e;
     }
+    #relation-legal-first-step h5, #relation-legal-second-step h5{
+      cursor: pointer;
+    }
   </style>
 @endsection
 
@@ -91,6 +94,16 @@
     <script type="text/JavaScript">
       var xhr;
       var timeout;
+      $('.nav-link').click(function(){
+        let $this = $(this);
+        if($this.attr('id') == 'pills-services-tab'){
+          $('#action-submit-button').addClass('hidden');
+        }
+        else{
+          $('#action-submit-button').removeClass('hidden');
+        }
+      });
+
       $('body').on('click','input[name="final_recipient"]', function(e){
         if($(this).val() == "0"){
           $('#final_recipient_container').removeClass('hidden');
@@ -98,8 +111,8 @@
         else{
           $('#final_recipient_container').addClass('hidden');
         }
-
       });
+
       $('body').on('click','input[name="is_agent_resident"]', function(e){
         if($(this).val() == "0"){
           $('#agent_resident_container').removeClass('hidden');
@@ -107,7 +120,6 @@
         else{
           $('#agent_resident_container').addClass('hidden');
         }
-
       });
 
       $('body').on('click', '#add-shareholder-btn', function(e){
@@ -160,7 +172,10 @@
                             $('#shareholder_container').append(response);
                           }
                       );
+      });
 
+      $('.ac-control').blur(function(){
+        $('.ac-container').fadeOut();
       });
 
       $('.ac-control').keyup(function(){
@@ -172,6 +187,10 @@
         }
         var $this = $(this);
         var $list_container = $this.next();
+        if($this.attr('ac-master-field'))
+          $('#'+$this.attr('ac-master-field')).val('0');
+        else
+          $this.prev().val('0');
         $list_container.html('');
         var query = $this.val();
         if(query != ''){
@@ -211,8 +230,24 @@
 
       $('body').on('click', '.ac-item', function(){
         var $this = $(this);
-        $this.closest('.ac-container').prev().val($this.html());
-        $this.closest('.ac-container').prev().prev().val($this.attr('data-val'));
+        let $input = $this.closest('.ac-container').prev();
+        let master_field = $input.attr('ac-master-field');
+        if(master_field){
+          $('#' + master_field).val($this.attr('data-val'));
+          $('#' + master_field).next().val($this.attr('data-item1'));
+          $input.val($this.attr('data-item2'));
+        }
+        else{
+          $master_item_field = $('input[ac-master-field="'+$input.prev().attr('id')+'"]');
+          if($master_item_field.length > 0){
+            $input.val($this.attr('data-item1'));
+            $master_item_field.val($this.attr('data-item2'));
+          }
+          else{
+            $input.val($this.html());
+          }
+          $input.prev().val($this.attr('data-val'));
+        }
         $this.closest('.ac-container').fadeOut();
       });
 
@@ -280,6 +315,7 @@
       });
 
       $('body').on('click','#legal_relation_create_btn', function(){
+          $('#relation_legalId').val('0');
           $('#relation-legal-first-step .card-header').removeClass('card-default').addClass('card-primary');
           $('#relation-legal-first-step .card-block').removeClass('hidden');
           $('#relation-legal-second-step .card-header').removeClass('card-primary').addClass('card-default');
@@ -312,7 +348,7 @@
           $('.legal_relation_container, #legal_relation_cancel').addClass('hidden')
       });
 
-      $('body').on('click','#legal_relation_next', function(){
+      $('body').on('click','#legal_relation_next, #relation-legal-second-step h5', function(){
           $('#relation-legal-first-step .card-header').removeClass('card-primary').addClass('card-default');
           $('#relation-legal-first-step .card-block').addClass('hidden');
           $('#relation-legal-second-step .card-header').removeClass('card-default').addClass('card-primary');
@@ -322,6 +358,7 @@
       $('body').on('click', '#legal_relation_add', function(){
         let data = {
           _token: '{{ csrf_token() }}',
+          legal_relation_id: $('#relation_legalId').val(),
           client_id: $('#client_id').val(),
           name: $('#legal_person_name').val(),
           ruc: $('#relation_objectives').val(),
@@ -330,10 +367,16 @@
           agent_resident_name: $('#resident_agent').val(),
           board_director_id: $('#board_directorId').val(),
           board_director_name: $('#board_director_name').val(),
+          board_director_last_name: $('#board_director_last_name').val(),
+          board_director_unique_id: $('#board_director_id').val(),
           board_secretary_id: $('#legal_secretarioId').val(),
           board_secretary_name: $('#board_secretario_name').val(),
+          board_secretary_last_name: $('#board_secretario_last_name').val(),
+          board_secretary_unique_id: $('#board_secretario_id').val(),
           board_treasurer_id: $('#legal_tesoreroId').val(),
-          board_treasurer_name: $('#board_tesorero_name').val()
+          board_treasurer_name: $('#board_tesorero_name').val(),
+          board_treasurer_last_name: $('#board_tesorero_last_name').val(),
+          board_treasurer_unique_id: $('#board_tesorero_id').val()
         };
         $.post("{{ route('people.add_legal_relation') }}", data ,
             function(data){
@@ -352,7 +395,15 @@
           );
       });
 
+      $('#relation-legal-first-step h5').first().click(function(){
+        $('#relation-legal-first-step .card-header').removeClass('card-default').addClass('card-primary');
+        $('#relation-legal-first-step .card-block').removeClass('hidden');
+        $('#relation-legal-second-step .card-header').removeClass('card-primary').addClass('card-default');
+        $('#relation-legal-second-step .card-block').addClass('hidden');
+      });
+
       $('body').on('click','.legal_relation_edit', function (){
+        $('.legal_relation_container, #legal_relation_cancel').addClass('hidden');
         $.post("{{ route('people.edit_legal_relation') }}",
           {
             _token: '{{ csrf_token() }}',
@@ -372,33 +423,41 @@
             $('#relation_legalId').val(data.legal_relation.id);
             $('#legal_person_name').val(data.legal_relation.legal_person_name);
             $('#relation_objectives').val(data.legal_relation.ruc);
-            if(data.legal_relation.resident_agent_id != 0){
+            if(data.legal_relation.resident_agent_id != null){
               $('#is_agent_residentYes').prop('checked',false);
               $('#is_agent_residentNo').prop('checked',true);
               $('#resident_agent_id').val(data.legal_relation.resident_agent_id);
               $('#resident_agent').val(data.legal_relation.resident_agent_name);
+              $('#agent_resident_container').removeClass('hidden');
             }
             else{
               $('#is_agent_residentYes').prop('checked',true);
               $('#is_agent_residentNo').prop('checked',false);
               $('#resident_agent_id').val('0');
               $('#resident_agent').val('');
+              $('#agent_resident_container').addClass('hidden');
             }
 
             for(let i = 0; i < data.boards.length; i++){
               let board = data.boards[i];
               switch(board.type_name){
                 case 'Director':
-                  $('#board_directorId').val(board.people_id)
-                  $('#board_director_name').val(board.people_name)
+                  $('#board_directorId').val(board.people_id);
+                  $('#board_director_name').val(board.people_name);
+                  $('#board_director_last_name').val(board.people_last_name);
+                  $('#board_director_id').val(board.people_unique_id);
                   break;
                 case 'Secretario':
-                  $('#legal_secretarioId').val(board.people_id)
-                  $('#board_secretario_name').val(board.people_name)
+                  $('#legal_secretarioId').val(board.people_id);
+                  $('#board_secretario_name').val(board.people_name);
+                  $('#board_secretario_last_name').val(board.people_last_name);
+                  $('#board_secretario_id').val(board.people_unique_id);
                   break;
                 case 'Tesorero':
-                  $('#legal_tesoreroId').val(board.people_id)
-                  $('#board_tesorero_name').val(board.people_name)
+                  $('#legal_tesoreroId').val(board.people_id);
+                  $('#board_tesorero_name').val(board.people_name);
+                  $('#board_tesorero_last_name').val(board.people_last_name);
+                  $('#board_tesorero_id').val(board.people_unique_id);
                   break;
               }
             }

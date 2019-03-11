@@ -249,6 +249,9 @@ class PeopleController extends Controller
 
     public function add_legal_relation(Request $request){
         $legal_relation = new \App\Relation_People_Legal;
+        if($request->legal_relation_id != '0'){
+            $legal_relation = \App\Relation_People_Legal::find($request->legal_relation_id);
+        }
         $legal_relation->clientID = $request->client_id;
         $legal_relation->legal_person_name = $request->name;
         $legal_relation->ruc = $request->ruc;
@@ -268,7 +271,10 @@ class PeopleController extends Controller
         $legal_relation->types_relationId = 1;
         $legal_relation->save();
 
-        $board_director_member = new \App\Relation_People_Board;
+        $board_director_member = \App\Relation_People_Board::where('client_legalId', '=', $legal_relation->id)->where('types_boardId','=','1')->first();
+        if($board_director_member == null){
+            $board_director_member = new \App\Relation_People_Board;
+        }
         $board_director_member->client_legalId = $legal_relation->id;
         $board_director_member->types_boardId = 1;
 
@@ -278,14 +284,18 @@ class PeopleController extends Controller
         else{
             $board_people = new \App\People;
             $board_people->name = $request->board_director_name;
-            $board_people->last_name = $request->board_director_name;
+            $board_people->last_name = $request->board_director_last_name;
+            $board_people->unique_id_number = $request->board_director_unique_id;
             $board_people->type_clientId = 5;
             $board_people->save();
             $board_director_member->client_relatedId = $board_people->id;
         }
         $board_director_member->save();
 
-        $board_secretary_member = new \App\Relation_People_Board;
+        $board_secretary_member = \App\Relation_People_Board::where('client_legalId', '=', $legal_relation->id)->where('types_boardId','=','2')->first();
+        if($board_secretary_member == null){
+            $board_secretary_member = new \App\Relation_People_Board;
+        }
         $board_secretary_member->client_legalId = $legal_relation->id;
         $board_secretary_member->types_boardId = 2;
 
@@ -295,14 +305,18 @@ class PeopleController extends Controller
         else{
             $board_people = new \App\People;
             $board_people->name = $request->board_secretary_name;
-            $board_people->last_name = $request->board_secretary_name;
+            $board_people->last_name = $request->board_secretary_last_name;
+            $board_people->unique_id_number = $request->board_secretary_unique_id;
             $board_people->type_clientId = 5;
             $board_people->save();
             $board_secretary_member->client_relatedId = $board_people->id;
         }
         $board_secretary_member->save();
 
-        $board_treasurer_member = new \App\Relation_People_Board;
+        $board_treasurer_member = \App\Relation_People_Board::where('client_legalId', '=', $legal_relation->id)->where('types_boardId','=','3')->first();
+        if($board_treasurer_member == null){
+            $board_treasurer_member = new \App\Relation_People_Board;
+        }
         $board_treasurer_member->client_legalId = $legal_relation->id;
         $board_treasurer_member->types_boardId = 3;
 
@@ -312,14 +326,15 @@ class PeopleController extends Controller
         else{
             $board_people = new \App\People;
             $board_people->name = $request->board_treasurer_name;
-            $board_people->last_name = $request->board_treasurer_name;
+            $board_people->last_name = $request->board_treasurer_last_name;
+            $board_people->unique_id_number = $request->board_treasurer_unique_id;
             $board_people->type_clientId = 5;
             $board_people->save();
             $board_treasurer_member->client_relatedId = $board_people->id;
         }
 
         $board_treasurer_member->save();
-        $legal_relations = $this.get_legal_relations_rows($request->client_id);
+        $legal_relations = $this->get_legal_relations_rows($request->client_id);
         echo json_encode(array('status'=>'success','legal_relation_id'=>$legal_relation->id));
     }
 
@@ -327,7 +342,7 @@ class PeopleController extends Controller
         $boards = DB::table('relation_client_board')
                         ->join('people', 'relation_client_board.client_relatedId', '=', 'people.id')
                         ->join('types_board', 'relation_client_board.types_boardId', '=', 'types_board.id')
-                        ->select(DB::raw('people.id as people_id, people.name as people_name, people.last_name as people_last_name, types_board.name as type_name'))
+                        ->select(DB::raw('people.id as people_id, people.name as people_name, people.last_name as people_last_name, people.unique_id_number as people_unique_id, types_board.name as type_name'))
                         ->where('relation_client_board.client_legalId', '=', $id)
                         ->orderBy('types_board.name', 'asc')
                         ->get();

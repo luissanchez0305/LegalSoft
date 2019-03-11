@@ -84,7 +84,9 @@
               <table class="table table-bordered table-hover table-striped">
                 <thead>
                     <tr>
-                      <th>Nombre (Escoja uno si ya existe)</th>
+                      <th>Nombre</th>
+                      <th>Apellido</th>
+                      <th>Cédula o # ID Único</th>
                       <th>Rol</th>
                     </tr>
                 </thead>
@@ -95,6 +97,13 @@
                       <input type="text" class="form-control ac-control" id="board_director_name" name="board_director_name" value="" ac-method="clients">
                       <div class="ac-container"></div>
                     </td>
+                    <td>
+                      <input type="text" class="form-control ac-control" id="board_director_last_name" name="board_director_last_name" value="" ac-method="clients" ac-master-field="board_directorId">
+                      <div class="ac-container"></div>
+                    </td>
+                    <td>
+                      <input type="text" class="form-control ac-ruc" id="board_director_id" name="board_director_id" value="">
+                    </td>
                     <td>Director</td>
                   </tr>
                   <tr>
@@ -103,6 +112,13 @@
                       <input type="text" class="form-control ac-control" id="board_secretario_name" name="board_secretario_name" value="" ac-method="clients">
                       <div class="ac-container"></div>
                     </td>
+                    <td>
+                      <input type="text" class="form-control ac-control" id="board_secretario_last_name" name="board_secretario_last_name" value="" ac-method="clients">
+                      <div class="ac-container" ac-master-field="legal_secretarioId"></div>
+                    </td>
+                    <td>
+                      <input type="text" class="form-control ac-ruc" id="board_secretario_id" name="board_secretario_id" value="">
+                    </td>
                     <td>Secretario</td>
                   </tr>
                   <tr>
@@ -110,6 +126,13 @@
                       <input type="hidden" value="0" name="legal_tesoreroId" id="legal_tesoreroId">
                       <input type="text" class="form-control ac-control" id="board_tesorero_name" name="board_tesorero_name" value="" ac-method="clients">
                       <div class="ac-container"></div>
+                    </td>
+                    <td>
+                      <input type="text" class="form-control ac-control" id="board_tesorero_last_name" name="board_tesorero_last_name" value="" ac-method="clients">
+                      <div class="ac-container" ac-master-field="legal_tesoreroId"></div>
+                    </td>
+                    <td>
+                      <input type="text" class="form-control ac-ruc" id="board_tesorero_id" name="board_tesorero_id" value="">
                     </td>
                     <td>Tesorero</td>
                   </tr>

@@ -30,7 +30,7 @@ class HelperController extends Controller
                                 ->get();
             $output = '';
             foreach ($data as $row) {
-                $output .= '<li><a class="ac-item" data-val="'.$row->id.'" data-ruc="'.$row->ruc.'">' . $row->name . ' ' . $row->last_name . '</a></li>';
+                $output .= '<li><a class="ac-item" data-val="'.$row->id.'" data-ruc="'.$row->ruc.'" data-item1="'.$row->name.'" data-item2="'.$row->last_name.'">' . $row->name . ' ' . $row->last_name . '</a></li>';
             }
             echo $output;
         }
