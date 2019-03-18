@@ -13,7 +13,7 @@ class HelperController extends Controller
         if($request->get('q'))
         {
             $query = $request->get('q');
-            $data = \App\Country::where('name', 'LIKE', '%'.$query.'%')->where('isDummy', '=', '1')->orderBy('name', 'asc')->get();
+            $data = \App\Country::where('name', 'LIKE', '%'.$query.'%')->where('isDummy', '=', '1')->orderBy('name', 'asc')->take(5)->get();
             $output = '';
             foreach ($data as $row) {$output .= '<li><a class="ac-item" data-val="'.$row->id.'">'.$row->name.'</a></li>';
             }
@@ -27,6 +27,7 @@ class HelperController extends Controller
             $query = $request->get('q');
             $data = \App\People::where('name', 'LIKE', '%'.$query.'%')
                                 ->orWhere('last_name', 'LIKE', '%'.$query.'%')
+                                ->take(5)
                                 ->get();
             $output = '';
             foreach ($data as $row) {
@@ -38,7 +39,7 @@ class HelperController extends Controller
     public function autocomplete_products(Request $request){
         if($request->get('q')){
             $query = $request->get('q');
-            $data = \App\Product::where('name', 'LIKE', '%'.$query.'%')->get();
+            $data = \App\Product::where('name', 'LIKE', '%'.$query.'%')->take(5)->get();
 
             $output = '';
             foreach ($data as $row) {
@@ -51,7 +52,7 @@ class HelperController extends Controller
     public function autocomplete_types_share(Request $request){
         if($request->get('q')){
             $query = $request->get('q');
-            $data = \App\Type_Share::where('name', 'LIKE', '%'.$query.'%')->get();
+            $data = \App\Type_Share::where('name', 'LIKE', '%'.$query.'%')->take(5)->get();
 
             $output = '';
             foreach ($data as $row) {

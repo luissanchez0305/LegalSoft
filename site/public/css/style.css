@@ -11,6 +11,10 @@ body {
     background-color: #222;
 }
 
+.error {
+    border-color: red;
+}
+
 .hidden{
     display: none !important;
 }

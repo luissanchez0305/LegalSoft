@@ -8,7 +8,9 @@
     <div class="row">
         <div class="col-lg-12">
             <h1 class="page-header">
-                Listado de clientes <a href="{{ action('PeopleController@create') }}" class="btn btn-warning">Nuevo</a>
+                Listado de clientes
+                <a href="{{ action('PeopleController@create', ['type_text' => 'natural']) }}" class="btn btn-warning">Nueva Persona Natural</a>
+                <a href="{{ action('PeopleController@create', ['type_text' => 'jurídica']) }}" class="btn btn-warning">Nueva Persona Jurídica</a>
             </h1>
             <ol class="breadcrumb">
                 <li class="active">

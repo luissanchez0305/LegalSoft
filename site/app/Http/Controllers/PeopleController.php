@@ -26,11 +26,12 @@ class PeopleController extends Controller
      *
      * @return Response
      */
-    public function create()
+    public function create($type_text)
     {
         //
         $action_type = 'add';
-        $action_type_text = "Agregar Nuevo";
+        $action_type_text = "Agregar nueva persona " . $type_text;
+        $legal_relation_display = $type_text == 'natural' ? '' : 'hidden';
         $id = 0;
         $final_recipient = null;
         $country_activity_financial = null;
@@ -42,7 +43,7 @@ class PeopleController extends Controller
         $country_nationality = null;
         // sacar nombre de producto
         $product = null;
-        $legal_relation = null;
+        $legal_relations = null;
         $board = null;
         $shareholders = null;
         $people = new \App\People;
@@ -50,8 +51,8 @@ class PeopleController extends Controller
         $share_types = \App\Type_Share::all();
         $file_types = \App\Type_File::all();
         $files = $this->get_files_array(0);;
-        return view('people/form',compact('people', 'action_type', 'action_type_text', 'id', 'country_residence', 'country_birth',
-            'final_recipient', 'country_nationality', 'country_activity_financial', 'product', 'legal_relation','board', 'shareholders',
+        return view('people/form',compact('people', 'action_type', 'legal_relation_display', 'action_type_text', 'id', 'country_residence', 'country_birth',
+            'final_recipient', 'country_nationality', 'country_activity_financial', 'product', 'legal_relations','board', 'shareholders',
             'share_types', 'file_types', 'files', 'legal_structures'));
     }
 
@@ -108,61 +109,57 @@ class PeopleController extends Controller
      * @param  int  $id
      * @return Response
      */
+
     public function update(Request $request)
     {            //
         $people = \App\People::find($request->client_id);
-         /* GENERAL */
-        $people->name = $request->name;
-        $people->last_name = $request->last_name;
-        $people->unique_id_number = $request->unique_id;
-        $people->phone_fixed = $request->phone_fixed;
-        $people->passport_number = $request->passport_number;
-        $people->phone_mobile = $request->phone_mobile;
-        $people->email = $request->email;
-        $people->genderId = $request->gender;
-        $people->ocuppation = $request->ocuppation;
-        if($request->final_recipientId != '0'){
-            $people->final_recipientId = $request->final_recipientId;
-        }
-        else if($request->final_recipient == '1' ){
-            $final_recipient = new \App\People;
-            $final_recipient->name = $request->final_recipient_text;
-            $final_recipient->last_name = $request->final_recipient_text;
-            // TODO llenar campos not null de final_recipient
-
-            $final_recipient->save();
-        }
-
-        $people->is_pep = $request->is_pep;
-        $people->is_pep_family = $request->is_pep_family;
-        $people->country_nationalityId = $request->country_nationalityId;
-        $people->country_birthId = $request->country_birthId;
-        $people->country_residenceId = $request->country_residenceId;
-        $people->address_physical = $request->address_physical;
-        $people->address_mail = $request->address_mail;
-
-        /* FINANZAS */
-        $people->activity_financial = $request->activity_financial;
-        $people->annual_income_lower_limit = explode('-',$request->annual_income_limits)[0];
-        $people->annual_income_upper_limit = explode('-',$request->annual_income_limits)[1];
-        $people->country_activity_financialId = $request->country_activity_financialId;
-        $people->legacy_lower_limit = explode('-', $request->legacy_limits)[0];
-        $people->legacy_upper_limit = explode('-', $request->legacy_limits)[1];
-        $people->productId = $request->productId;
-        $people->relation_objectives = $request->relation_objectives_txt;
-        $people->legal_structureId = $request->legal_structure;
-
-        /* RELACION */
-        $people_legal = \App\Relation_People_Legal::where('clientId', '=', $request->client_id)->first();
-        if($people_legal){
-            if($request->legal_person_name != ''){
-                 $people_legal->legal_person_name = $request->legal_person_name;
-                 $people_legal->ruc = $request->relation_objectives;
+        if($request->action_type == 'general-info'){
+             /* GENERAL */
+            $people->name = $request->name;
+            $people->last_name = $request->last_name;
+            $people->unique_id_number = $request->unique_id;
+            $people->phone_fixed = $request->phone_fixed;
+            $people->passport_number = $request->passport_number;
+            $people->phone_mobile = $request->phone_mobile;
+            $people->email = $request->email;
+            $people->genderId = $request->gender;
+            $people->ocuppation = $request->ocuppation;
+            if($request->final_recipientId != '0'){
+                $people->final_recipientId = $request->final_recipientId;
             }
+            else if($request->final_recipient == '1' ){
+                $final_recipient = new \App\People;
+                $final_recipient->name = $request->final_recipient_text;
+                $final_recipient->last_name = $request->final_recipient_text;
+                // TODO llenar campos not null de final_recipient
+
+                $final_recipient->save();
+            }
+
+            $people->is_pep = $request->is_pep;
+            $people->is_pep_family = $request->is_pep_family;
+            $people->country_nationalityId = $request->country_nationalityId;
+            $people->country_birthId = $request->country_birthId;
+            $people->country_residenceId = $request->country_residenceId;
+            $people->address_physical = $request->address_physical;
+            $people->address_mail = $request->address_mail;
+        }
+        else if($request->action_type == 'finance-info'){
+            /* FINANZAS */
+            $people->activity_financial = $request->activity_financial;
+            $people->annual_income_lower_limit = explode('-',$request->annual_income_limits)[0];
+            $people->annual_income_upper_limit = explode('-',$request->annual_income_limits)[1];
+            $people->country_activity_financialId = $request->country_activity_financialId;
+            $people->legacy_lower_limit = explode('-', $request->legacy_limits)[0];
+            $people->legacy_upper_limit = explode('-', $request->legacy_limits)[1];
+            $people->productId = $request->productId;
+            $people->relation_objectives = $request->relation_objectives_txt;
+            $people->legal_structureId = $request->legal_structure;
+
         }
 
         $people->save();
-        return redirect('people');
+        echo json_encode(array('status'=>'success'));
     }
 
     public function add_shareholder(Request $request){
@@ -268,6 +265,10 @@ class PeopleController extends Controller
                 $legal_relation->resident_agent_id = $legal_resident_agent->id;
             }
         }
+        // si es una actualizacion y ya tiene asignado un agente residente, actualizarlo
+        else if($request->legal_relation_id != '0'){
+            $legal_relation->resident_agent_id = null;
+        }
         $legal_relation->types_relationId = 1;
         $legal_relation->save();
 
@@ -278,18 +279,17 @@ class PeopleController extends Controller
         $board_director_member->client_legalId = $legal_relation->id;
         $board_director_member->types_boardId = 1;
 
+        $board_people = new \App\People;
         if($request->board_director_id != '0'){
             $board_director_member->client_relatedId = $request->board_director_id;
+            $board_people = \App\People::find($request->board_director_id);
         }
-        else{
-            $board_people = new \App\People;
-            $board_people->name = $request->board_director_name;
-            $board_people->last_name = $request->board_director_last_name;
-            $board_people->unique_id_number = $request->board_director_unique_id;
-            $board_people->type_clientId = 5;
-            $board_people->save();
-            $board_director_member->client_relatedId = $board_people->id;
-        }
+        $board_people->name = $request->board_director_name;
+        $board_people->last_name = $request->board_director_last_name;
+        $board_people->unique_id_number = $request->board_director_unique_id;
+        $board_people->type_clientId = 5;
+        $board_people->save();
+        $board_director_member->client_relatedId = $board_people->id;
         $board_director_member->save();
 
         $board_secretary_member = \App\Relation_People_Board::where('client_legalId', '=', $legal_relation->id)->where('types_boardId','=','2')->first();
@@ -299,18 +299,17 @@ class PeopleController extends Controller
         $board_secretary_member->client_legalId = $legal_relation->id;
         $board_secretary_member->types_boardId = 2;
 
+        $board_people = new \App\People;
         if($request->board_secretary_id != '0'){
             $board_secretary_member->client_relatedId = $request->board_secretary_id;
+            $board_people = \App\People::find($request->board_secretary_id);
         }
-        else{
-            $board_people = new \App\People;
-            $board_people->name = $request->board_secretary_name;
-            $board_people->last_name = $request->board_secretary_last_name;
-            $board_people->unique_id_number = $request->board_secretary_unique_id;
-            $board_people->type_clientId = 5;
-            $board_people->save();
-            $board_secretary_member->client_relatedId = $board_people->id;
-        }
+        $board_people->name = $request->board_secretary_name;
+        $board_people->last_name = $request->board_secretary_last_name;
+        $board_people->unique_id_number = $request->board_secretary_unique_id;
+        $board_people->type_clientId = 5;
+        $board_people->save();
+        $board_secretary_member->client_relatedId = $board_people->id;
         $board_secretary_member->save();
 
         $board_treasurer_member = \App\Relation_People_Board::where('client_legalId', '=', $legal_relation->id)->where('types_boardId','=','3')->first();
@@ -320,18 +319,18 @@ class PeopleController extends Controller
         $board_treasurer_member->client_legalId = $legal_relation->id;
         $board_treasurer_member->types_boardId = 3;
 
+        $board_people = new \App\People;
         if($request->board_treasurer_id != '0'){
             $board_treasurer_member->client_relatedId = $request->board_treasurer_id;
+            $board_people = \App\People::find($request->board_treasurer_id);
         }
-        else{
-            $board_people = new \App\People;
-            $board_people->name = $request->board_treasurer_name;
-            $board_people->last_name = $request->board_treasurer_last_name;
-            $board_people->unique_id_number = $request->board_treasurer_unique_id;
-            $board_people->type_clientId = 5;
-            $board_people->save();
-            $board_treasurer_member->client_relatedId = $board_people->id;
-        }
+
+        $board_people->name = $request->board_treasurer_name;
+        $board_people->last_name = $request->board_treasurer_last_name;
+        $board_people->unique_id_number = $request->board_treasurer_unique_id;
+        $board_people->type_clientId = 5;
+        $board_people->save();
+        $board_treasurer_member->client_relatedId = $board_people->id;
 
         $board_treasurer_member->save();
         $legal_relations = $this->get_legal_relations_rows($request->client_id);

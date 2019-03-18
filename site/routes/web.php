@@ -16,6 +16,7 @@ Route::get('/', function () {
 })->middleware('auth');
 
 Route::resource('people', 'PeopleController');
+Route::get('/people/create/{type_text}', 'PeopleController@create')->name('people.create');
 Route::post('/people/update', 'PeopleController@update')->name('people.update');
 Route::post('/people/add_file', 'PeopleController@add_file')->name('people.add_file');
 Route::post('/people/delete_file', 'PeopleController@delete_file')->name('people.delete_file');
