@@ -1,6 +1,6 @@
 <!-- index.blade.php -->
 @extends('layout.plain')
-@section('page-title', 'Creación/Modificación De Cliente - LegalSoft507')
+@section('page-title', 'LegalSoft507 - Creación/Modificación de cliente')
 
 @section('body')
     @section('page-heading')
