@@ -1,15 +1,15 @@
 x vista y accion de agregar files
     - visualizar archivos subidos
-    - validacion de campos
+    x validacion de campos
 x accion de agregar accionistas
-    - validacion de campos
+    x validacion de campos
 x accion de borrar accionista
 x accion de agregar persona juridica a persona natural
-    - validacion de campos
+    x validacion de campos
 - accion de borrar persona juridica a persona natural
 
 - accion de agregar persona natural
-    - validacion de campos
+    x validacion de campos
 - accion de agregar persona juridica
     - validacion de campos
 

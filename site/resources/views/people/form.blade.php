@@ -1,6 +1,6 @@
 <!-- index.blade.php -->
 @extends('layout.plain')
-@section('page-title', 'Listado de Clientes - LegalSoft507')
+@section('page-title', 'Creación/Modificación De Cliente - LegalSoft507')
 
 @section('body')
     @section('page-heading')
@@ -30,13 +30,13 @@
               <a class="nav-link active" id="pills-general-tab" data-toggle="pill" href="#pills-general" role="tab" aria-controls="pills-general" aria-selected="true">General</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" id="pills-finance-tab" data-toggle="pill" href="#pills-finance" role="tab" aria-controls="pills-finance" aria-selected="false">Finanzas y Servicios</a>
+              <a class="nav-link {{ $new_client ? 'disabled' : '' }}" id="pills-finance-tab" data-toggle="pill" href="#pills-finance" role="tab" aria-controls="pills-finance" aria-selected="false">Finanzas y Servicios</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link {{ $legal_relation_display }}" id="pills-services-tab" data-toggle="pill" href="#pills-services" role="tab" aria-controls="pills-services" aria-selected="false">Persona Jurídica</a>
+              <a class="nav-link {{ $legal_relation_display }} {{ $new_client ? 'disabled' : '' }}" id="pills-services-tab" data-toggle="pill" href="#pills-services" role="tab" aria-controls="pills-services" aria-selected="false">Persona Jurídica</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" id="pills-files-tab" data-toggle="pill" href="#pills-files" role="tab" aria-controls="pills-files" aria-selected="false">Documentos</a>
+              <a class="nav-link {{ $new_client ? 'disabled' : '' }}" id="pills-files-tab" data-toggle="pill" href="#pills-files" role="tab" aria-controls="pills-files" aria-selected="false">Documentos</a>
             </li>
           </ul>
           <div class="tab-content" id="pills-tabContent">
@@ -101,11 +101,16 @@
       val.init();
       $('.nav-link').click(function(){
         let $this = $(this);
-        if($this.attr('id') == 'pills-services-tab' || $this.attr('id') == 'pills-files-tab'){
-          $('#action-submit-button').addClass('hidden');
+        if(!$this.hasClass('disabled')){
+          if($this.attr('id') == 'pills-services-tab' || $this.attr('id') == 'pills-files-tab'){
+            $('#action-submit-button').addClass('hidden');
+          }
+          else{
+            $('#action-submit-button').removeClass('hidden');
+          }
         }
         else{
-          $('#action-submit-button').removeClass('hidden');
+          return false;
         }
       });
 
@@ -231,6 +236,7 @@
             $('#form-general-status').html('Guardando...');
             var _data = {
               action_type: $('.tab-pane.active').attr('form'),
+              client_typeId: $('#client-typeId').val(),
               _token: '{{ csrf_token() }}',
               type: '{{ $action_type }}',
               client_id: '{{ $people->id }}',
@@ -265,8 +271,9 @@
                   if(data.status == 'success'){
                     $('#form-general-status').html('Guardado');
                     setTimeout(function(){
-                    $('#form-general-status').html('');
+                      $('#form-general-status').html('');
                     }, 5000);
+                    $('.nav-link.disabled').removeClass('disabled');
                   }
                   else
                   {

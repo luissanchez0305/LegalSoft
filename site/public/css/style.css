@@ -131,13 +131,13 @@ li.nav-item-elements {
 .nav-link-elements:hover,
 .nav-link-elements:active,
 .nav-link-elements:focus {
-    color: rgba(0,0,0,.8)!important;
+    color: rgba(0,0,0,.8) !important;
 }
 
 .nav-link:hover,
 .nav-link:active,
 .nav-link:focus {
-    color: #fff!important;
+    color: #060606 !important;
 }
 
 ul.message-dropdown {

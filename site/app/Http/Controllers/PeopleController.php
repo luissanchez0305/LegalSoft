@@ -50,10 +50,11 @@ class PeopleController extends Controller
         $legal_structures = \App\Legal_Structure::all();
         $share_types = \App\Type_Share::all();
         $file_types = \App\Type_File::all();
-        $files = $this->get_files_array(0);;
+        $files = $this->get_files_array(0);
+        $new_client = true;
         return view('people/form',compact('people', 'action_type', 'legal_relation_display', 'action_type_text', 'id', 'country_residence', 'country_birth',
             'final_recipient', 'country_nationality', 'country_activity_financial', 'product', 'legal_relations','board', 'shareholders',
-            'share_types', 'file_types', 'files', 'legal_structures'));
+            'share_types', 'file_types', 'files', 'legal_structures', 'new_client'));
     }
 
     /**
@@ -67,6 +68,9 @@ class PeopleController extends Controller
         //
         //
         $people = \App\People::find($id);
+        $legal_relation_display = '';
+        if($people->client_typeId == 2)
+            $legal_relation_display = 'hidden';
         $action_type = 'edit';
         $action_type_text = "Guardar Cambios";
         /*- sacar nombre de pais de residencia*/
@@ -98,9 +102,11 @@ class PeopleController extends Controller
 
         $files = $this->get_files_array($people->id);
 
-        return view('people/form',compact('people','id', 'action_type', 'action_type_text', 'country_residence', 'country_birth',
+        $new_client = false;
+
+        return view('people/form',compact('people','id', 'action_type', 'legal_relation_display', 'action_type_text', 'country_residence', 'country_birth',
             'final_recipient', 'country_nationality', 'country_activity_financial', 'product', 'legal_structures', 'legal_relations', 'shareholders',
-            'share_types', 'file_types', 'files'));
+            'share_types', 'file_types', 'files', 'new_client'));
     }
 
     /**
@@ -111,8 +117,11 @@ class PeopleController extends Controller
      */
 
     public function update(Request $request)
-    {            //
-        $people = \App\People::find($request->client_id);
+    {   //
+        $people = new \App\People;
+        if($request->client_id > 0)
+            $people = \App\People::find($request->client_id);
+        $people->type_clientId = $request->client_typeId;
         if($request->action_type == 'general-info'){
              /* GENERAL */
             $people->name = $request->name;
