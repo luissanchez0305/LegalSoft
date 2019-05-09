@@ -31,6 +31,7 @@ Route::post('/helper/autocomplete_countries', 'HelperController@autocomplete_cou
 Route::post('/helper/autocomplete_clients', 'HelperController@autocomplete_clients')->name('helper.autocomplete_clients');
 Route::post('/helper/autocomplete_products', 'HelperController@autocomplete_products')->name('helper.autocomplete_products');
 Route::post('/helper/autocomplete_types_share', 'HelperController@autocomplete_types_share')->name('helper.autocomplete_types_share');
+Route::post('/helper/autocomplete_oficial_jobs', 'HelperController@autocomplete_oficial_jobs')->name('helper.autocomplete_oficial_jobs');
 Auth::routes();
 
 //Route::get('/home', 'HomeController@index')->name('home');

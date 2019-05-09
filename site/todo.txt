@@ -8,9 +8,10 @@ x accion de agregar persona juridica a persona natural
     x validacion de campos
 - accion de borrar persona juridica a persona natural
 
-- accion de agregar persona natural
+x accion de agregar persona natural
     x validacion de campos
-- accion de agregar persona juridica
-    - validacion de campos
+x accion de agregar persona juridica
+    x validacion de campos
 
+-
 - revisar si la cuenta aun sigue conectada al correr cualquier pagina

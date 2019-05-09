@@ -33,7 +33,7 @@
               <a class="nav-link {{ $new_client ? 'disabled' : '' }}" id="pills-finance-tab" data-toggle="pill" href="#pills-finance" role="tab" aria-controls="pills-finance" aria-selected="false">Finanzas y Servicios</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link {{ $legal_relation_display }} {{ $new_client ? 'disabled' : '' }}" id="pills-services-tab" data-toggle="pill" href="#pills-services" role="tab" aria-controls="pills-services" aria-selected="false">Persona Jurídica</a>
+              <a class="nav-link {{ $legal_relation_client ? 'hidden' : '' }} {{ $new_client ? 'disabled' : '' }}" id="pills-services-tab" data-toggle="pill" href="#pills-services" role="tab" aria-controls="pills-services" aria-selected="false">Persona Jurídica</a>
             </li>
             <li class="nav-item">
               <a class="nav-link {{ $new_client ? 'disabled' : '' }}" id="pills-files-tab" data-toggle="pill" href="#pills-files" role="tab" aria-controls="pills-files" aria-selected="false">Documentos</a>
@@ -123,6 +123,26 @@
         }
       });
 
+      $('body').on('click','input[name="is_pep"]', function(e){
+        console.log($(this).val());
+        if($(this).val() == "1"){
+          $('#pep_oficial_job_container').removeClass('hidden');
+        }
+        else{
+          $('#pep_oficial_job_container').addClass('hidden');
+        }
+      });
+
+      $('body').on('click','input[name="is_pep_family"]', function(e){
+        console.log($(this).val());
+        if($(this).val() == "1"){
+          $('#pep_family_container').removeClass('hidden');
+        }
+        else{
+          $('#pep_family_container').addClass('hidden');
+        }
+      });
+
       $('body').on('click','input[name="is_agent_resident"]', function(e){
         if($(this).val() == "0"){
           $('#agent_resident_container').removeClass('hidden');
@@ -134,39 +154,45 @@
         }
       });
 
-      $('.ac-control').keyup(function(){
+      ac_control = function (obj){
         if(timeout){
           clearTimeout(timeout);
         }
         if(xhr){
           xhr.abort();
         }
-        var $this = $(this);
+        var $this = $(obj);
         var $list_container = $this.next()[0].localName == 'label' ? $this.next().next() : $this.next();
-        /*if($this.next()[0].localName == 'label' && $this.next().hasClass('error'))
-          $this.next().remove();*/
-        if($this.attr('ac-master-field'))
-          $('#' + $this.attr('ac-master-field')).val('0');
-        else
-          $this.prev().val('0');
-        $list_container.html('');
+        let ac_method = $this.attr('ac-method');
+
+        if(ac_method != 'clients'){
+          if($this.attr('ac-master-field'))
+            $('#' + $this.attr('ac-master-field')).val('0');
+          else
+            $this.prev().val('0');
+        }
+        ul = '<ul class="dropdown-menu" style="display:block; position:relative;">[data]</ul>';
+        $list_container.html(ul.replace('[data]', '<li><a class="ac-item new">Nuevo Cliente</a></li>'));
         var query = $this.val();
         if(query != ''){
           var _token = $('input[name="_token"]').val();
           var _url;
           var _data = { q: query, _token: _token };
-          switch($this.attr('ac-method')){
+          switch(ac_method){
             case 'countries':
               _url = "{{ route('helper.autocomplete_countries') }}";
               break;
             case 'clients':
               _url = "{{ route('helper.autocomplete_clients') }}";
               break;
-            case 'producs':
+            case 'products':
               _url = "{{ route('helper.autocomplete_products') }}";
               break;
             case 'types_share':
               _url = "{{ route('helper.autocomplete_types_share') }}";
+              break;
+            case 'oficial_job':
+              _url = "{{ route('helper.autocomplete_oficial_jobs') }}";
               break;
           }
           timeout = setTimeout(function(){
@@ -177,17 +203,22 @@
               success: function(data){
                 if(data.length > 0){
                   $list_container.fadeIn();
-                  ul = '<ul class="dropdown-menu" style="display:block; position:relative;">' + data + '</ul>';
-                  $list_container.html(ul);
-                  $this.blur(function(){
-                    $this.off('blur');
-                    $list_container.fadeOut();
-                  });
+                  $list_container.html(ul.replace('[data]',data));
                 }
               }
             });
-          }, 800);
+
+            $this.blur(function(){
+              $this.off('blur');
+              $list_container.fadeOut();
+              xhr.abort();
+            });
+          }, 500);
         }
+      }
+
+      $('.ac-control').keyup(function(){
+        ac_control(this);
       });
 
       $('body').on('click', '.ac-item', function(e){
@@ -195,22 +226,49 @@
         var $this = $(this);
         let $input = $this.closest('.ac-container').prev()[0].localName == 'label' ? $this.closest('.ac-container').prev().prev() : $this.closest('.ac-container').prev();
         let master_field = $input.attr('ac-master-field');
+        let $master_item_fields = [];
+
+        if($this.hasClass('new')){
+          if(master_field){
+            $('#' + master_field).val('0');
+            $('#' + master_field).next().val('');
+            $master_item_fields = $('input[ac-master-field="'+ master_field+'"]');
+          }
+          else{
+            $input.prev().val('0');
+            $master_item_fields = $('input[ac-master-field="'+$input.prev().attr('id')+'"]');
+          }
+          for(var i = 0; i < $master_item_fields.length; i++){
+            let obj = $master_item_fields[i];
+            let $obj = $(obj);
+            if($obj.attr('ac-master-data') != $input.attr('ac-master-data'))
+              $obj.val('');
+          }
+
+          return;
+        }
+
         if(master_field){
           $('#' + master_field).val($this.attr('data-val'));
           $('#' + master_field).next().val($this.attr('data-item1'));
+          $master_item_fields = $('input[ac-master-field="'+ master_field+'"]');
           $input.val($this.attr('data-item2'));
         }
         else{
-          $master_item_field = $('input[ac-master-field="'+$input.prev().attr('id')+'"]');
-          if($master_item_field.length > 0){
+          $master_item_fields = $('input[ac-master-field="'+$input.prev().attr('id')+'"]');
+          if($master_item_fields.length > 0){
             $input.val($this.attr('data-item1'));
-            $master_item_field.val($this.attr('data-item2'));
           }
           else{
             $input.val($this.html());
           }
           ($input.prev()[0].localName == 'input' && $input.prev()[0].type == 'text' ? $input.prev().prev() : $input.prev()).val($this.attr('data-val'));
           $input.removeClass('error');
+        }
+        for(var i = 0; i < $master_item_fields.length; i++){
+          let obj = $master_item_fields[i];
+          let $obj = $(obj);
+          $obj.val($this.attr($obj.attr('ac-master-data')));
         }
       });
 
@@ -249,9 +307,13 @@
               email: $('#email').val(),
               gender: $('#gender').val(),
               ocuppation: $('#ocuppation').val(),
+              final_recipient: $('input[name="final_recipient"]:checked').val(),
               final_recipientId: $('#final_recipientId').val(),
               final_recipient_text: $('#final_recipient_text').val(),
-              is_pep: $('input[name="is_pep"]:checked').val(),
+              is_pep_oficial_job: $('input[name="is_pep"]:checked').val(),
+              pep_oficial_job: $('#pep_oficial_job_text').val(),
+              pep_family_text: $('#pep_family_text').val(),
+              pep_familyId: $('#pep_familyId').val(),
               is_pep_family: $('input[name="is_pep_family"]:checked').val(),
               country_nationalityId: $('#country_nationalityId').val(),
               country_birthId: $('#country_birthId').val(),
@@ -417,6 +479,45 @@
           }, $('#file-upload-result'));
       });
 
+      $('body').on('click', '#legal_relation_create_item', function(){
+        var tr_index = $('#relation_board tr').length;
+        $('#relation_board').append('<tr>' +
+              '<td>' +
+                '<input type="hidden" value="new" id="board_people_status_' + tr_index + '" name="board_people_status">' +
+                '<input type="hidden" value="0" id="board_people_' + tr_index + '" name="board_people_ids">' +
+                '<input type="text" class="form-control ac-control" name="board_name" id="board_name_' + tr_index + '" value="" ac-method="clients" required title="Inserte el nombre" onkeyup="ac_control(this)">' +
+                '<div class="ac-container"></div>' +
+              '</td>' +
+              '<td>' +
+                '<input type="text" class="form-control ac-control" name="board_last_names" value="" ac-method="clients" ac-master-field="board_people_' + tr_index + '" ac-master-data="data-item2" required title="Inserte el apellido" onkeyup="ac_control(this)">' +
+                '<div class="ac-container"></div>' +
+              '</td>' +
+              '<td>' +
+                '<input type="text" ac-master-field="board_people_' + tr_index + '" ac-master-data="data-unique-id" class="form-control ac-control" name="board_ids" value="" ac-method="clients" required title="Inserte el ID del director" onkeyup="ac_control(this)">' +
+                '<div class="ac-container"></div>' +
+              '</td>' +
+              '<td style="text-align: right;">' +
+                '<select name="board_types">' +
+                  '<option value="1">Director</option>' +
+                  '<option value="2">Secretario</option>' +
+                  '<option value="3">Tesorero</option>' +
+                  '<option value="4">Presidente</option>' +
+                  '<option value="5">Vicepresidente</option>' +
+                  '<option value="6">Vocal</option>' +
+                  '<option value="7">Otro</option>' +
+                '</select>' +
+                '<button type="button" id="legal_relation_delete" class="btn btn-sm btn-link">x</button>' +
+              '</td>' +
+            '</tr>');
+      });
+
+      $('body').on('click', '#legal_relation_delete', function(){
+        let $this = $(this);
+        let tr = $this.parents('tr').first();
+        tr.find('input[name="board_people_status"]').val('delete');
+        tr.hide();
+      });
+
       $('body').on('click','#legal_relation_create_btn', function(){
           $('#relation_legalId').val('0');
           $('#relation-legal-first-step .card-header').removeClass('card-default').addClass('card-primary');
@@ -483,6 +584,21 @@
             }
           },
           function(){
+            let board_people_status = {};
+            let board_people_ids = {};
+            let board_names = {};
+            let board_last_names = {};
+            let board_ids = {};
+            let board_types = {};
+            $('#relation_board tr').each(function(index,obj){
+              let $obj = $(obj);
+              board_people_status['board_people_status' + index] = $obj.find('input[name="board_people_status"]').val();
+              board_people_ids['board_people_ids' + index] = $obj.find('input[name="board_people_ids"]').val();
+              board_names['board_names' + index] = $obj.find('input[name="board_name"]').val();
+              board_last_names['board_last_names' + index] = $obj.find('input[name="board_last_names"]').val();
+              board_ids['board_ids' + index] = $obj.find('input[name="board_ids"]').val();
+              board_types['board_types' + index] = $obj.find('select[name="board_types"] option:selected').val();
+            });
             let data = {
               _token: '{{ csrf_token() }}',
               legal_relation_id: $('#relation_legalId').val(),
@@ -492,19 +608,14 @@
               is_agent_resident: $('input[name="is_agent_resident"]:checked').val(),
               agent_resident_id: $('#resident_agent_id').val(),
               agent_resident_name: $('#resident_agent').val(),
-              board_director_id: $('#board_directorId').val(),
-              board_director_name: $('#board_director_name').val(),
-              board_director_last_name: $('#board_director_last_name').val(),
-              board_director_unique_id: $('#board_director_id').val(),
-              board_secretary_id: $('#legal_secretarioId').val(),
-              board_secretary_name: $('#board_secretario_name').val(),
-              board_secretary_last_name: $('#board_secretario_last_name').val(),
-              board_secretary_unique_id: $('#board_secretario_id').val(),
-              board_treasurer_id: $('#legal_tesoreroId').val(),
-              board_treasurer_name: $('#board_tesorero_name').val(),
-              board_treasurer_last_name: $('#board_tesorero_last_name').val(),
-              board_treasurer_unique_id: $('#board_tesorero_id').val()
+              board_people_status,
+              board_people_ids,
+              board_names,
+              board_last_names,
+              board_ids,
+              board_types
             };
+
             $.post("{{ route('people.add_legal_relation') }}", data ,
                 function(data){
                   data = $.parseJSON(data);
@@ -573,8 +684,11 @@
               $('#agent_resident_container').addClass('hidden');
             }
 
-            for(let i = 0; i < data.boards.length; i++){
+            $('#relation_board').html(data.boards);
+
+            /*for(let i = 0; i < data.boards.length; i++){
               let board = data.boards[i];
+
               switch(board.type_name){
                 case 'Director':
                   $('#board_directorId').val(board.people_id);
@@ -595,7 +709,7 @@
                   $('#board_tesorero_id').val(board.people_unique_id);
                   break;
               }
-            }
+            }*/
 
             $('.shareholder_row_container').remove();
             $('#shareholder_container').append(data.shareholders);
@@ -606,7 +720,8 @@
         $.post("{{ route('people.delete_legal_relation') }}",
           {
             _token: '{{ csrf_token() }}',
-            $id: $(this).attr('data-id')
+            $id: $(this).attr('data-id'),
+            $client_id: '{{ $people->id }}'
           },
           function(data){
             console.log(data);

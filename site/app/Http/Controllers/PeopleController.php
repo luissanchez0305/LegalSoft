@@ -16,7 +16,7 @@ class PeopleController extends Controller
     public function index()
     {
         //
-        $people=\App\People::where('type_clientId','=',1)->orWhere('type_clientId','=','2')->get();
+        $people=\App\People::where('status_id', '=', '1')->where('type_clientId','=',1)->orWhere('type_clientId','=','2')->get();
 
         return view('people/index',compact('people'));
     }
@@ -31,7 +31,7 @@ class PeopleController extends Controller
         //
         $action_type = 'add';
         $action_type_text = "Agregar nueva persona " . $type_text;
-        $legal_relation_display = $type_text == 'natural' ? '' : 'hidden';
+        $legal_relation_client = $type_text == 'natural' ? false : true;
         $id = 0;
         $final_recipient = null;
         $country_activity_financial = null;
@@ -52,7 +52,7 @@ class PeopleController extends Controller
         $file_types = \App\Type_File::all();
         $files = $this->get_files_array(0);
         $new_client = true;
-        return view('people/form',compact('people', 'action_type', 'legal_relation_display', 'action_type_text', 'id', 'country_residence', 'country_birth',
+        return view('people/form',compact('people', 'action_type', 'legal_relation_client', 'action_type_text', 'id', 'country_residence', 'country_birth',
             'final_recipient', 'country_nationality', 'country_activity_financial', 'product', 'legal_relations','board', 'shareholders',
             'share_types', 'file_types', 'files', 'legal_structures', 'new_client'));
     }
@@ -66,11 +66,10 @@ class PeopleController extends Controller
     public function edit($id)
     {
         //
-        //
         $people = \App\People::find($id);
-        $legal_relation_display = '';
-        if($people->client_typeId == 2)
-            $legal_relation_display = 'hidden';
+        $legal_relation_client =false;
+        if($people->type_clientId == 2)
+            $legal_relation_client = 'hidden';
         $action_type = 'edit';
         $action_type_text = "Guardar Cambios";
         /*- sacar nombre de pais de residencia*/
@@ -80,15 +79,25 @@ class PeopleController extends Controller
         /*- sacar nombre de pais de nacionalidad*/
         $country_nationality = \App\Country::find($people->country_nationalityId)->name;
 
-        $final_recipient = \App\People::find($people->final_recipientId);
-        if($final_recipient)
-            $final_recipient = $final_recipient->name . ' ' . $final_recipient->last_name;
-        else
-            $final_recipient = null;
+        $final_recipient = null;
+        if($people->final_recipientId > 0){
+            $final_recipient = \App\People::find($people->final_recipientId);
+            $final_recipient = $final_recipient->name != $final_recipient->last_name ? $final_recipient->name . ' ' . $final_recipient->last_name : $final_recipient->name;
+        }
 
-        $country_activity_financial = \App\Country::find($people->country_activity_financialId)->name;
+        $pep_family = null;
+        if($people->pep_family > 0){
+            $pep_family = \App\People::find($people->pep_family);
+            $pep_family = $pep_family->name != $pep_family->last_name ? $pep_family->name . ' ' . $pep_family->last_name : $pep_family->name;
+        }
 
-        $product = \App\Product::find($people->productId)->name;
+        $country_activity_financial = '';
+        if($people->country_activity_financialId > 0)
+            $country_activity_financial = \App\Country::find($people->country_activity_financialId)->name;
+
+        $product = '';
+        if($people->productId > 0)
+            $product = \App\Product::find($people->productId)->name;
 
         $legal_structures = \App\Legal_Structure::all();
 
@@ -104,9 +113,9 @@ class PeopleController extends Controller
 
         $new_client = false;
 
-        return view('people/form',compact('people','id', 'action_type', 'legal_relation_display', 'action_type_text', 'country_residence', 'country_birth',
+        return view('people/form',compact('people','id', 'action_type', 'legal_relation_client', 'action_type_text', 'country_residence', 'country_birth',
             'final_recipient', 'country_nationality', 'country_activity_financial', 'product', 'legal_structures', 'legal_relations', 'shareholders',
-            'share_types', 'file_types', 'files', 'new_client'));
+            'share_types', 'file_types', 'files', 'new_client', 'pep_family'));
     }
 
     /**
@@ -133,20 +142,44 @@ class PeopleController extends Controller
             $people->email = $request->email;
             $people->genderId = $request->gender;
             $people->ocuppation = $request->ocuppation;
-            if($request->final_recipientId != '0'){
+            if($request->final_recipient == '0' && $request->final_recipientId != '0'){
                 $people->final_recipientId = $request->final_recipientId;
             }
-            else if($request->final_recipient == '1' ){
+            else if($request->final_recipient == '0'){
                 $final_recipient = new \App\People;
                 $final_recipient->name = $request->final_recipient_text;
                 $final_recipient->last_name = $request->final_recipient_text;
                 // TODO llenar campos not null de final_recipient
 
                 $final_recipient->save();
+                $people->final_recipientId = $final_recipient->id;
+            }
+            else if($request->final_recipient == '1'){
+                $people->final_recipientId = null;
             }
 
-            $people->is_pep = $request->is_pep;
-            $people->is_pep_family = $request->is_pep_family;
+            if($request->is_pep_oficial_job == '1'){
+                $people->pep_oficial_job = $request->pep_oficial_job;
+            }
+            else{
+                $people->pep_oficial_job = null;
+            }
+            $people->pep_family = $request->pep_family;
+            if($request->is_pep_family == '1' && $request->pep_familyId != '0'){
+                $people->pep_family = $request->pep_familyId;
+            }
+            else if($request->is_pep_family == '1'){
+                $pep_family = new \App\People;
+                $pep_family->name = $request->pep_family_text;
+                $pep_family->last_name = $request->pep_family_text;
+                // TODO llenar campos not null de pep_family
+
+                $pep_family->save();
+                $people->pep_family = $pep_family->id;
+            }
+            else if($request->is_pep_family == '0'){
+                $people->pep_family = null;
+            }
             $people->country_nationalityId = $request->country_nationalityId;
             $people->country_birthId = $request->country_birthId;
             $people->country_residenceId = $request->country_residenceId;
@@ -236,7 +269,7 @@ class PeopleController extends Controller
         $legal_relations =  DB::table('relation_client_legal')
                         ->leftJoin("people", 'relation_client_legal.resident_agent_id', '=', 'people.id')
                         ->select(DB::raw('relation_client_legal.id as id, relation_client_legal.legal_person_name as legal_person_name, relation_client_legal.ruc as ruc, relation_client_legal.resident_agent_id as resident_agent_id, people.name as people_name, people.last_name as people_last_name'))
-                        ->where('relation_client_legal.clientId', '=', $id)
+                        ->where('relation_client_legal.clientId', '=', $id)->where('relation_client_legal.status', '=', '1')
                         ->get();
         return $legal_relations;
     }
@@ -258,6 +291,7 @@ class PeopleController extends Controller
         if($request->legal_relation_id != '0'){
             $legal_relation = \App\Relation_People_Legal::find($request->legal_relation_id);
         }
+        $legal_relation->status = 1;
         $legal_relation->clientID = $request->client_id;
         $legal_relation->legal_person_name = $request->name;
         $legal_relation->ruc = $request->ruc;
@@ -281,80 +315,93 @@ class PeopleController extends Controller
         $legal_relation->types_relationId = 1;
         $legal_relation->save();
 
-        $board_director_member = \App\Relation_People_Board::where('client_legalId', '=', $legal_relation->id)->where('types_boardId','=','1')->first();
-        if($board_director_member == null){
-            $board_director_member = new \App\Relation_People_Board;
-        }
-        $board_director_member->client_legalId = $legal_relation->id;
-        $board_director_member->types_boardId = 1;
+        $board_index = 0;
+        $result = '';
+        foreach ($request->board_people_ids as $key => $value) {
+            $board_member = \App\Relation_People_Board::where('client_legalId', '=', $legal_relation->id)->where('client_relatedId', '=', $value)->first();
+            $result .= $legal_relation->id . '-' . $request->board_types['board_types'.$board_index] . '-' . $value . ',';
+            if($request->board_people_status['board_people_status'.$board_index] != 'delete'){
+                if($board_member == null){
+                    $board_member = new \App\Relation_People_Board;
+                }
+                $board_member->client_legalId = $legal_relation->id;
+                $board_member->types_boardId = $request->board_types['board_types'.$board_index];
 
-        $board_people = new \App\People;
-        if($request->board_director_id != '0'){
-            $board_director_member->client_relatedId = $request->board_director_id;
-            $board_people = \App\People::find($request->board_director_id);
-        }
-        $board_people->name = $request->board_director_name;
-        $board_people->last_name = $request->board_director_last_name;
-        $board_people->unique_id_number = $request->board_director_unique_id;
-        $board_people->type_clientId = 5;
-        $board_people->save();
-        $board_director_member->client_relatedId = $board_people->id;
-        $board_director_member->save();
 
-        $board_secretary_member = \App\Relation_People_Board::where('client_legalId', '=', $legal_relation->id)->where('types_boardId','=','2')->first();
-        if($board_secretary_member == null){
-            $board_secretary_member = new \App\Relation_People_Board;
-        }
-        $board_secretary_member->client_legalId = $legal_relation->id;
-        $board_secretary_member->types_boardId = 2;
-
-        $board_people = new \App\People;
-        if($request->board_secretary_id != '0'){
-            $board_secretary_member->client_relatedId = $request->board_secretary_id;
-            $board_people = \App\People::find($request->board_secretary_id);
-        }
-        $board_people->name = $request->board_secretary_name;
-        $board_people->last_name = $request->board_secretary_last_name;
-        $board_people->unique_id_number = $request->board_secretary_unique_id;
-        $board_people->type_clientId = 5;
-        $board_people->save();
-        $board_secretary_member->client_relatedId = $board_people->id;
-        $board_secretary_member->save();
-
-        $board_treasurer_member = \App\Relation_People_Board::where('client_legalId', '=', $legal_relation->id)->where('types_boardId','=','3')->first();
-        if($board_treasurer_member == null){
-            $board_treasurer_member = new \App\Relation_People_Board;
-        }
-        $board_treasurer_member->client_legalId = $legal_relation->id;
-        $board_treasurer_member->types_boardId = 3;
-
-        $board_people = new \App\People;
-        if($request->board_treasurer_id != '0'){
-            $board_treasurer_member->client_relatedId = $request->board_treasurer_id;
-            $board_people = \App\People::find($request->board_treasurer_id);
+                $board_people = new \App\People;
+                if($value != '0'){
+                    $board_member->client_relatedId = $value;
+                    $board_people = \App\People::find($value);
+                }
+                $board_people->name = $request->board_names['board_names'.$board_index];
+                $board_people->last_name = $request->board_last_names['board_last_names'.$board_index];
+                $board_people->unique_id_number = $request->board_ids['board_ids'.$board_index];
+                $board_people->type_clientId = 5;
+                $board_people->save();
+                $board_member->client_relatedId = $board_people->id;
+                $board_member->save();
+            }
+            else{
+                if($value != '0'){
+                    \App\Relation_People_Board::destroy($board_member->id);
+                }
+            }
+            $board_index++;
         }
 
-        $board_people->name = $request->board_treasurer_name;
-        $board_people->last_name = $request->board_treasurer_last_name;
-        $board_people->unique_id_number = $request->board_treasurer_unique_id;
-        $board_people->type_clientId = 5;
-        $board_people->save();
-        $board_treasurer_member->client_relatedId = $board_people->id;
-
-        $board_treasurer_member->save();
         $legal_relations = $this->get_legal_relations_rows($request->client_id);
-        echo json_encode(array('status'=>'success','legal_relation_id'=>$legal_relation->id));
+        echo json_encode(array('status'=>'success','legal_relation_id'=>$legal_relation->id,'result'=>$result));
     }
 
     public function get_boards_array($id){
         $boards = DB::table('relation_client_board')
                         ->join('people', 'relation_client_board.client_relatedId', '=', 'people.id')
                         ->join('types_board', 'relation_client_board.types_boardId', '=', 'types_board.id')
-                        ->select(DB::raw('people.id as people_id, people.name as people_name, people.last_name as people_last_name, people.unique_id_number as people_unique_id, types_board.name as type_name'))
+                        ->select(DB::raw('people.id as people_id, people.name as people_name, people.last_name as people_last_name, people.unique_id_number as people_unique_id, types_board.name as type_name, types_board.id as type_id'))
                         ->where('relation_client_board.client_legalId', '=', $id)
                         ->orderBy('types_board.name', 'asc')
                         ->get();
         return $boards;
+    }
+
+    public function get_boards_rows($id){
+        $boards_array = $this->get_boards_array($id);
+
+        $output = '';
+        $boardIndex = 0;
+        foreach ($boards_array as $item) {
+            $output .= '
+                  <tr>
+                    <td>
+                      <input type="hidden" value="edit" id="board_people_status_' . $boardIndex . '" name="board_people_status">
+                      <input type="hidden" value="' . $item->people_id . '" id="board_people_' . $boardIndex . '" name="board_people_ids">
+                      <input type="text" class="form-control ac-control" name="board_name" id="board_name_' . $boardIndex . '" value="' . $item->people_name . '" ac-method="clients" required title="Inserte el nombre" onkeyup="ac_control(this)">
+                      <div class="ac-container"></div>
+                    </td>
+                    <td>
+                      <input type="text" class="form-control ac-control" name="board_last_names" value="' . $item->people_last_name . '" ac-method="clients" ac-master-field="board_people_' . $boardIndex . '" ac-master-data="data-item2" required title="Inserte el apellido" onkeyup="ac_control(this)">
+                      <div class="ac-container"></div>
+                    </td>
+                    <td>
+                      <input type="text" ac-master-field="board_people_' . $boardIndex . '" ac-master-data="data-unique-id" class="form-control ac-control" name="board_ids" ac-method="clients" value="' . $item->people_unique_id . '" required title="Inserte el ID del director" onkeyup="ac_control(this)">
+                      <div class="ac-container"></div>
+                    </td>
+                    <td style="text-align: right;">
+                      <select name="board_types">
+                        <option value="1" ' . ($item->type_id == 1 ? 'selected="selected"' : '') . '>Director</option>
+                        <option value="2" ' . ($item->type_id == 2 ? 'selected="selected"' : '') . '>Secretario</option>
+                        <option value="3" ' . ($item->type_id == 3 ? 'selected="selected"' : '') . '>Tesorero</option>
+                        <option value="4" ' . ($item->type_id == 4 ? 'selected="selected"' : '') . '>Presidente</option>
+                        <option value="5" ' . ($item->type_id == 5 ? 'selected="selected"' : '') . '>Vicepresidente</option>
+                        <option value="6" ' . ($item->type_id == 6 ? 'selected="selected"' : '') . '>Vocal</option>
+                        <option value="7" ' . ($item->type_id == 7 ? 'selected="selected"' : '') . '>Otro</option>
+                      </select>
+                      <button type="button" id="legal_relation_delete" class="btn btn-sm btn-link">x</button>
+                    </td>
+                  </tr>';
+            $boardIndex++;
+        }
+        return $output;
     }
 
     public function add_file(Request $request){
@@ -403,18 +450,17 @@ class PeopleController extends Controller
                         ->select(DB::raw('relation_client_legal.id as id, relation_client_legal.legal_person_name as legal_person_name, relation_client_legal.ruc as ruc, relation_client_legal.resident_agent_id as resident_agent_id, people.name as resident_agent_name, people.last_name as resident_agent_last_name'))
                         ->where('relation_client_legal.id', '=', $request->id)
                         ->first();
-        $boards = $this->get_boards_array($legal_relation->id);
+        $boards = $this->get_boards_rows($legal_relation->id);
         $shareholders = $this->get_shareholders_rows($legal_relation->id);
         return json_encode(array('legal_relation' => $legal_relation, 'boards' => $boards, 'shareholders' => $shareholders));
     }
 
-    public function delete_legal_relation($id){
-        $legal_relation = DB::table('relation_client_legal')
-                        ->leftJoin("people", 'relation_client_legal.resident_agent_id', '=', 'people.id')
-                        ->select(DB::raw('relation_client_legal.*, people.name as people_name, people.last_name as people_last_name'))
-                        ->where('relation_client_legal.id', '=', $id)
-                        ->first();
-        return $legal_relation;
+    public function delete_legal_relation(Request $request){
+        $legal_relation = \App\Relation_People_Legal::find($request->id);
+        $legal_relation->status = 2;
+        $legal_relation->save();
+
+        return $this->get_legal_relations_rows($request->client_id);
     }
 
     /**
