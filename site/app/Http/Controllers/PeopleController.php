@@ -71,9 +71,9 @@ class PeopleController extends Controller
     {
         //
         $people = \App\People::find($id);
-        $legal_relation_client =false;
+        $legal_relation_client = false;
         if($people->type_clientId == 2)
-            $legal_relation_client = 'hidden';
+            $legal_relation_client = true;
         $action_type = 'edit';
         $action_type_text = "Guardar Cambios";
         /*- sacar nombre de pais de residencia*/
@@ -122,7 +122,7 @@ class PeopleController extends Controller
 
         $new_client = false;
 
-        $people_persons = $this->get_persons($people->id);
+        $people_persons = $legal_relation_client ? null : $this->get_persons($people->id);
 
     return view('people/form',compact('people','id', 'action_type', 'legal_relation_client', 'action_type_text', 'country_residence', 'country_birth', 'final_recipient_name','final_recipient_last_name', 'country_nationality', 'country_activity_financial', 'product', 'legal_structures', 'legal_relations', 'shareholders', 'share_types', 'file_types', 'files', 'new_client', 'pep_family_name', 'pep_family_last_name', 'people_persons'));
     }
