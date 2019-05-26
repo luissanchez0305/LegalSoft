@@ -1,5 +1,7 @@
 <div class="row">
   <form id="general-info">
+    <input type="hidden" id="client-Id" name="client-Id" value="{{ $people->id ?? $id }}">
+    <input type="hidden" id="client-relatedId" name="client-relatedId" value="{{ $people->id ?? $id }}">
     <input type="hidden" id="client-typeId" name="client-typeId" value="{{ $legal_relation_client ? 2 : 1 }}">
     <div class="col-xl-6">
       <div class="card card-default">
@@ -70,16 +72,22 @@
             </div>
             <div class="col-md-6">
               <label class="radio-inline">
-                  <input type="radio" name="final_recipient" id="final_recipientYes" value="1" {{ $final_recipient == null ? 'checked' : '' }}>Si
+                  <input type="radio" name="final_recipient" id="final_recipientYes" value="1" {{ $final_recipient_name == null ? 'checked' : '' }}>Si
               </label>
               <label class="radio-inline">
-                  <input type="radio" name="final_recipient" id="final_recipientNo" value="0" {{ $final_recipient != null ? 'checked' : '' }}>No
+                  <input type="radio" name="final_recipient" id="final_recipientNo" value="0" {{ $final_recipient_name != null ? 'checked' : '' }}>No
               </label>
-              <div class="{{ $final_recipient != null ? '' : 'hidden' }}" id="final_recipient_container">
-                <label for="final_recipient_text">Ingrese el nombre del beneficiario</label>
-                <input type="hidden" value="{{ $people->final_recipientId }}" id="final_recipientId" name="final_recipientId">
-                <input type="text" class="form-control ac-control" name="final_recipient_text" id="final_recipient_text" value="{{$final_recipient}}" ac-method="clients" required title="Inserte el beneficiario" data-validation-depends-on="final_recipient" data-validation-depends-on-value="0">
-                <div class="ac-container"></div>
+              <div class="{{ $final_recipient_name != null ? '' : 'hidden' }}" id="final_recipient_container">
+                <label for="final_recipient_name">Ingrese el nombre del beneficiario</label>
+                <div class="col-sm-6">
+                  <input type="hidden" value="{{ $people->final_recipientId }}" id="final_recipientId" name="final_recipientId">
+                  <input type="text" class="form-control ac-control" name="final_recipient_name" id="final_recipient_name" value="{{$final_recipient_name}}" ac-method="clients" required title="Inserte el beneficiario" placeholder="Nombre" title="Inserte el nombre" data-validation-depends-on="final_recipient" data-validation-depends-on-value="0">
+                  <div class="ac-container"></div>
+                </div>
+                <div class="col-sm-6">
+                  <input type="text" class="form-control ac-control" name="final_recipient_last_name" id="final_recipient_last_name" value="{{$final_recipient_last_name}}" ac-method="clients" ac-master-field="final_recipientId" ac-master-data="data-item2" title="Inserte el apellido" placeholder="Apellido" title="Inserte el beneficiario">
+                  <div class="ac-container"></div>
+                </div>
               </div>
             </div>
           </div>
@@ -108,16 +116,22 @@
             </div>
             <div class="col-md-6">
               <label class="radio-inline">
-                  <input type="radio" name="is_pep_family" id="is_pep_familyYes" value="1"  {{ $people->pep_family != null ? 'checked' : '' }}>Si
+                  <input type="radio" name="is_pep_family" id="is_pep_familyYes" value="1"  {{ $pep_family_name != null ? 'checked' : '' }}>Si
               </label>
               <label class="radio-inline">
-                  <input type="radio" name="is_pep_family" id="is_pep_familyNo" value="0" {{ $people->pep_family != null ? '' : 'checked' }}>No
+                  <input type="radio" name="is_pep_family" id="is_pep_familyNo" value="0" {{ $pep_family_name != null ? '' : 'checked' }}>No
               </label>
-              <div class="{{ $people->pep_family != null ? '' : 'hidden' }}" id="pep_family_container">
-                <label for="pep_family_text">Ingrese el nombre del familiar</label>
-                <input type="hidden" value="{{ $people->pep_family }}" id="pep_familyId" name="pep_familyId">
-                <input type="text" class="form-control ac-control" name="pep_family_text" id="pep_family_text" value="{{ $pep_family }}" ac-method="clients" required title="Cargo público" data-validation-depends-on="is_pep_family" data-validation-depends-on-value="0">
-                <div class="ac-container"></div>
+              <div class="{{ $pep_family_name != null ? '' : 'hidden' }}" id="pep_family_container">
+                <label for="pep_family_name">Ingrese el nombre del familiar</label>
+                <div class="col-sm-6">
+                  <input type="hidden" value="{{ $people->pep_family ?? '0' }}" id="pep_familyId" name="pep_familyId">
+                  <input type="text" class="form-control ac-control" name="pep_family_name" id="pep_family_name" value="{{ $pep_family_name }}" ac-method="clients" required title="Inserte el nombre" placeholder="Nombre" data-validation-depends-on="is_pep_family" data-validation-depends-on-value="0">
+                  <div class="ac-container"></div>
+                </div>
+                <div class="col-sm-6">
+                  <input type="text" class="form-control ac-control" name="pep_family_last_name" id="pep_family_last_name" value="{{ $pep_family_last_name }}" ac-method="clients" title="Inserte el apellido" placeholder="Apellido" ac-master-field="pep_familyId" ac-master-data="data-item2">
+                  <div class="ac-container"></div>
+                </div>
               </div>
             </div>
           </div>
@@ -159,5 +173,19 @@
       </div>
     </div>
   </form>
+</div>
+<div class="row">
+  <div class="col-xl-12 {{ $people_persons == null ? 'hidden' : '' }}" id="persons-container">
+    @if($people_persons)
+      @foreach($people_persons as $people_related)
+    <div class="col-sm-2">
+      <a data-id="{{ $people_related->id }}" class="btn btn-link person {{$people_related->id == $people->id ? 'active' : ''}}">{{ $people_related->name }} {{ $people_related->last_name }}</a>
+    </div>
+      @endforeach
+    @endif
+    <div class="col-sm-2">
+      <a class="btn btn-link" id="add-new-person">+Agregar nuevo</a>
+    </div>
+  </div>
 </div>
 <!-- /.row -->

@@ -56,6 +56,12 @@ body {
     line-height: normal;
 }
 
+.person.active {
+    color: #808080 !important;
+    cursor: default;
+    text-decoration: none;
+}
+
 @media(min-width:768px) {
     #wrapper {
         padding-left: 225px;

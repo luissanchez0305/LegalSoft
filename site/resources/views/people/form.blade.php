@@ -124,7 +124,6 @@
       });
 
       $('body').on('click','input[name="is_pep"]', function(e){
-        console.log($(this).val());
         if($(this).val() == "1"){
           $('#pep_oficial_job_container').removeClass('hidden');
         }
@@ -134,7 +133,6 @@
       });
 
       $('body').on('click','input[name="is_pep_family"]', function(e){
-        console.log($(this).val());
         if($(this).val() == "1"){
           $('#pep_family_container').removeClass('hidden');
         }
@@ -172,7 +170,7 @@
             $this.prev().val('0');
         }
         ul = '<ul class="dropdown-menu" style="display:block; position:relative;">[data]</ul>';
-        $list_container.html(ul.replace('[data]', '<li><a class="ac-item new">Nuevo Cliente</a></li>'));
+        var $list_container = $this.next()[0].localName == 'label' ? $this.next().next() : $this.next();
         var query = $this.val();
         if(query != ''){
           var _token = $('input[name="_token"]').val();
@@ -207,15 +205,28 @@
                 }
               }
             });
-
-            $this.blur(function(){
-              $this.off('blur');
-              $list_container.fadeOut();
-              xhr.abort();
-            });
           }, 500);
         }
       }
+
+      $('.ac-control').click(function(){
+        ul = '<ul class="dropdown-menu" style="display:block; position:relative;">[data]</ul>';
+        var $this = $(this);
+        var $list_container = $this.next()[0].localName == 'label' ? $this.next().next() : $this.next();
+        if($this.attr('ac-method') == 'clients'){
+          $list_container.fadeIn();
+          $list_container.html(ul.replace('[data]', '<li><a class="ac-item new">Nuevo Cliente</a></li>'));
+        }
+
+        $this.blur(function(){
+          $this.off('blur');
+          if($list_container)
+            $list_container.fadeOut();
+
+          if(xhr)
+            xhr.abort();
+        });
+      });
 
       $('.ac-control').keyup(function(){
         ac_control(this);
@@ -236,13 +247,13 @@
           }
           else{
             $input.prev().val('0');
+            $input.val('');
             $master_item_fields = $('input[ac-master-field="'+$input.prev().attr('id')+'"]');
           }
           for(var i = 0; i < $master_item_fields.length; i++){
             let obj = $master_item_fields[i];
             let $obj = $(obj);
-            if($obj.attr('ac-master-data') != $input.attr('ac-master-data'))
-              $obj.val('');
+            $obj.val('');
           }
 
           return;
@@ -272,6 +283,95 @@
         }
       });
 
+      $('body').on('click', '#add-new-person', function(){
+          $('#client-Id').val('0');
+          $('#client-typeId').val('7'); // tipo de cliente: subcliente (7)
+          $('#name').val('');
+          $('#last_name').val('');
+          $('#email').val('');
+          $('#passport_number').val('');
+          $('#unique_id').val('');
+          $('#gender option:eq(0)').prop('selected', true);
+          $('#phone_fixed').val('');
+          $('#phone_mobile').val('');
+          $('#ocuppation').val('');
+          $('#final_recipientYes').click();
+          $('#final_recipientId, #final_recipient_name, #final_recipient_last_name').val('')
+          $('#is_pepNo').click();
+          $('#pep_oficial_job_text').val('');
+          $('#is_pep_familyNo').click();
+          $('#pep_familyId').val('0')
+          $('#pep_family_name, #pep_family_last_name').val('');
+            $('#country_nationalityId, #nationality, #country_birthId, #birth, #country_residenceId, #residence').val('');
+            $('#address_physical, #address_mail').val('');
+
+          $('.person.active').removeClass('active');
+      });
+
+      $('body').on('click', '.person', function(){
+        let $this = $(this);
+        if(!$this.hasClass('active')){
+          $.post('{{ route("people.get_general_info") }}', { _token: '{{ csrf_token() }}', id: $this.attr('data-id') }, function(data){
+            data = $.parseJSON(data);
+            $('#client-Id').val(data.people.id);
+            $('#client-typeId').val(data.people.type_clientId);
+            $('#name').val(data.people.name);
+            $('#last_name').val(data.people.last_name);
+            $('#email').val(data.people.email);
+            $('#passport_number').val(data.people.passport_number);
+            $('#unique_id').val(data.people.unique_id_number);
+            $('#gender option[value="' + data.people.genderId + '"]').prop('selected', true);
+            $('#phone_fixed').val(data.people.phone_fixed);
+            $('#phone_mobile').val(data.people.phone_mobile);
+            $('#ocuppation').val(data.people.ocuppation);
+
+            if(data.people.final_recipientId){
+              $('#final_recipientNo').click();
+              $('#final_recipientId').val(data.people.final_recipientId);
+              $('#final_recipient_name').val(data.final_recipient_name);
+              $('#final_recipient_last_name').val(data.final_recipient_last_name);
+            }
+            else{
+              $('#final_recipientYes').click();
+            }
+
+            if(data.people.pep_oficial_job){
+              $('#is_pepYes').click();
+              $('#pep_oficial_job_text').val(data.people.pep_oficial_job);
+            }
+            else{
+              $('#is_pepNo').click();
+              $('#pep_oficial_job_text').val('');
+            }
+
+            if(data.people.pep_family){
+              $('#is_pep_familyYes').click();
+              $('#pep_familyId').val(data.people.pep_family);
+              $('#pep_family_name').val(data.pep_family_name);
+              $('#pep_family_last_name').val(data.pep_family_last_name);
+            }
+            else{
+              $('#is_pep_familyNo').click();
+              $('#pep_familyId').val('0');
+              $('#pep_family_name').val('');
+              $('#pep_family_last_name').val('');
+            }
+
+            $('#country_nationalityId').val(data.people.country_nationalityId);
+            $('#nationality').val(data.country_nationality);
+            $('#country_birthId').val(data.people.country_birthId);
+            $('#birth').val(data.country_birth);
+            $('#country_residenceId').val(data.people.country_residenceId);
+            $('#residence').val(data.country_residence);
+            $('#address_physical').val(data.people.address_physical);
+            $('#address_mail').val(data.people.address_mail);
+
+            $('.person.active').removeClass('active');
+            $this.addClass('active');
+          });
+        }
+      });
+
       $('body').on('click', '#form-general-save', function(){
         val.validate_form($('#' + $('.tab-pane.active').attr('form')),
           {
@@ -293,11 +393,12 @@
           function(){
             $('#form-general-status').html('Guardando...');
             var _data = {
-              action_type: $('.tab-pane.active').attr('form'),
-              client_typeId: $('#client-typeId').val(),
               _token: '{{ csrf_token() }}',
+              action_type: $('.tab-pane.active').attr('form'),
               type: '{{ $action_type }}',
-              client_id: '{{ $people->id }}',
+              client_id: $('#client-Id').val(),
+              client_relatedId: $('#client-relatedId').val(),
+              client_typeId: $('#client-typeId').val(),
               name: $('#name').val(),
               last_name: $('#last_name').val(),
               unique_id: $('#unique_id').val(),
@@ -309,11 +410,13 @@
               ocuppation: $('#ocuppation').val(),
               final_recipient: $('input[name="final_recipient"]:checked').val(),
               final_recipientId: $('#final_recipientId').val(),
-              final_recipient_text: $('#final_recipient_text').val(),
+              final_recipient_name: $('#final_recipient_name').val(),
+              final_recipient_last_name: $('#final_recipient_last_name').val(),
               is_pep_oficial_job: $('input[name="is_pep"]:checked').val(),
               pep_oficial_job: $('#pep_oficial_job_text').val(),
-              pep_family_text: $('#pep_family_text').val(),
               pep_familyId: $('#pep_familyId').val(),
+              pep_family_name: $('#pep_family_name').val(),
+              pep_family_last_name: $('#pep_family_last_name').val(),
               is_pep_family: $('input[name="is_pep_family"]:checked').val(),
               country_nationalityId: $('#country_nationalityId').val(),
               country_birthId: $('#country_birthId').val(),
@@ -336,6 +439,15 @@
                       $('#form-general-status').html('');
                     }, 5000);
                     $('.nav-link.disabled').removeClass('disabled');
+                    if(data.people_id != $('#client-relatedId').val() && $('#client-Id').val() == '0'){
+                      $('#persons-container .col-sm-2:last').before('<div class="col-sm-2"><a data-id="' + data.people_id + '" class="btn btn-link person active">' +
+                        $('#name').val() + ' ' + $('#last_name').val() + '</a></div>');
+                      if($('#client-relatedId').val() == '0')
+                        $('#client-relatedId').val(data.people_id);
+                      $('#persons-container').removeClass('hidden');
+                      $('#form-general-save').html('Guardar Cambios');
+                    }
+                    $('#client-Id').val(data.people_id);
                   }
                   else
                   {
@@ -368,7 +480,7 @@
               shareholder_client_people_name: $('#shareholder_client_people_name').val(),
               shareholder_client_people_certification_number: $('#shareholder_client_people_certification_number').val(),
               shareholder_client_people_action_typeId: $('#shareholder_client_people_action_typeId').val(),
-              shareholder_client_people_ruc: $('#shareholder_client_people_ruc').val(),
+              shareholder_client_people_id: $('#shareholder_client_people_id').val(),
               shareholder_client_people_country_birthId: $('#shareholder_client_people_country_birthId').val(),
               shareholder_client_people_country_nationalityId: $('#shareholder_client_people_country_nationalityId').val(),
               shareholder_client_people_phone_number: $('#shareholder_client_people_phone_number').val(),
@@ -386,7 +498,7 @@
                 $('#shareholder_client_people_name').val('');
                 $('#shareholder_client_people_certification_number').val('');
                 $('#shareholder_client_people_action_typeId').find('option:eq(0)').prop('selected', true);
-                $('#shareholder_client_people_ruc').val('');
+                $('#shareholder_client_people_id').val('');
                 $('#shareholder_client_people_country_birthId').val('0');
                 $('#shareholder_people_country_birth_name').val('');
                 $('#shareholder_client_people_country_nationalityId').val('0');

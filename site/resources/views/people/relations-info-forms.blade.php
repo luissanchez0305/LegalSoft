@@ -57,7 +57,7 @@
             </div>
           </fieldset>
         </div>
-        <div class="col-xl-6">
+        <div class="col-xl-12">
           <button type="button" class="btn btn-warning" id="legal_relation_add">Guardar</button><a href="#" class="hidden" id="legal_relation_next">Siguiente</a>
         </div>
       </div>
@@ -107,7 +107,7 @@
                       <div class="ac-container"></div>
                     </td>
                     <td>
-                      <input type="text" class="form-control" id="shareholder_client_people_ruc" name="shareholder_client_people_ruc" value="" required title="Inserte el RUC"/>
+                      <input type="text" class="form-control" id="shareholder_client_people_id" name="shareholder_client_people_id" value="" required title="Inserte el RUC" ac-master-data="data-unique-id" ac-master-field="shareholder_client_peopleId"/>
                     </td>
                     <td>
                       <input type="hidden" value="0" id="shareholder_client_people_country_birthId"/>
