@@ -3,7 +3,7 @@
 $(function() {
 
     // Area Chart
-    Morris.Area({
+    /*Morris.Area({
         element: 'morris-area-chart',
         data: [{
             period: '2010 Q1',
@@ -62,26 +62,29 @@ $(function() {
         pointSize: 2,
         hideHover: 'auto',
         resize: true
-    });
+    });*/
 
     // Donut Chart
     Morris.Donut({
         element: 'morris-donut-chart',
         data: [{
-            label: "Download Sales",
-            value: 12
+            label: "Bajo",
+            value: 12,
+            color: 'green'
         }, {
-            label: "In-Store Sales",
-            value: 30
+            label: "Medio",
+            value: 30,
+            color: 'orange'
         }, {
-            label: "Mail-Order Sales",
-            value: 20
+            label: "Alto",
+            value: 20,
+            color: 'red'
         }],
         resize: true
     });
 
     // Line Chart
-    Morris.Line({
+    /*Morris.Line({
         // ID of the element in which to draw the chart.
         element: 'morris-line-chart',
         // Chart data records -- each entry in this array corresponds to a point on
@@ -190,33 +193,33 @@ $(function() {
         // Disables line smoothing
         smooth: false,
         resize: true
-    });
+    });*/
 
     // Bar Chart
     Morris.Bar({
         element: 'morris-bar-chart',
         data: [{
-            device: 'iPhone',
-            geekbench: 136
+            pais: 'Panamá',
+            clients: 342
         }, {
-            device: 'iPhone 3G',
-            geekbench: 137
+            pais: 'Rusia',
+            clients: 136
         }, {
-            device: 'iPhone 3GS',
-            geekbench: 275
+            pais: 'EEUU',
+            clients: 102
         }, {
-            device: 'iPhone 4',
-            geekbench: 380
+            pais: 'Argentina',
+            clients: 380
         }, {
-            device: 'iPhone 4S',
-            geekbench: 655
+            pais: 'Colombia',
+            clients: 302
         }, {
-            device: 'iPhone 5',
-            geekbench: 1571
+            pais: 'Brasil',
+            clients: 157
         }],
-        xkey: 'device',
-        ykeys: ['geekbench'],
-        labels: ['Geekbench'],
+        xkey: 'pais',
+        ykeys: ['clients'],
+        labels: ['Clientes'],
         barRatio: 0.4,
         xLabelAngle: 35,
         hideHover: 'auto',

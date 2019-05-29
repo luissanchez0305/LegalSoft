@@ -65,7 +65,7 @@
     <script src="/js/jquery.validate.min.js"></script>
     <script src="/js/script.js"></script>
     <script type="text/javascript">
-        $('body input[type="text"]').attr('autocomplete', 'false');
+        //$('body input[type="text"]').attr('autocomplete', 'off');
     </script>
 	@yield('js')
 

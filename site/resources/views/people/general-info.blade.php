@@ -1,5 +1,6 @@
 <div class="row">
-  <form id="general-info">
+  <form id="general-info" autocomplete="off">
+    <input autocomplete="off" name="hidden" type="text" style="display:none;">
     <input type="hidden" id="client-Id" name="client-Id" value="{{ $people->id ?? $id }}">
     <input type="hidden" id="client-relatedId" name="client-relatedId" value="{{ $people->id ?? $id }}">
     <input type="hidden" id="client-typeId" name="client-typeId" value="{{ $legal_relation_client ? 2 : 1 }}">
@@ -50,19 +51,33 @@
           </div>
         </fieldset>
         <fieldset class="form-group col-md-12">
-          <div class="col-md-4">
+          <div class="col-md-3">
             <label for="phone_fixed">Teléfono Principal</label>
             <input type="text" class="form-control" name="phone_fixed" id="phone_fixed" value="{{ $people->phone_fixed }}" required title="Inserte el teléfono principal">
           </div>
 
-          <div class="col-md-4">
+          <div class="col-md-3">
             <label for="phone_mobile">{{ $legal_relation_client ? 'Fax' : 'Teléfono Móvil' }}</label>
             <input type="text" class="form-control" name="phone_mobile" id="phone_mobile" value="{{ $people->phone_mobile }}" required title="Inserte el teléfono móvil">
           </div>
 
-          <div class="col-md-4">
+          <div class="col-md-3 {{ $legal_relation_client ? 'hidden' : '' }}">
             <label for="ocuppation" class="{{ $legal_relation_client ? 'hidden' : '' }}">Actividad Profesional</label>
-            <input type="text" class="form-control {{ $legal_relation_client ? 'hidden' : '' }}" name="ocuppation" id="ocuppation" value="{{ $people->ocuppation }}" required title="Inserte el actividad profesional">
+            <select class="form-control {{ $legal_relation_client ? 'hidden' : '' }}" name="ocuppation" id="ocuppation" required title="Escoja la act. profesional">
+              <option></option>
+              <option value="1" {{ $people->occupationId == 1 ? 'selected="selected"' : '' }}>Act. profesional 1</option>
+              <option value="2" {{ $people->occupationId == 2 ? 'selected="selected"' : '' }}>Act. profesional 2</option>
+            </select>
+          </div>
+
+          <div class="col-md-3">
+            <label for="channel">Canal</label>
+            <select class="form-control" name="channel" id="channel" required title="Escoja el canal">
+              <option></option>
+              <option value="1" {{ $people->channelId == 1 ? 'selected="selected"' : '' }}>Directo</option>
+              <option value="2" {{ $people->channelId == 2 ? 'selected="selected"' : '' }}>Referido</option>
+              <option value="2" {{ $people->channelId == 3 ? 'selected="selected"' : '' }}>Página web</option>
+            </select>
           </div>
         </fieldset>
         <fieldset class="form-group col-md-12 {{ $legal_relation_client ? 'hidden' : '' }}">
@@ -144,7 +159,7 @@
           <div class="col-md-4">
             <label for="nationality">{{ $legal_relation_client ? 'Lugar de constitución' : 'Nacionalidad' }}</label>
             <input type="hidden" value="{{ $people->country_nationalityId }}" id="country_nationalityId" name="country_nationalityId">
-            <input type="text" class="form-control ac-control" id="nationality" name="nationality" value="{{ $country_nationality }}" ac-method="countries" required title="Inserte la nacionalidad">
+            <input type="text" autocomplete="off" class="form-control ac-control" id="nationality" name="nationality" value="{{ $country_nationality }}" ac-method="countries" required title="Inserte la nacionalidad">
             <div class="ac-container"></div>
           </div>
           <div class="col-md-4">

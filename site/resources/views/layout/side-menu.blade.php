@@ -6,7 +6,24 @@
                         <a href="/"><i class="fa fa-fw fa-dashboard"></i> Dashboard</a>
                     </li>
                     <li class="list-group-item">
-                        <a href="/people"><i class="fa fa-fw fa-bar-chart-o"></i> Clientes</a>
+                        <a href="/people" data-toggle="collapse" data-target="#clients"><i class="fa fa-fw fa-users"></i> Clientes <i class="fa fa-fw fa-caret-down"></i></a>
+                        <ul id="clients" class="list-group collapse in">
+                            <li class="list-group-item">
+                                <a href="{{ action('PeopleController@create', ['type_text' => 'natural']) }}"><i class="fa fa-fw fa-plus-square"></i> Persona Natural</a>
+                            </li>
+                            <li class="list-group-item">
+                                <a href="{{ action('PeopleController@create', ['type_text' => 'jurídica']) }}"><i class="fa fa-fw fa-plus-square"></i> Persona Jurídica</a>
+                            </li>
+                            <li class="list-group-item">
+                                <a href="/people/all"><i class="fa fa-fw fa-list-ul"></i> Todos</a>
+                            </li>
+                            <li class="list-group-item">
+                                <a href="/people/natural"><i class="fa fa-fw fa-list-ul"></i> Personas Naturales</a>
+                            </li>
+                            <li class="list-group-item">
+                                <a href="/people/juridica"><i class="fa fa-fw fa-list-ul"></i> Personas Jurídicas</a>
+                            </li>
+                        </ul>
                     </li>
                     <li class="list-group-item hidden">
                         <a href="tables.html"><i class="fa fa-fw fa-table"></i> Tables</a>

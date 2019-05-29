@@ -10,16 +10,20 @@
             <h1 class="page-header">
                 {{ $action_type_text }}
             </h1>
-
+        </div>
+        <div class="col-lg-12">
             <ol class="breadcrumb">
                 <li>
-                    <i class="fa fa-dashboard"></i>  <a href="/people">Listado General</a>
+                    <i class="fa fa-dashboard"></i>  <a href="/people/{{ $legal_relation_client ? 'juridica' : 'natural' }}">Listado General</a>
                 </li>
                 <li class="active">
                     <i class="fa fa-edit"></i> {{ $people->name }} {{ $people->last_name }}
                 </li>
+                <li>
+                  <a href="javascript:alert('print');"><i class="fa fa-print"></i></a>
+                </li>
             </ol>
-        </div>
+          </div>
     </div>
     <!-- /.row -->
     @endsection
@@ -38,6 +42,9 @@
             <li class="nav-item">
               <a class="nav-link {{ $new_client ? 'disabled' : '' }}" id="pills-files-tab" data-toggle="pill" href="#pills-files" role="tab" aria-controls="pills-files" aria-selected="false">Documentos</a>
             </li>
+            <li class="nav-item">
+              <a class="nav-link {{ $new_client ? 'disabled' : '' }}" id="pills-risk-tab" data-toggle="pill" href="#pills-risk" role="tab" aria-controls="pills-risk" aria-selected="false">Riesgo</a>
+            </li>
           </ul>
           <div class="tab-content" id="pills-tabContent">
             <div class="tab-pane fade show active in" id="pills-general" role="tabpanel" aria-labelledby="pills-general-tab" form="general-info">
@@ -51,6 +58,9 @@
             </div>
             <div class="tab-pane fade" id="pills-files" role="tabpanel" aria-labelledby="pills-files-tab">
               @include('people.files-info')
+            </div>
+            <div class="tab-pane fade" id="pills-risk" role="tabpanel" aria-labelledby="pills-risk-tab">
+              @include('people.risk-info')
             </div>
           </div>
           <div class="row" id="action-submit-button">
@@ -102,7 +112,7 @@
       $('.nav-link').click(function(){
         let $this = $(this);
         if(!$this.hasClass('disabled')){
-          if($this.attr('id') == 'pills-services-tab' || $this.attr('id') == 'pills-files-tab'){
+          if($this.attr('id') == 'pills-services-tab' || $this.attr('id') == 'pills-files-tab' || $this.attr('id') == 'pills-risk-tab'){
             $('#action-submit-button').addClass('hidden');
           }
           else{
@@ -408,6 +418,7 @@
               email: $('#email').val(),
               gender: $('#gender').val(),
               ocuppation: $('#ocuppation').val(),
+              channel: $('#channel').val(),
               final_recipient: $('input[name="final_recipient"]:checked').val(),
               final_recipientId: $('#final_recipientId').val(),
               final_recipient_name: $('#final_recipient_name').val(),
@@ -427,7 +438,7 @@
               annual_income_limits: $('#annual_income_limits').val(),
               country_activity_financialId: $('#country_activity_financialId').val(),
               legacy_limits: $('#legacy_limits').val(),
-              productId: $('#productId').val(),
+              productId: $('#product').val(),
               relation_objectives_txt: $('#relation_objectives_txt').val(),
               legal_structure:$('#legal_structure').val()
             }
@@ -439,13 +450,18 @@
                       $('#form-general-status').html('');
                     }, 5000);
                     $('.nav-link.disabled').removeClass('disabled');
-                    if(data.people_id != $('#client-relatedId').val() && $('#client-Id').val() == '0'){
-                      $('#persons-container .col-sm-2:last').before('<div class="col-sm-2"><a data-id="' + data.people_id + '" class="btn btn-link person active">' +
-                        $('#name').val() + ' ' + $('#last_name').val() + '</a></div>');
-                      if($('#client-relatedId').val() == '0')
-                        $('#client-relatedId').val(data.people_id);
-                      $('#persons-container').removeClass('hidden');
-                      $('#form-general-save').html('Guardar Cambios');
+                    if($('#client-typeId').val() == '1'){
+                      if(data.people_id != $('#client-relatedId').val() && $('#client-Id').val() == '0'){
+                        $('#persons-container .col-sm-2:last').before('<div class="col-sm-2"><a data-id="' + data.people_id + '" class="btn btn-link person active">' +
+                          $('#name').val() + ' ' + $('#last_name').val() + '</a></div>');
+                        if($('#client-relatedId').val() == '0')
+                          $('#client-relatedId').val(data.people_id);
+                        $('#persons-container').removeClass('hidden');
+                        $('#form-general-save').html('Guardar Cambios');
+                      }
+                      else{
+                        $('a[data-id="' + data.people_id + '"]').html($('#name').val() + ' ' + $('#last_name').val());
+                      }
                     }
                     $('#client-Id').val(data.people_id);
                   }
@@ -591,18 +607,38 @@
           }, $('#file-upload-result'));
       });
 
-      $('body').on('click', '#legal_relation_create_item', function(){
+      var board_last_name_obj = '<input type="text" class="form-control ac-control" name="board_last_names" value="" ac-method="clients" ac-master-field="board_people_[[tr_index]]" ac-master-data="data-item2" required title="Inserte el apellido" onkeyup="ac_control(this)">' +
+                '<div class="ac-container"></div>';
+
+      board_people_type_change = function(obj){
+        let $obj = $(obj);
+        if($obj.val() == '2'){
+          $obj.parents('tr').find('td').eq(2).html('&nbsp;');
+        }
+        else{
+          $obj.parents('tr').find('td').eq(2).html(board_last_name_obj.replace('[[tr_index]]', $obj.attr('data-index')));
+        }
+      }
+
+      $('body').on('click', '.legal_relation_create_item', function(){
         var tr_index = $('#relation_board tr').length;
+        let typeId = $(this).attr('data-type');
         $('#relation_board').append('<tr>' +
               '<td>' +
+                  '<select class="form-control" data-index="' + tr_index + '" id="board_people_type_' + tr_index + '" name="board_people_types" required title="Escoja un tipo" onchange="board_people_type_change(this)">' +
+                    '<option value="1" ' + (typeId == '1' ? 'selected="selected"' : '') + '>Per. Natural</option>' +
+                    '<option value="2" ' + (typeId == '2' ? 'selected="selected"' : '') + '>Per. Jurídica</option> ' +
+                  '</select>' +
+              '</td>' +
+              '<td>' +
+                '<input type="hidden" value="' + typeId + '" id="board_people_type_' + tr_index + '" name="board_people_types">' +
                 '<input type="hidden" value="new" id="board_people_status_' + tr_index + '" name="board_people_status">' +
                 '<input type="hidden" value="0" id="board_people_' + tr_index + '" name="board_people_ids">' +
                 '<input type="text" class="form-control ac-control" name="board_name" id="board_name_' + tr_index + '" value="" ac-method="clients" required title="Inserte el nombre" onkeyup="ac_control(this)">' +
                 '<div class="ac-container"></div>' +
               '</td>' +
               '<td>' +
-                '<input type="text" class="form-control ac-control" name="board_last_names" value="" ac-method="clients" ac-master-field="board_people_' + tr_index + '" ac-master-data="data-item2" required title="Inserte el apellido" onkeyup="ac_control(this)">' +
-                '<div class="ac-container"></div>' +
+                (typeId == '1' ? board_last_name_obj.replace('[[tr_index]]', tr_index) : '&nbsp;') +
               '</td>' +
               '<td>' +
                 '<input type="text" ac-master-field="board_people_' + tr_index + '" ac-master-data="data-unique-id" class="form-control ac-control" name="board_ids" value="" ac-method="clients" required title="Inserte el ID del director" onkeyup="ac_control(this)">' +
@@ -618,7 +654,9 @@
                   '<option value="6">Vocal</option>' +
                   '<option value="7">Otro</option>' +
                 '</select>' +
-                '<button type="button" id="legal_relation_delete" class="btn btn-sm btn-link">x</button>' +
+              '</td>' +
+              '<td>' +
+                '<button type="button" id="legal_relation_delete" class="btn btn-sm btn-link"><i class="fa fa-times"></i></button>' +
               '</td>' +
             '</tr>');
       });
@@ -632,6 +670,8 @@
 
       $('body').on('click','#legal_relation_create_btn', function(){
           $('#relation_legalId').val('0');
+          $('#relation_board').html('');
+          $('#legal_relations_people_container').addClass('hidden');
           $('#relation-legal-first-step .card-header').removeClass('card-default').addClass('card-primary');
           $('#relation-legal-first-step .card-block').removeClass('hidden');
           $('#relation-legal-second-step .card-header').removeClass('card-primary').addClass('card-default');
@@ -671,6 +711,7 @@
 
       $('body').on('click','#legal_relation_cancel', function(){
           $('.legal_relation_container, #legal_relation_cancel').addClass('hidden');
+          $('#legal_relations_people_container').removeClass('hidden');
           $('#relation-legal-first-step label.error').remove();
           $('#relation-legal-first-step .error').removeClass('error');
           $('#relation-legal-second-step label.error').remove();
@@ -696,6 +737,7 @@
             }
           },
           function(){
+            let board_people_types = {};
             let board_people_status = {};
             let board_people_ids = {};
             let board_names = {};
@@ -704,10 +746,12 @@
             let board_types = {};
             $('#relation_board tr').each(function(index,obj){
               let $obj = $(obj);
+              let typeId = $obj.find('select[name="board_people_types"]').val();
+              board_people_types['board_people_type' + index] = typeId;
               board_people_status['board_people_status' + index] = $obj.find('input[name="board_people_status"]').val();
               board_people_ids['board_people_ids' + index] = $obj.find('input[name="board_people_ids"]').val();
               board_names['board_names' + index] = $obj.find('input[name="board_name"]').val();
-              board_last_names['board_last_names' + index] = $obj.find('input[name="board_last_names"]').val();
+              board_last_names['board_last_names' + index] = typeId == '1' ? $obj.find('input[name="board_last_names"]').val() : '';
               board_ids['board_ids' + index] = $obj.find('input[name="board_ids"]').val();
               board_types['board_types' + index] = $obj.find('select[name="board_types"] option:selected').val();
             });
@@ -720,6 +764,7 @@
               is_agent_resident: $('input[name="is_agent_resident"]:checked').val(),
               agent_resident_id: $('#resident_agent_id').val(),
               agent_resident_name: $('#resident_agent').val(),
+              board_people_types,
               board_people_status,
               board_people_ids,
               board_names,
@@ -766,6 +811,7 @@
           },
           function(data){
             data = $.parseJSON(data);
+            $('#legal_relations_people_container').addClass('hidden');
 
             $('#relation-legal-first-step .help-block.form-error, #relation-legal-second-step .help-block.form-error').remove();
             $('#relation-legal-first-step .form-control, #relation-legal-second-step .form-control').attr('style',null).removeClass('error');
@@ -781,6 +827,7 @@
             $('#relation_legalId').val(data.legal_relation.id);
             $('#legal_person_name').val(data.legal_relation.legal_person_name);
             $('#relation_objectives').val(data.legal_relation.ruc);
+
             if(data.legal_relation.resident_agent_id != null){
               $('#is_agent_residentYes').prop('checked',false);
               $('#is_agent_residentNo').prop('checked',true);
@@ -797,31 +844,6 @@
             }
 
             $('#relation_board').html(data.boards);
-
-            /*for(let i = 0; i < data.boards.length; i++){
-              let board = data.boards[i];
-
-              switch(board.type_name){
-                case 'Director':
-                  $('#board_directorId').val(board.people_id);
-                  $('#board_director_name').val(board.people_name);
-                  $('#board_director_last_name').val(board.people_last_name);
-                  $('#board_director_id').val(board.people_unique_id);
-                  break;
-                case 'Secretario':
-                  $('#legal_secretarioId').val(board.people_id);
-                  $('#board_secretario_name').val(board.people_name);
-                  $('#board_secretario_last_name').val(board.people_last_name);
-                  $('#board_secretario_id').val(board.people_unique_id);
-                  break;
-                case 'Tesorero':
-                  $('#legal_tesoreroId').val(board.people_id);
-                  $('#board_tesorero_name').val(board.people_name);
-                  $('#board_tesorero_last_name').val(board.people_last_name);
-                  $('#board_tesorero_id').val(board.people_unique_id);
-                  break;
-              }
-            }*/
 
             $('.shareholder_row_container').remove();
             $('#shareholder_container').append(data.shareholders);

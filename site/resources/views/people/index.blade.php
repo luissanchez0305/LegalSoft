@@ -12,11 +12,20 @@
                 <a href="{{ action('PeopleController@create', ['type_text' => 'natural']) }}" class="btn btn-warning">Nueva Persona Natural</a>
                 <a href="{{ action('PeopleController@create', ['type_text' => 'jurídica']) }}" class="btn btn-warning">Nueva Persona Jurídica</a>
             </h1>
+        </div>
+        <div class="col-lg-6">
             <ol class="breadcrumb">
                 <li class="active">
-                    <i class="fa fa-dashboard"></i> Listado General
+                    <i class="fa fa-list-ul"></i> Listado General
                 </li>
             </ol>
+        </div>
+        <div class="col-xl-2 form-group input-group">
+            <input type="text" class="form-control" id="people-search-text">
+            <span class="input-group-btn">
+              <input type="hidden" id="list-type" value="{{ $id }}" />
+              <button class="btn btn-secondary" placeholder="Buscar" type="button" id="people-search-btn"><i class="fa fa-search"></i></button>
+            </span>
         </div>
     </div>
     <!-- /.row -->
@@ -27,42 +36,19 @@
           <p>{{ \Session::get('success') }}</p>
         </div>
       @endif
-        <div class="col-xl-6 col-lg-12">
+        <div class="col-xl-8">
           <div class="table-responsive">
             <table class="table table-bordered table-hover table-striped">
                 <thead>
                     <tr>
                       <th>Nombre</th>
-                      <th>Apellido</th>
-                      <th colspan="2"></th>
+                      <th>Email</th>
+                      <th>Tipo de cliente</th>
+                      <th>&nbsp;</th>
                     </tr>
                 </thead>
-                <tbody>
-
-                @foreach($people as $item)
-                  <tr>
-                    <td>{{$item['name']}}</td>
-                    <td>{{$item['last_name']}}</td>
-
-                    <td>
-                      <div class="row">
-                          <div class="col-xl-6 text-xs-center">
-                              <a href="{{ action('PeopleController@edit', $item['id']) }}" class="btn btn-warning">Editar</a>
-                          </div>
-                          <div class="col-xl-6 text-xs-center">
-                              <form action="{{ action('PeopleController@destroy', $item['id']) }}" method="post">
-                                <input type="hidden" name="_token" value="{{ csrf_token() }}"/>
-                                <input name="_method" type="hidden" value="DELETE"/>
-                                <button class="btn btn-danger" type="submit">Borrar</button>
-                              </form>
-                          </div>
-                      </div>
-                      <!-- /.row -->
-                    </td>
-                    <td>
-                    </td>
-                  </tr>
-                  @endforeach
+                <tbody id="people_rows">
+                {!!html_entity_decode($clients)!!}
                 </tbody>
             </table>
           </div>
@@ -71,7 +57,7 @@
       <!-- /.row -->
   @stop
 
-@section('index-javascript')
+@section('js')
   <script type="text/javascript">
     $(function() {
       $('.close-dropdown').click(function(){
@@ -116,6 +102,30 @@
         $('.top-menu .nav-item').removeClass('active-nav');
         $('.nav-dropdown-wrapper').removeClass('in');
       });
+      $('body').on('click', '.delete-client', function(e){
+        e.preventDefault();
+        var _data = {
+          _token: '{{ csrf_token() }}',
+          id: $(this).attr('data-id')
+        }
+        $.post('{{ route("people.destroy") }}', _data , function(data){
+          location.reload();
+        });
+      });
+      $('body').on('click','#people-search-btn', function(){
+        var _data = {
+          _token: '{{ csrf_token() }}',
+          list_type: $('#list-type').val(),
+          q: $('#people-search-text').val()
+        };
+        $.post('{{ route("people.search") }}', _data, function(data){
+          data = $.parseJSON(data);
+          $('#people_rows').html(data.people);
+        });
+      });
+      $('body').on('click', '.client-item', function(){
+        location.href = $(this).attr('edit-url');
+      });
     });
   </script>
-@stop
+@endsection

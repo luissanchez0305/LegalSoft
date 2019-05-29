@@ -1,5 +1,5 @@
 @extends('layout.plain')
-@section('page-title', 'Welcome - LegalSoft507')
+@section('page-title', 'LegalSoft507')
 
 @section('body')
         @section('page-heading')
@@ -7,7 +7,7 @@
         <div class="row">
             <div class="col-lg-12">
                 <h1 class="page-header">
-                    Dashboard <small>Statistics Overview</small>
+                    Dashboard <small>Resumen de estadísticas</small>
                 </h1>
                 <ol class="breadcrumb">
                     <li class="active">
@@ -24,17 +24,17 @@
                     <div class="card-header card-primary">
                         <div class="row">
                             <div class="col-xs-3">
-                                <i class="fa fa-comments fa-5x"></i>
+                                <i class="fa fa-map-marker fa-5x"></i>
                             </div>
                             <div class="col-xs-9 text-xs-right">
-                                <div class="huge">26</div>
-                                <div>New Comments!</div>
+                                <div class="huge">342</div>
+                                <div>Clientes de Panamá</div>
                             </div>
                         </div>
                     </div>
                     <div class="card-footer card-default">
                         <a href="javascript:;">
-                            <span class="pull-xs-left">View Details</span>
+                            <span class="pull-xs-left">Ver detalles</span>
                             <span class="pull-xs-right"><i class="fa fa-arrow-circle-right"></i></span>
                             <div class="clearfix"></div>
                         </a>
@@ -46,17 +46,17 @@
                     <div class="card-header card-green">
                         <div class="row">
                             <div class="col-xs-3">
-                                <i class="fa fa-tasks fa-5x"></i>
+                                <i class="fa fa-globe fa-5x"></i>
                             </div>
                             <div class="col-xs-9 text-xs-right">
-                                <div class="huge">12</div>
-                                <div>New Tasks!</div>
+                                <div class="huge">1077</div>
+                                <div>Clientes extranjeros</div>
                             </div>
                         </div>
                     </div>
                     <div class="card-footer card-green">
                         <a href="javascript:;">
-                            <span class="pull-xs-left">View Details</span>
+                            <span class="pull-xs-left">Ver detalles</span>
                             <span class="pull-xs-right"><i class="fa fa-arrow-circle-right"></i></span>
                             <div class="clearfix"></div>
                         </a>
@@ -68,17 +68,17 @@
                     <div class="card-header card-yellow">
                         <div class="row">
                             <div class="col-xs-3">
-                                <i class="fa fa-shopping-cart fa-5x"></i>
+                                <i class="fa fa-info-circle fa-5x"></i>
                             </div>
                             <div class="col-xs-9 text-xs-right">
                                 <div class="huge">124</div>
-                                <div>New Orders!</div>
+                                <div>Clientes con perfil incompleto</div>
                             </div>
                         </div>
                     </div>
                     <div class="card-footer card-yellow">
                         <a href="javascript:;">
-                            <span class="pull-xs-left">View Details</span>
+                            <span class="pull-xs-left">Ver detalles</span>
                             <span class="pull-xs-right"><i class="fa fa-arrow-circle-right"></i></span>
                             <div class="clearfix"></div>
                         </a>
@@ -90,17 +90,17 @@
                     <div class="card-header card-red">
                         <div class="row">
                             <div class="col-xs-3">
-                                <i class="fa fa-support fa-5x"></i>
+                                <i class="fa fa-exclamation-triangle fa-5x"></i>
                             </div>
                             <div class="col-xs-9 text-xs-right">
-                                <div class="huge">13</div>
-                                <div>Support Tickets!</div>
+                                <div class="huge">265</div>
+                                <div>Clientes PEP</div>
                             </div>
                         </div>
                     </div>
                     <div class="card-footer card-red">
                         <a href="javascript:;">
-                            <span class="pull-xs-left">View Details</span>
+                            <span class="pull-xs-left">Ver detalles</span>
                             <span class="pull-xs-right"><i class="fa fa-arrow-circle-right"></i></span>
                             <div class="clearfix"></div>
                         </a>
@@ -114,10 +114,10 @@
             <div class="col-lg-12">
                 <div class="card">
                     <div class="card-header card-default">
-                        <i class="fa fa-bar-chart-o fa-fw"></i> Area Chart
+                        <i class="fa fa-bar-chart-o fa-fw"></i> Clientes x país
                     </div>
                     <div class="card-block">
-                        <div id="morris-area-chart"></div>
+                        <div id="morris-bar-chart"></div>
                     </div>
                 </div>
             </div>
@@ -128,17 +128,17 @@
             <div class="col-xl-4 col-lg-12">
                 <div class="card">
                     <div class="card-header card-default">
-                        <i class="fa fa-long-arrow-right fa-fw"></i> Donut Chart
+                        <i class="fa fa-long-arrow-right fa-fw"></i> Clientes según riesgo
                     </div>
                     <div class="card-block">
                         <div id="morris-donut-chart"></div>
                         <div class="text-xs-right">
-                            <a href="javascript:;">View Details <i class="fa fa-arrow-circle-right"></i></a>
+                            <a href="javascript:;">Ver detalles <i class="fa fa-arrow-circle-right"></i></a>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-xl-4 col-lg-12">
+            <div class="col-xl-4 col-lg-12 hidden">
                 <div class="card card-default">
                     <div class="card-header card-default">
                         <i class="fa fa-clock-o fa-fw"></i> Tasks Card
@@ -150,7 +150,7 @@
                                 <i class="fa fa-fw fa-calendar"></i> Calendar updated
                             </a>
                             <a href="javascript:;" class="list-group-item">
-                                <span class="label label-pill label-default pull-xs-right">4 minutes ago</span>
+                                <span class="label label-pill label-default pull-xs-right">4 <main></main>utes ago</span>
                                 <i class="fa fa-fw fa-comment"></i> Commented on a post
                             </a>
                             <a href="javascript:;" class="list-group-item">
@@ -184,7 +184,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-xl-4 col-lg-12">
+            <div class="col-xl-4 col-lg-12 hidden">
                 <div class="card card-default">
                     <div class="card-header card-default">
                         <i class="fa fa-money fa-fw"></i> Transactions Card

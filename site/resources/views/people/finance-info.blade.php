@@ -43,9 +43,11 @@
         </fieldset>
         <fieldset class="form-group col-md-6">
           <label for="product">Productos o servicios solicitados</label>
-          <input type="hidden" value="{{ $people->productId }}" id="productId" name="productId">
-          <input type="text" class="form-control" id="product" id="product" name="product" value="{{ $product }}" ac-method="products">
-          <div class="ac-container"></div>
+          <select class="form-control" name="product" id="product" required title="Escoja el canal">
+            <option></option>
+            <option value="1" {{ $people->productId == 1 ? 'selected="selected"' : '' }}>Producto 1</option>
+            <option value="2" {{ $people->productId == 2 ? 'selected="selected"' : '' }}>Producto 2</option>
+          </select>
           <label for="name">Propósito de la relación</label>
           <input type="text" class="form-control" id="relation_objectives_txt" name="relation_objectives_txt" value="{{ $people->relation_objectives }}">
         </fieldset>

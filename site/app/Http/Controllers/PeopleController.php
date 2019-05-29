@@ -13,11 +13,10 @@ class PeopleController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index($id)
     {
         //
-        $people=\App\People::where('status_id', '=', '1')->where('type_clientId','=',1)->orWhere('type_clientId','=','2')->get();
-
+        $people = \App\People::where('status_id', '=', '1')->where('type_clientId','=',$id == 'natural' ? 1 : 2)->get();
         return view('people/index',compact('people'));
     }
 
@@ -30,7 +29,7 @@ class PeopleController extends Controller
     {
         //
         $action_type = 'add';
-        $action_type_text = "Agregar nueva persona " . $type_text;
+        $action_type_text = "Guardar";
         $legal_relation_client = $type_text == 'natural' ? false : true;
         $id = 0;
         $people_relatedId = 0;
@@ -152,7 +151,8 @@ class PeopleController extends Controller
             $people->phone_mobile = $request->phone_mobile;
             $people->email = $request->email;
             $people->genderId = $request->gender;
-            $people->ocuppation = $request->ocuppation;
+            $people->occupationId = $request->ocuppation;
+            $people->channelId = $request->channel;
             if($request->final_recipient == '0' && $request->final_recipientId != '0'){
                 $people->final_recipientId = $request->final_recipientId;
             }
@@ -192,8 +192,13 @@ class PeopleController extends Controller
                 $people->pep_family = null;
             }
             $people->country_nationalityId = $request->country_nationalityId;
-            $people->country_birthId = $request->country_birthId;
-            $people->country_residenceId = $request->country_residenceId;
+            if($request->client_typeId == 2){
+                $people->country_birthId = 3;
+                $people->country_residenceId = 3;
+            }else{
+                $people->country_birthId = $request->country_birthId;
+                $people->country_residenceId = $request->country_residenceId;
+            }
             $people->address_physical = $request->address_physical;
             $people->address_mail = $request->address_mail;
         }
@@ -257,8 +262,7 @@ class PeopleController extends Controller
             $client->type_clientId = 3;
             $client->name = $request->shareholder_client_people_name;
             $client->last_name = $request->shareholder_client_people_name;
-            $client->unique_id_number = $request->shareholder_client_people_ruc;
-            $client->ruc = $request->shareholder_client_people_ruc;
+            $client->unique_id_number = $request->shareholder_client_people_id;
             $client->country_birthId = $request->shareholder_client_people_country_birthId;
             $client->country_nationalityId = $request->shareholder_client_people_country_nationalityId;
             $client->phone_mobile = $request->shareholder_client_people_phone_number;
@@ -295,7 +299,7 @@ class PeopleController extends Controller
                         ->join('types_share', 'relation_client_shareholders.types_shareId', '=', 'types_share.id')
                         ->join('countries as countries_birth', 'people.country_birthId', '=', 'countries_birth.id')
                         ->join('countries as countries_nationality', 'people.country_birthId', '=', 'countries_nationality.id')
-                        ->select(DB::raw('relation_client_shareholders.id as cert_id, relation_client_shareholders.certification_number as cert_number, people.id as people_id, people.name as people_name, people.last_name as people_last_name, types_share.id as type_id, types_share.name as type_name, people.ruc as people_ruc, people.country_birthId as people_country_birthId, countries_birth.name as people_country_birth_name, people.country_nationalityId as people_country_nationalityId, countries_nationality.name as people_country_nationality_name, people.phone_mobile as people_phone_mobile, people.email as people_email, relation_client_shareholders.percentage as share_percentage'))
+                        ->select(DB::raw('relation_client_shareholders.id as cert_id, relation_client_shareholders.certification_number as cert_number, people.id as people_id, people.name as people_name, people.last_name as people_last_name, types_share.id as type_id, types_share.name as type_name, people.unique_id_number as people_id, people.country_birthId as people_country_birthId, countries_birth.name as people_country_birth_name, people.country_nationalityId as people_country_nationalityId, countries_nationality.name as people_country_nationality_name, people.phone_mobile as people_phone_mobile, people.email as people_email, relation_client_shareholders.percentage as share_percentage'))
                         ->where('relation_client_shareholders.client_legalId', '=', $id)
                         ->where('relation_client_shareholders.status', '=', '1')
                         ->get();
@@ -306,7 +310,7 @@ class PeopleController extends Controller
         $shareholders = $this->get_shareholders_array($id);
         $output = '';
         foreach ($shareholders as $item) {
-            $output .= '<tr class="shareholder_row_container"><td>'. $item->cert_number . '</td><td>' . $item->type_name . '</td><td>' . $item->people_name . ' ' . $item->people_last_name . '</td><td>' . $item->people_ruc . '</td><td>' . $item->people_country_birth_name . '</td><td>' . $item->people_country_nationality_name . '</td><td>' . $item->people_phone_mobile . '</td><td>' . $item->people_email . '</td><td>' . $item->share_percentage . '</td><td><button type="button" class="btn btn-danger shareholder-delete" data-id="' . $item->cert_id . '">Borrar</button></td></tr>';
+            $output .= '<tr class="shareholder_row_container"><td>'. $item->cert_number . '</td><td>' . $item->type_name . '</td><td>' . $item->people_name . ' ' . $item->people_last_name . '</td><td>' . $item->people_id . '</td><td>' . $item->people_country_birth_name . '</td><td>' . $item->people_country_nationality_name . '</td><td>' . $item->people_phone_mobile . '</td><td>' . $item->people_email . '</td><td>' . $item->share_percentage . '</td><td><button type="button" class="btn btn-danger shareholder-delete" data-id="' . $item->cert_id . '">Borrar</button></td></tr>';
         }
         return $output;
     }
@@ -370,6 +374,7 @@ class PeopleController extends Controller
                 if($board_member == null){
                     $board_member = new \App\Relation_People_Board;
                 }
+                $board_member->client_typeId = $request->board_people_types['board_people_type'.$board_index];
                 $board_member->client_legalId = $legal_relation->id;
                 $board_member->types_boardId = $request->board_types['board_types'.$board_index];
 
@@ -400,7 +405,6 @@ class PeopleController extends Controller
     }
 
     public function edit_legal_relation(Request $request){
-
         $legal_relation = DB::table('relation_client_legal')
                         ->leftJoin("people", 'relation_client_legal.resident_agent_id', '=', 'people.id')
                         ->select(DB::raw('relation_client_legal.id as id, relation_client_legal.legal_person_name as legal_person_name, relation_client_legal.ruc as ruc, relation_client_legal.resident_agent_id as resident_agent_id, people.name as resident_agent_name, people.last_name as resident_agent_last_name'))
@@ -423,7 +427,7 @@ class PeopleController extends Controller
         $boards = DB::table('relation_client_board')
                         ->join('people', 'relation_client_board.client_relatedId', '=', 'people.id')
                         ->join('types_board', 'relation_client_board.types_boardId', '=', 'types_board.id')
-                        ->select(DB::raw('people.id as people_id, people.name as people_name, people.last_name as people_last_name, people.unique_id_number as people_unique_id, types_board.name as type_name, types_board.id as type_id'))
+                        ->select(DB::raw('people.id as people_id, people.name as people_name, people.last_name as people_last_name, people.unique_id_number as people_unique_id, types_board.name as type_name, people.type_clientId as people_type_id, types_board.id as type_id, relation_client_board.client_typeId as relation_client_type_id'))
                         ->where('relation_client_board.client_legalId', '=', $id)
                         ->orderBy('types_board.name', 'asc')
                         ->get();
@@ -439,21 +443,29 @@ class PeopleController extends Controller
             $output .= '
                   <tr>
                     <td>
+                        <select data-index="' . $boardIndex . '" class="form-control" id="board_people_type_' . $boardIndex . '" name="board_people_types" required title="Escoja un tipo" onchange="board_people_type_change(this)">
+                            <option value="1" ' . ($item->relation_client_type_id == 1 ? 'selected="selected"' : '') . '>Per. Natural</option>
+                            <option value="2" ' . ($item->relation_client_type_id == 2 ? 'selected="selected"' : '') . '>Per. Jurídica</option>
+                        </select>
+                    </td>
+                    <td>
                       <input type="hidden" value="edit" id="board_people_status_' . $boardIndex . '" name="board_people_status">
                       <input type="hidden" value="' . $item->people_id . '" id="board_people_' . $boardIndex . '" name="board_people_ids">
                       <input type="text" class="form-control ac-control" name="board_name" id="board_name_' . $boardIndex . '" value="' . $item->people_name . '" ac-method="clients" required title="Inserte el nombre" onkeyup="ac_control(this)">
                       <div class="ac-container"></div>
                     </td>
-                    <td>
-                      <input type="text" class="form-control ac-control" name="board_last_names" value="' . $item->people_last_name . '" ac-method="clients" ac-master-field="board_people_' . $boardIndex . '" ac-master-data="data-item2" required title="Inserte el apellido" onkeyup="ac_control(this)">
-                      <div class="ac-container"></div>
-                    </td>
+                    <td>' .
+                    ($item->relation_client_type_id == '1' ?
+                        '<input type="text" class="form-control ac-control" name="board_last_names" value="' . $item->people_last_name . '" ac-method="clients" ac-master-field="board_people_' . $boardIndex . '" ac-master-data="data-item2" required title="Inserte el apellido" onkeyup="ac_control(this)">
+                        <div class="ac-container"></div>' :
+                        '&nbsp;') .
+                    '</td>
                     <td>
                       <input type="text" ac-master-field="board_people_' . $boardIndex . '" ac-master-data="data-unique-id" class="form-control ac-control" name="board_ids" ac-method="clients" value="' . $item->people_unique_id . '" required title="Inserte el ID del director" onkeyup="ac_control(this)">
                       <div class="ac-container"></div>
                     </td>
                     <td style="text-align: right;">
-                      <select name="board_types">
+                      <select class="form-control" name="board_types">
                         <option value="1" ' . ($item->type_id == 1 ? 'selected="selected"' : '') . '>Director</option>
                         <option value="2" ' . ($item->type_id == 2 ? 'selected="selected"' : '') . '>Secretario</option>
                         <option value="3" ' . ($item->type_id == 3 ? 'selected="selected"' : '') . '>Tesorero</option>
@@ -462,7 +474,9 @@ class PeopleController extends Controller
                         <option value="6" ' . ($item->type_id == 6 ? 'selected="selected"' : '') . '>Vocal</option>
                         <option value="7" ' . ($item->type_id == 7 ? 'selected="selected"' : '') . '>Otro</option>
                       </select>
-                      <button type="button" id="legal_relation_delete" class="btn btn-sm btn-link">x</button>
+                    </td>
+                    <td>
+                      <button type="button" id="legal_relation_delete" class="btn btn-sm btn-link"><i class="fa fa-times"></i></button>
                     </td>
                   </tr>';
             $boardIndex++;
@@ -521,7 +535,7 @@ class PeopleController extends Controller
         $people = \App\People::find($id);
         $people->status_id = 2;
         $people->save();
-        return redirect('people');
+        return json_encode(array('status'=>'success'));
     }
 
     /**
@@ -549,7 +563,51 @@ class PeopleController extends Controller
     public function show($id)
     {
         //
-        $people = \App\People::find($id);
-        return view('people.show', array('people' => $people));
+        /*$people = \App\People::find($id);
+        return view('people.show', array('people' => $people));*/
+        if($id == 'all')
+            $people = \App\People::where('status_id', '=', '1')->where(function($query){
+                $query->where('type_clientId','=', 1)->orWhere('type_clientId','=', 2);
+            })->get();
+        else
+            $people = \App\People::where('status_id', '=', '1')->where('type_clientId','=',$id == 'natural' ? 1 : 2)->get();
+
+        $clients = $this->get_people_rows($people);
+
+        return view('people/index',compact('people','id', 'clients'));
+    }
+
+    public function get_people_rows($people){
+        $clients = '';
+        foreach ($people as $item) {
+            $clients .= '<tr class="client-item" edit-url="/people/'.$item->id.'/edit">
+                <td>'.$item->name.' '.$item->last_name.'</td>
+                <td>'.$item->email.'</td>
+                <td>'.($item->type_clientId == 1 ? 'Persona Natural' : 'Persona Juridica').'</td>
+                <td>
+                  <div class="row">
+                      <div class="col-xl-6 text-xs-center">
+                        <a class="btn btn-danger delete-client" data-id="'.$item->id.'"><i class="fa fa-times"></i></a>
+                      </div>
+                  </div>
+                  <!-- /.row -->
+                </td>
+            </tr>';
+        }
+        return $clients;
+    }
+
+    public function search(Request $request){
+        $people = \App\People::where('status_id', '=', '1')->where(function($query) use ($request){
+                if($request->list_type == 'all')
+                    $query->where('type_clientId','=', 1)->orWhere('type_clientId','=', 2);
+                else if($request->list_type == 'natural')
+                    $query->where('type_clientId','=', 1);
+                else
+                    $query->where('type_clientId','=', 2);
+            })->where(function($query) use ($request){
+                $query->where('name', 'LIKE', '%'.$request->q.'%')->orWhere('last_name', 'LIKE', '%'.$request->q.'%')->orWhere('email', 'LIKE', '%'.$request->q.'%');
+            })->get();
+        return json_encode(array('people'=>$this->get_people_rows($people),'count'=>count($people)));
     }
 }
