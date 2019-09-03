@@ -1,6 +1,6 @@
 <!-- index.blade.php -->
 @extends('layout.plain')
-@section('page-title', 'Mi perfil - LegalSoft507')
+@section('page-title', 'Mi perfil - Bitliance')
 
 @section('body')
     @section('page-heading')

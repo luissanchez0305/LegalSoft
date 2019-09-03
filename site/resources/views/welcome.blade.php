@@ -1,5 +1,5 @@
 @extends('layout.plain')
-@section('page-title', 'LegalSoft507')
+@section('page-title', 'Bitliance')
 
 @section('body')
         @section('page-heading')

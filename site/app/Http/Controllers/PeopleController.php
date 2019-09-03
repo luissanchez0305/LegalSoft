@@ -8,7 +8,7 @@ use DB;
 
 class PeopleController extends Controller
 {
-        /**
+     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
@@ -20,6 +20,10 @@ class PeopleController extends Controller
         return view('people/index',compact('people'));
     }
 
+    public function choose_title($type){
+        return $type == 'natural' || $type == 1 ? " Persona Natural" : " Persona Juridica";
+    }
+
     /**
      * Show the form for creating a new resource.
      *
@@ -29,7 +33,7 @@ class PeopleController extends Controller
     {
         //
         $action_type = 'add';
-        $action_type_text = "Guardar";
+        $action_type_text = "Nueva " . $this->choose_title($type_text);
         $legal_relation_client = $type_text == 'natural' ? false : true;
         $id = 0;
         $people_relatedId = 0;
@@ -74,7 +78,7 @@ class PeopleController extends Controller
         if($people->type_clientId == 2)
             $legal_relation_client = true;
         $action_type = 'edit';
-        $action_type_text = "Guardar Cambios";
+        $action_type_text = "Guardar Cambios - " . $this->choose_title($people->type_clientId);
         /*- sacar nombre de pais de residencia*/
         $country_residence = \App\Country::find($people->country_residenceId)->name;
         /*- sacar nombre de pais de nacimiento*/
@@ -367,17 +371,22 @@ class PeopleController extends Controller
 
         $board_index = 0;
         $result = '';
+        $board_relations_ids = [];
+        $actions = '';
         foreach ($request->board_people_ids as $key => $value) {
-            $board_member = \App\Relation_People_Board::where('client_legalId', '=', $legal_relation->id)->where('client_relatedId', '=', $value)->first();
+            $board_member = \App\Relation_People_Board::where('id','=',$request->board_relations_ids['board_relations_ids'.$board_index])->first();
             $result .= $legal_relation->id . '-' . $request->board_types['board_types'.$board_index] . '-' . $value . ',';
             if($request->board_people_status['board_people_status'.$board_index] != 'delete'){
                 if($board_member == null){
                     $board_member = new \App\Relation_People_Board;
+                    $actions .= 'new ';
+                }
+                else{
+                    $actions .= 'edit ';                    
                 }
                 $board_member->client_typeId = $request->board_people_types['board_people_type'.$board_index];
                 $board_member->client_legalId = $legal_relation->id;
                 $board_member->types_boardId = $request->board_types['board_types'.$board_index];
-
 
                 $board_people = new \App\People;
                 if($value != '0'){
@@ -385,15 +394,20 @@ class PeopleController extends Controller
                     $board_people = \App\People::find($value);
                 }
                 $board_people->name = $request->board_names['board_names'.$board_index];
-                $board_people->last_name = $request->board_last_names['board_last_names'.$board_index];
+                if($board_member->client_typeId == 1){
+                    $board_people->last_name = $request->board_last_names['board_last_names'.$board_index];
+                }
                 $board_people->unique_id_number = $request->board_ids['board_ids'.$board_index];
                 $board_people->type_clientId = 5;
                 $board_people->save();
                 $board_member->client_relatedId = $board_people->id;
-                $board_member->save();
+                $board_member->save();                
+                array_push($board_relations_ids, $board_member->id);
             }
-            else{
+            else if($board_member != null){
                 if($value != '0'){
+                    $actions .= 'delete ';
+                    array_push($board_relations_ids, $board_member->id);
                     \App\Relation_People_Board::destroy($board_member->id);
                 }
             }
@@ -401,7 +415,7 @@ class PeopleController extends Controller
         }
 
         $legal_relations = $this->get_legal_relations_rows($request->client_id);
-        echo json_encode(array('status'=>'success','legal_relation_id'=>$legal_relation->id,'result'=>$result));
+        echo json_encode(array('status'=>'success','legal_relation_id'=>$legal_relation->id,'result'=>$result, 'board_relations_ids'=>$board_relations_ids, 'actions' => $actions));
     }
 
     public function edit_legal_relation(Request $request){
@@ -427,7 +441,7 @@ class PeopleController extends Controller
         $boards = DB::table('relation_client_board')
                         ->join('people', 'relation_client_board.client_relatedId', '=', 'people.id')
                         ->join('types_board', 'relation_client_board.types_boardId', '=', 'types_board.id')
-                        ->select(DB::raw('people.id as people_id, people.name as people_name, people.last_name as people_last_name, people.unique_id_number as people_unique_id, types_board.name as type_name, people.type_clientId as people_type_id, types_board.id as type_id, relation_client_board.client_typeId as relation_client_type_id'))
+                        ->select(DB::raw('people.id as people_id, people.name as people_name, people.last_name as people_last_name, people.unique_id_number as people_unique_id, types_board.name as type_name, people.type_clientId as people_type_id, types_board.id as type_id, relation_client_board.client_typeId as relation_client_type_id, relation_client_board.id as relation_board_id'))
                         ->where('relation_client_board.client_legalId', '=', $id)
                         ->orderBy('types_board.name', 'asc')
                         ->get();
@@ -450,6 +464,7 @@ class PeopleController extends Controller
                     </td>
                     <td>
                       <input type="hidden" value="edit" id="board_people_status_' . $boardIndex . '" name="board_people_status">
+                      <input type="hidden" value="' . $item->relation_board_id . '" id="board_relation_' . $boardIndex . '" name="board_relations_ids">
                       <input type="hidden" value="' . $item->people_id . '" id="board_people_' . $boardIndex . '" name="board_people_ids">
                       <input type="text" class="form-control ac-control" name="board_name" id="board_name_' . $boardIndex . '" value="' . $item->people_name . '" ac-method="clients" required title="Inserte el nombre" onkeyup="ac_control(this)">
                       <div class="ac-container"></div>

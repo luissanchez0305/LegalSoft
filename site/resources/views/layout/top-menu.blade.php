@@ -3,7 +3,7 @@
                 <button class="navbar-toggler hidden-sm-up pull-sm-right" type="button" data-toggle="collapse" data-target=".navbar-ex1-collapse">
                     &#9776;
                 </button>
-                <a class="navbar-brand" href="/">LegalSoft507</a>
+                <a class="navbar-brand" href="/">Bitliance</a>
             </div>
             <!-- Top Menu Items -->
             <ul class="nav navbar-nav top-nav navbar-right pull-xs-right">

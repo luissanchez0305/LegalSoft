@@ -1,7 +1,7 @@
 <!-- welcome.blade.php -->
 @extends('layout.main')
 @section('index-title')
-Clientes | LegalSoft
+Clientes | Bitliance
 @stop
 @section('index-style')
 

@@ -9,36 +9,36 @@
         <fieldset class="form-group col-md-12">
           <div class="col-md-4">
             <label for="name">Nombre</label>
-            <input type="text" class="form-control" name="name" id="name" value="{{ $people->name }}" required title="Inserte el nombre">
+            <input type="text" class="form-control" name="name" id="name" value="{{ $people->name }}" required title="Ingrese el nombre">
           </div>
           @if($legal_relation_client)
           <div class="col-md-4">
             <label for="unique_id" class="persona-natural">RUC/NIT</label>
-            <input type="text" class="form-control persona-natural" name="unique_id" id="unique_id" value="{{ $people->unique_id_number }}" required title="Inserte la cédula">
+            <input type="text" class="form-control persona-natural" name="unique_id" id="unique_id" value="{{ $people->unique_id_number }}" title="Ingrese la cédula">
           </div>
           @else
           <div class="col-md-4">
             <label for="last_name" class="{{ $legal_relation_client ? 'hidden' : '' }}">Apellido</label>
-            <input type="text" class="form-control {{ $legal_relation_client ? 'hidden' : '' }}" name="last_name" id="last_name" value="{{ $people->last_name }}" required title="Inserte el apellido">
+            <input type="text" class="form-control {{ $legal_relation_client ? 'hidden' : '' }}" name="last_name" id="last_name" value="{{ $people->last_name }}" required title="Ingrese el apellido">
           </div>
           @endif
 
           <div class="col-md-4">
             <label for="email">email</label>
-            <input type="text" class="form-control" name="email" id="email" value="{{ $people->email }}" required data-validation="email" title="Inserte el email">
+            <input type="text" class="form-control" name="email" id="email" value="{{ $people->email }}" required data-validation="email" title="Ingrese el email">
           </div>
         </fieldset>
         <fieldset class="form-group col-md-12">
           @if(!$legal_relation_client)
           <div class="col-md-4">
             <label for="unique_id" class="persona-natural">Cédula</label>
-            <input type="text" class="form-control persona-natural" name="unique_id" id="unique_id" value="{{ $people->unique_id_number }}" required title="Inserte la cédula">
+            <input type="text" class="form-control persona-natural" name="unique_id" id="unique_id" value="{{ $people->unique_id_number }}" title="Ingrese Ruc o Pasaporte">
           </div>
           @endif
 
           <div class="col-md-4">
             <label for="passport_number" class="persona-natural {{ $legal_relation_client ? 'hidden' : '' }}">Pasaporte</label>
-            <input type="text" class="form-control persona-natural {{ $legal_relation_client ? 'hidden' : '' }}" name="passport_number" id="passport_number" value="{{ $people->passport_number }}" required title="Inserte el pasaporte">
+            <input type="text" class="form-control persona-natural {{ $legal_relation_client ? 'hidden' : '' }}" name="passport_number" id="passport_number" value="{{ $people->passport_number }}" title="Ingrese Ruc o Pasaporte">
           </div>
 
           <div class="col-md-4">
@@ -53,12 +53,12 @@
         <fieldset class="form-group col-md-12">
           <div class="col-md-3">
             <label for="phone_fixed">Teléfono Principal</label>
-            <input type="text" class="form-control" name="phone_fixed" id="phone_fixed" value="{{ $people->phone_fixed }}" required title="Inserte el teléfono principal">
+            <input type="text" class="form-control" name="phone_fixed" id="phone_fixed" value="{{ $people->phone_fixed }}" required title="Ingrese el teléfono principal">
           </div>
 
           <div class="col-md-3">
             <label for="phone_mobile">{{ $legal_relation_client ? 'Fax' : 'Teléfono Móvil' }}</label>
-            <input type="text" class="form-control" name="phone_mobile" id="phone_mobile" value="{{ $people->phone_mobile }}" required title="Inserte el teléfono móvil">
+            <input type="text" class="form-control" name="phone_mobile" id="phone_mobile" value="{{ $people->phone_mobile }}" required title="Ingrese el teléfono móvil">
           </div>
 
           <div class="col-md-3 {{ $legal_relation_client ? 'hidden' : '' }}">
@@ -96,11 +96,11 @@
                 <label for="final_recipient_name">Ingrese el nombre del beneficiario</label>
                 <div class="col-sm-6">
                   <input type="hidden" value="{{ $people->final_recipientId }}" id="final_recipientId" name="final_recipientId">
-                  <input type="text" class="form-control ac-control" name="final_recipient_name" id="final_recipient_name" value="{{$final_recipient_name}}" ac-method="clients" required title="Inserte el beneficiario" placeholder="Nombre" title="Inserte el nombre" data-validation-depends-on="final_recipient" data-validation-depends-on-value="0">
+                  <input type="text" class="form-control ac-control" name="final_recipient_name" id="final_recipient_name" value="{{$final_recipient_name}}" ac-method="clients" required title="Ingrese el beneficiario" placeholder="Nombre" title="Ingrese el nombre" data-validation-depends-on="final_recipient" data-validation-depends-on-value="0">
                   <div class="ac-container"></div>
                 </div>
                 <div class="col-sm-6">
-                  <input type="text" class="form-control ac-control" name="final_recipient_last_name" id="final_recipient_last_name" value="{{$final_recipient_last_name}}" ac-method="clients" ac-master-field="final_recipientId" ac-master-data="data-item2" title="Inserte el apellido" placeholder="Apellido" title="Inserte el beneficiario">
+                  <input type="text" class="form-control ac-control" name="final_recipient_last_name" id="final_recipient_last_name" value="{{$final_recipient_last_name}}" ac-method="clients" ac-master-field="final_recipientId" ac-master-data="data-item2" title="Ingrese el apellido" placeholder="Apellido" title="Ingrese el beneficiario">
                   <div class="ac-container"></div>
                 </div>
               </div>
@@ -140,11 +140,11 @@
                 <label for="pep_family_name">Ingrese el nombre del familiar</label>
                 <div class="col-sm-6">
                   <input type="hidden" value="{{ $people->pep_family ?? '0' }}" id="pep_familyId" name="pep_familyId">
-                  <input type="text" class="form-control ac-control" name="pep_family_name" id="pep_family_name" value="{{ $pep_family_name }}" ac-method="clients" required title="Inserte el nombre" placeholder="Nombre" data-validation-depends-on="is_pep_family" data-validation-depends-on-value="0">
+                  <input type="text" class="form-control ac-control" name="pep_family_name" id="pep_family_name" value="{{ $pep_family_name }}" ac-method="clients" required title="Ingrese el nombre" placeholder="Nombre" data-validation-depends-on="is_pep_family" data-validation-depends-on-value="0">
                   <div class="ac-container"></div>
                 </div>
                 <div class="col-sm-6">
-                  <input type="text" class="form-control ac-control" name="pep_family_last_name" id="pep_family_last_name" value="{{ $pep_family_last_name }}" ac-method="clients" title="Inserte el apellido" placeholder="Apellido" ac-master-field="pep_familyId" ac-master-data="data-item2">
+                  <input type="text" class="form-control ac-control" name="pep_family_last_name" id="pep_family_last_name" value="{{ $pep_family_last_name }}" ac-method="clients" title="Ingrese el apellido" placeholder="Apellido" ac-master-field="pep_familyId" ac-master-data="data-item2">
                   <div class="ac-container"></div>
                 </div>
               </div>
@@ -159,30 +159,30 @@
           <div class="col-md-4">
             <label for="nationality">{{ $legal_relation_client ? 'Lugar de constitución' : 'Nacionalidad' }}</label>
             <input type="hidden" value="{{ $people->country_nationalityId }}" id="country_nationalityId" name="country_nationalityId">
-            <input type="text" autocomplete="off" class="form-control ac-control" id="nationality" name="nationality" value="{{ $country_nationality }}" ac-method="countries" required title="Inserte la nacionalidad">
+            <input type="text" autocomplete="off" class="form-control ac-control" id="nationality" name="nationality" value="{{ $country_nationality }}" ac-method="countries" required title="Ingrese la nacionalidad">
             <div class="ac-container"></div>
           </div>
           <div class="col-md-4">
             <label for="birth" class="{{ $legal_relation_client ? 'hidden' : '' }}">Lugar de Nacimiento</label>
             <input type="hidden" value="{{ $people->country_birthId }}" id="country_birthId" name="country_birthId">
-            <input type="text" class="form-control ac-control {{ $legal_relation_client ? 'hidden' : '' }}" id="birth" name="birth" value="{{ $country_birth }}" ac-method="countries" required title="Inserte el lugar de nacimiento">
+            <input type="text" class="form-control ac-control {{ $legal_relation_client ? 'hidden' : '' }}" id="birth" name="birth" value="{{ $country_birth }}" ac-method="countries" required title="Ingrese el lugar de nacimiento">
             <div class="ac-container"></div>
           </div>
           <div class="col-md-4">
             <label for="residence" class="{{ $legal_relation_client ? 'hidden' : '' }}">Lugar de Residencia</label>
             <input type="hidden" value="{{ $people->country_residenceId }}" id="country_residenceId" name="country_residenceId">
-            <input type="text" class="form-control ac-control {{ $legal_relation_client ? 'hidden' : '' }}" id="residence" name="residence" value="{{ $country_residence }}" ac-method="countries" required title="Inserte el lugar de residencia" >
+            <input type="text" class="form-control ac-control {{ $legal_relation_client ? 'hidden' : '' }}" id="residence" name="residence" value="{{ $country_residence }}" ac-method="countries" required title="Ingrese el lugar de residencia" >
             <div class="ac-container"></div>
           </div>
         </fieldset>
         <fieldset class="form-group col-md-12">
           <div class="col-md-6">
             <label for="address_physical">Dirección Física</label>
-            <textarea class="form-control" rows="3" id="address_physical" name="address_physical" required title="Inserte direccion física">{{ $people->address_physical }}</textarea>
+            <textarea class="form-control" rows="3" id="address_physical" name="address_physical" required title="Ingrese direccion física">{{ $people->address_physical }}</textarea>
           </div>
           <div class="col-md-6">
             <label for="address_mail">Dirección de Correspondencia</label>
-            <textarea class="form-control" rows="3" id="address_mail" name="address_mail" required title="Inserte la dirección de correspondencia">{{ $people->address_mail }}</textarea>
+            <textarea class="form-control" rows="3" id="address_mail" name="address_mail" required title="Ingrese la dirección de correspondencia">{{ $people->address_mail }}</textarea>
           </div>
         </fieldset>
       </div>

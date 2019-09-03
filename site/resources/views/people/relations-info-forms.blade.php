@@ -39,6 +39,7 @@
           <div class="col-sm-8">
             <fieldset class="col-md-12">
                 <h3>Directores y Dignatarios</h3>
+                <p id="relation_board-error" class="hidden error" for="relation_board">Inserte Directores y Dignatarios</p>
             </fieldset>
             <fieldset class="col-md-12">
               <div class="table-responsive">

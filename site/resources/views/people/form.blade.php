@@ -1,6 +1,6 @@
 <!-- index.blade.php -->
 @extends('layout.plain')
-@section('page-title', 'LegalSoft507 - Creación/Modificación de cliente')
+@section('page-title', 'Bitliance - Creación/Modificación de cliente')
 
 @section('body')
     @section('page-heading')
@@ -65,7 +65,7 @@
           </div>
           <div class="row" id="action-submit-button">
             <div class="form-group col-md-12">
-              <button type="button" class="btn btn-success" id="form-general-save">{{ $action_type_text }}</button>
+              <button type="button" class="btn btn-success" id="form-general-save">Guardar</button>
             </div>
             <div class="col-md-12" id="form-general-status"></div>
           </div>
@@ -219,7 +219,7 @@
         }
       }
 
-      $('.ac-control').click(function(){
+      $('body').on('click', '.ac-control', function(){
         ul = '<ul class="dropdown-menu" style="display:block; position:relative;">[data]</ul>';
         var $this = $(this);
         var $list_container = $this.next()[0].localName == 'label' ? $this.next().next() : $this.next();
@@ -245,7 +245,8 @@
       $('body').on('click', '.ac-item', function(e){
         e.preventDefault();
         var $this = $(this);
-        let $input = $this.closest('.ac-container').prev()[0].localName == 'label' ? $this.closest('.ac-container').prev().prev() : $this.closest('.ac-container').prev();
+        var $container = $this.closest('.ac-container'); 
+        let $input = $container.prev()[0].localName == 'label' ? $container.prev().prev() : $container.prev();
         let master_field = $input.attr('ac-master-field');
         let $master_item_fields = [];
 
@@ -283,7 +284,8 @@
           else{
             $input.val($this.html());
           }
-          ($input.prev()[0].localName == 'input' && $input.prev()[0].type == 'text' ? $input.prev().prev() : $input.prev()).val($this.attr('data-val'));
+          ($input.prev()[0].localName == 'input' && $input.prev()[0].type == 'text' ? 
+            $input.prev().prev() : $input.prev()).val($this.attr('data-val'));
           $input.removeClass('error');
         }
         for(var i = 0; i < $master_item_fields.length; i++){
@@ -291,6 +293,7 @@
           let $obj = $(obj);
           $obj.val($this.attr($obj.attr('ac-master-data')));
         }
+        $container.html('');
       });
 
       $('body').on('click', '#add-new-person', function(){
@@ -383,6 +386,12 @@
       });
 
       $('body').on('click', '#form-general-save', function(){
+        $.validator.addMethod('dependsOnPassport', function(value_ruc, element){
+          return value_ruc.length > 0 
+        });
+        $.validator.addMethod('dependsOnRuc', function(value_passport, element){
+          return value_passport.length > 0 
+        });
         val.validate_form($('#' + $('.tab-pane.active').attr('form')),
           {
             rules: {
@@ -397,7 +406,22 @@
               },
               country_activity_financial: {
                 check_zero: true
+              },
+              unique_id:{
+                dependsOnPassport: {
+                  depends: function (element) {
+                    return $('#client-typeId').val() == '2' || ($('#client-typeId').val() == '1' && $('#passport_number').val().length == 0);
+                  }
+                }
+              },
+              passport_number:{
+                dependsOnRuc: {                  
+                  depends: function (element){
+                    return $('#client-typeId').val() == '2' || ($('#client-typeId').val() == '1' && $('#unique_id').val().length == 0);
+                  }
+                }
               }
+
             }
           },
           function(){
@@ -621,6 +645,7 @@
       }
 
       $('body').on('click', '.legal_relation_create_item', function(){
+        $('#relation_board-error').addClass('hidden').removeClass('error');
         var tr_index = $('#relation_board tr').length;
         let typeId = $(this).attr('data-type');
         $('#relation_board').append('<tr>' +
@@ -633,6 +658,7 @@
               '<td>' +
                 '<input type="hidden" value="' + typeId + '" id="board_people_type_' + tr_index + '" name="board_people_types">' +
                 '<input type="hidden" value="new" id="board_people_status_' + tr_index + '" name="board_people_status">' +
+                '<input type="hidden" value="0" id="board_relation_' + tr_index + '" name="board_relations_ids">' +
                 '<input type="hidden" value="0" id="board_people_' + tr_index + '" name="board_people_ids">' +
                 '<input type="text" class="form-control ac-control" name="board_name" id="board_name_' + tr_index + '" value="" ac-method="clients" required title="Inserte el nombre" onkeyup="ac_control(this)">' +
                 '<div class="ac-container"></div>' +
@@ -737,8 +763,13 @@
             }
           },
           function(){
+            if($('#relation_board tr:visible').length == 0){
+              $('#relation_board-error').removeClass('hidden').addClass('error');
+              return;
+            }
             let board_people_types = {};
             let board_people_status = {};
+            let board_relations_ids = {};
             let board_people_ids = {};
             let board_names = {};
             let board_last_names = {};
@@ -749,6 +780,7 @@
               let typeId = $obj.find('select[name="board_people_types"]').val();
               board_people_types['board_people_type' + index] = typeId;
               board_people_status['board_people_status' + index] = $obj.find('input[name="board_people_status"]').val();
+              board_relations_ids['board_relations_ids' + index] = $obj.find('input[name="board_relations_ids"]').val();
               board_people_ids['board_people_ids' + index] = $obj.find('input[name="board_people_ids"]').val();
               board_names['board_names' + index] = $obj.find('input[name="board_name"]').val();
               board_last_names['board_last_names' + index] = typeId == '1' ? $obj.find('input[name="board_last_names"]').val() : '';
@@ -766,6 +798,7 @@
               agent_resident_name: $('#resident_agent').val(),
               board_people_types,
               board_people_status,
+              board_relations_ids,
               board_people_ids,
               board_names,
               board_last_names,
@@ -782,6 +815,14 @@
                     $('#relation-legal-second-step .card-header').removeClass('card-default').addClass('card-primary');
                     $('#relation-legal-second-step .card-block').removeClass('hidden');
                     $('#relation_legalId').val(data.legal_relation_id);
+                    $('#relation_board tr').each(function(index,obj){
+                      let $obj = $(obj);
+                      let $status = $obj.find('input[name="board_people_status"]');
+                      $obj.find('input[name="board_relations_ids"]').val(data.board_relations_ids[index]);
+                      if($status.val() != 'delete'){
+                        $status.val('edit');
+                      }
+                    });
                   }
                   else{
                     // TODO poner mensaje de error en transaccion

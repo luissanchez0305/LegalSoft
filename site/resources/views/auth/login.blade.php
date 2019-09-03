@@ -88,7 +88,7 @@
                         <div class="row">
                             <div class="col-xl-6 text-xs-center">
                                 <img src="images/flat-avatar.png" class="user-avatar" />
-                                <h1>Acceso LegalSoft    </h1>
+                                <h1>Acceso Bitliance    </h1>
                                 <form role="form" method="POST" action="{{ route('login') }}">
                                     @csrf
                                     <div class="form-content col-xl-12" >
