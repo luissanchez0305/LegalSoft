@@ -45,8 +45,9 @@
           <label for="product">Productos o servicios solicitados</label>
           <select class="form-control" name="product" id="product" required title="Escoja el canal">
             <option></option>
-            <option value="1" {{ $people->productId == 1 ? 'selected="selected"' : '' }}>Producto 1</option>
-            <option value="2" {{ $people->productId == 2 ? 'selected="selected"' : '' }}>Producto 2</option>
+            @foreach($products_services as $item)
+            <option value="{{ $item->id }}" {{ $people->productId == $item->id ? 'selected="selected"' : '' }}>{{$item->name}}</option>
+            @endforeach
           </select>
           <label for="name">Propósito de la relación</label>
           <input type="text" class="form-control" id="relation_objectives_txt" name="relation_objectives_txt" value="{{ $people->relation_objectives }}">

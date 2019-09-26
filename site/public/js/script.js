@@ -19,5 +19,4 @@ validate = (function(){
         return $el.val().length == 0 || $el.prev().val() == '0';
     }
     return items;
-
 });

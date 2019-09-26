@@ -13,21 +13,18 @@
             <tr>
               <th>Nombre</th>
               <th>Ruc</th>
-              <th colspan="2">&nbsp;</th>
+              <th>&nbsp;</th>
             </tr>
           </thead>
           <tbody id="legal_relations_container">
             @if($legal_relations != null && count($legal_relations) > 0)
             @foreach($legal_relations as $item)
-            <tr>
+            <tr class="legal_relation_edit hand" data-id="{{ $item->id }}">
               <td>
                 {{ $item->legal_person_name }}
               </td>
               <td>
                 {{ $item->ruc }}
-              </td>
-              <td>
-                <a href="#" class="btn btn-warning legal_relation_edit" data-id="{{ $item->id }}">Editar</a>
               </td>
               <td>
                 <a href="#" class="btn btn-danger legal_relation_delete" data-id="{{ $item->id }}">Borrar</a>

@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use DB;
+use PDF;
 
 class PeopleController extends Controller
 {
@@ -52,6 +53,7 @@ class PeopleController extends Controller
         $shareholders = null;
         $people = new \App\People;
         $legal_structures = \App\Legal_Structure::all();
+        $products_services = \App\Product::all();
         $share_types = \App\Type_Share::all();
         $file_types = \App\Type_File::all();
         $files = $this->get_files_array(0);
@@ -61,7 +63,8 @@ class PeopleController extends Controller
         $pep_family_name = null;
         $pep_family_last_name = null;
         $people_persons = null;
-        return view('people/form',compact('people', 'action_type', 'legal_relation_client', 'action_type_text', 'id', 'people_relatedId', 'country_residence', 'country_birth', 'final_recipient', 'country_nationality', 'country_activity_financial', 'product', 'legal_relations','board', 'shareholders', 'share_types', 'file_types', 'files', 'legal_structures', 'new_client', 'pep_family_name', 'pep_family_last_name', 'final_recipient_name','final_recipient_last_name', 'people_persons'));
+        return view('people/form',compact('people', 'action_type', 'legal_relation_client', 'action_type_text', 'id', 'people_relatedId', 'country_residence', 'country_birth', 'final_recipient', 'country_nationality', 'country_activity_financial', 'product', 'legal_relations','board', 'shareholders', 'share_types', 'file_types', 'files', 'legal_structures', 'products_services', 
+            'new_client', 'pep_family_name', 'pep_family_last_name', 'final_recipient_name','final_recipient_last_name', 'people_persons'));
     }
 
     /**
@@ -113,6 +116,8 @@ class PeopleController extends Controller
 
         $legal_structures = \App\Legal_Structure::all();
 
+        $products_services = \App\Product::all();
+
         $legal_relations = $this->get_legal_relations_array($people->id);
 
         $share_types = \App\Type_Share::all();
@@ -127,7 +132,7 @@ class PeopleController extends Controller
 
         $people_persons = $legal_relation_client ? null : $this->get_persons($people->id);
 
-    return view('people/form',compact('people','id', 'action_type', 'legal_relation_client', 'action_type_text', 'country_residence', 'country_birth', 'final_recipient_name','final_recipient_last_name', 'country_nationality', 'country_activity_financial', 'product', 'legal_structures', 'legal_relations', 'shareholders', 'share_types', 'file_types', 'files', 'new_client', 'pep_family_name', 'pep_family_last_name', 'people_persons'));
+    return view('people/form',compact('people','id', 'action_type', 'legal_relation_client', 'action_type_text', 'country_residence', 'country_birth', 'final_recipient_name','final_recipient_last_name', 'country_nationality', 'country_activity_financial', 'product', 'legal_structures', 'products_services', 'legal_relations', 'shareholders', 'share_types', 'file_types', 'files', 'new_client', 'pep_family_name', 'pep_family_last_name', 'people_persons'));
     }
 
     /**
@@ -595,7 +600,13 @@ class PeopleController extends Controller
     public function get_people_rows($people){
         $clients = '';
         foreach ($people as $item) {
-            $clients .= '<tr class="client-item" edit-url="/people/'.$item->id.'/edit">
+            $clients .= $this->get_people_table_row($item);
+        }
+        return $clients;
+    }
+
+    public function get_people_table_row($item){
+        return '<tr class="client-item hand" edit-url="/people/'.$item->id.'/edit">
                 <td>'.$item->name.' '.$item->last_name.'</td>
                 <td>'.$item->email.'</td>
                 <td>'.($item->type_clientId == 1 ? 'Persona Natural' : 'Persona Juridica').'</td>
@@ -608,8 +619,6 @@ class PeopleController extends Controller
                   <!-- /.row -->
                 </td>
             </tr>';
-        }
-        return $clients;
     }
 
     public function search(Request $request){
@@ -623,6 +632,34 @@ class PeopleController extends Controller
             })->where(function($query) use ($request){
                 $query->where('name', 'LIKE', '%'.$request->q.'%')->orWhere('last_name', 'LIKE', '%'.$request->q.'%')->orWhere('email', 'LIKE', '%'.$request->q.'%');
             })->get();
+        if($request->is_autocomplete == 'true'){
+            return response()->json($people);
+        }
         return json_encode(array('people'=>$this->get_people_rows($people),'count'=>count($people)));
+    }
+
+    public function search_one(Request $request){
+        $people = \App\People::find($request->id);
+        return json_encode(array('people'=>$this->get_people_table_row($people), 'count'=> 1));
+    }
+
+    public function pdf_format($id){
+        $people = \App\People::find($id);
+        $country = \App\Country::find($people->country_nationalityId);
+
+        $data = [
+            'name' => $people->name . ' ' . $people->last_name, 
+            'type' => $this->choose_title($people->type_clientId),
+            'phisicalAddress' => $people->address_physical,
+            'nationallity' => $country->name,
+            'email' => $people->email,
+            'phone' => $people->phone_mobile,
+            'legal_relations' => 'legal relations',
+            'lawFirmContacts' => 'Contactos de LawFirm'
+        ];
+        $pdf = PDF::loadView('people/pdf_people', $data);
+  
+        return $pdf->download('file.pdf');
+        //return view('people/pdf_people', $data);
     }
 }

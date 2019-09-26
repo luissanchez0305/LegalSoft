@@ -16,10 +16,13 @@ Route::get('/', function () {
 })->middleware('auth');
 
 Route::resource('people', 'PeopleController');
+Route::resource('profile', 'ProfileController')->middleware('auth');
 Route::get('/people/create/{type_text}', 'PeopleController@create')->name('people.create');
+Route::get('/people/pdf_format/{id}', ['as'=>'people.pdf_format', 'uses'=>'PeopleController@pdf_format']);
 Route::post('/people/destroy', 'PeopleController@destroy')->name('people.destroy');
 Route::post('/people/get_general_info', 'PeopleController@get_general_info')->name('people.get_general_info');
 Route::post('/people/search', 'PeopleController@search')->name('people.search');
+Route::post('/people/search_one', 'PeopleController@search_one')->name('people.search_one');
 Route::post('/people/update', 'PeopleController@update')->name('people.update');
 Route::post('/people/add_file', 'PeopleController@add_file')->name('people.add_file');
 Route::post('/people/delete_file', 'PeopleController@delete_file')->name('people.delete_file');
@@ -28,7 +31,6 @@ Route::post('/people/delete_shareholder', 'PeopleController@delete_shareholder')
 Route::post('/people/add_legal_relation', 'PeopleController@add_legal_relation')->name('people.add_legal_relation');
 Route::post('/people/edit_legal_relation', 'PeopleController@edit_legal_relation')->name('people.edit_legal_relation');
 Route::post('/people/delete_legal_relation', 'PeopleController@delete_legal_relation')->name('people.delete_legal_relation');
-Route::resource('profile', 'ProfileController')->middleware('auth');
 Route::post('/updatePassword', 'ProfileController@updatePassword')->name('updatePassword');
 Route::post('/helper/autocomplete_countries', 'HelperController@autocomplete_countries')->name('helper.autocomplete_countries');
 Route::post('/helper/autocomplete_clients', 'HelperController@autocomplete_clients')->name('helper.autocomplete_clients');
