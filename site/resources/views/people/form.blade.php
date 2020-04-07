@@ -498,7 +498,18 @@
         }, false, $('#form-general-status'));
 
     });
-
+  
+    jQuery.validator.addMethod("sumpercentage", function(value, element){
+      let total = 0;
+      $('.share_percentage').each(function(i,o){
+        total += parseInt($(o).html());
+      });
+      if (total + parseInt(value) > 100) {
+          return false;
+      } else {
+          return true;
+      };
+    }, "La suma de los porcentajes debe ser menor a 100"); 
     $('body').on('click', '#add-shareholder-btn', function(){
       val.validate_form($('#new-shareholder-container'),
         {
@@ -507,6 +518,10 @@
               check_zero: true
             },
             shareholder_people_country_nationality_name:{
+              check_zero: true
+            },
+            shareholder_client_people_percentage: {
+              sumpercentage: true,
               check_zero: true
             }
           }
@@ -888,6 +903,12 @@
 
           $('.shareholder_row_container').remove();
           $('#shareholder_container').append(data.shareholders);
+          if(data.total_shareholders_percetage == 100){
+            $('#shareholder_new_form').hide();
+          }
+          else{
+            $('#shareholder_new_form').show();            
+          }
         });
     });
 

@@ -95,7 +95,7 @@
                     </tr>
                 </thead>
                 <tbody id="shareholder_container">
-                    <tr>
+                    <tr id="shareholder_new_form">
                       <td>
                         @csrf
                         <input type="text" class="form-control" id="shareholder_client_people_certification_number" name="shareholder_client_people_certification_number" value="" required title="Inserte el numero de certificado"/>
@@ -133,7 +133,7 @@
                         <input type="text" class="form-control" id="shareholder_client_people_email" name="shareholder_client_people_email" value="" required title="Inserte un email válido"/>
                       </td>
                       <td>
-                        <input type="text" class="form-control" id="shareholder_client_people_percentage" name="shareholder_client_people_percentage" value="" required title="Inserte un porcentaje válido"/>
+                        <input type="text" class="form-control" id="shareholder_client_people_percentage" name="shareholder_client_people_percentage" value="" required />
                       </td>
                       <td>
                         <button type="button" class="btn btn-success" id="add-shareholder-btn">Agregar</button>
@@ -166,7 +166,7 @@
                     <td>
                       {{ $item->people_email }}
                     </td>
-                    <td>
+                    <td class="share_percentage">
                       {{ $item->share_percentage }}
                     </td>
                     <td>

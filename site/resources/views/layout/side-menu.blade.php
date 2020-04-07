@@ -12,7 +12,7 @@
                                 <a href="{{ action('PeopleController@create', ['type_text' => 'natural']) }}"><i class="fa fa-fw fa-plus-square"></i> Persona Natural</a>
                             </li>
                             <li class="list-group-item">
-                                <a href="{{ action('PeopleController@create', ['type_text' => 'jurídica']) }}"><i class="fa fa-fw fa-plus-square"></i> Persona Jurídica</a>
+                                <a href="{{ action('PeopleController@create', ['type_text' => 'juridical']) }}"><i class="fa fa-fw fa-plus-square"></i> Persona Jurídica</a>
                             </li>
                             <li class="list-group-item">
                                 <a href="/people/all"><i class="fa fa-fw fa-list-ul"></i> Todos</a>
@@ -21,7 +21,7 @@
                                 <a href="/people/natural"><i class="fa fa-fw fa-list-ul"></i> Personas Naturales</a>
                             </li>
                             <li class="list-group-item">
-                                <a href="/people/juridica"><i class="fa fa-fw fa-list-ul"></i> Personas Jurídicas</a>
+                                <a href="/people/juridical"><i class="fa fa-fw fa-list-ul"></i> Personas Jurídicas</a>
                             </li>
                         </ul>
                     </li>

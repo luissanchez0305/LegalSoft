@@ -1,6 +1,6 @@
 <!-- index.blade.php -->
 @extends('layout.plain')
-@section('page-title', 'Listado de Clientes - LegalSoft507')
+@section('page-title', 'Listado de Clientes - Bitlliance')
 
 @section('body')
     @section('page-heading')
@@ -10,7 +10,7 @@
             <h1 class="page-header">
                 Listado de clientes
                 <a href="{{ action('PeopleController@create', ['type_text' => 'natural']) }}" class="btn btn-warning">Nueva Persona Natural</a>
-                <a href="{{ action('PeopleController@create', ['type_text' => 'jurídica']) }}" class="btn btn-warning">Nueva Persona Jurídica</a>
+                <a href="{{ action('PeopleController@create', ['type_text' => 'juridical']) }}" class="btn btn-warning">Nueva Persona Jurídica</a>
             </h1>
         </div>
         <div class="col-lg-6">

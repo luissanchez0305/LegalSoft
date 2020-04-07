@@ -22,7 +22,7 @@ class PeopleController extends Controller
     }
 
     public function choose_title($type){
-        return $type == 'natural' || $type == 1 ? " Persona Natural" : " Persona Juridica";
+        return $type == 'natural' || $type == 1 ? " Persona Natural" : " Persona Jurídica";
     }
 
     /**
@@ -292,14 +292,14 @@ class PeopleController extends Controller
         $relation_client_shareholder->percentage = $request->shareholder_client_people_percentage;
         $relation_client_shareholder->save();
 
-        echo $this->get_shareholders_rows($request->relation_legalId);
+        echo $this->get_shareholders_rows($request->relation_legalId)[0];
     }
 
     public function delete_shareholder(Request $request){
         $shareholder = \App\Relation_People_Shareholder::find($request->id);
         $shareholder->status = 0;
         $shareholder->save();
-        echo $this->get_shareholders_rows($request->relation_legalId);
+        echo $this->get_shareholders_rows($request->relation_legalId)[0];
     }
 
     public function get_shareholders_array($id){
@@ -318,10 +318,15 @@ class PeopleController extends Controller
     public function get_shareholders_rows($id){
         $shareholders = $this->get_shareholders_array($id);
         $output = '';
+        $total = 0;
+        $result = array();
         foreach ($shareholders as $item) {
-            $output .= '<tr class="shareholder_row_container"><td>'. $item->cert_number . '</td><td>' . $item->type_name . '</td><td>' . $item->people_name . ' ' . $item->people_last_name . '</td><td>' . $item->people_id . '</td><td>' . $item->people_country_birth_name . '</td><td>' . $item->people_country_nationality_name . '</td><td>' . $item->people_phone_mobile . '</td><td>' . $item->people_email . '</td><td>' . $item->share_percentage . '</td><td><button type="button" class="btn btn-danger shareholder-delete" data-id="' . $item->cert_id . '">Borrar</button></td></tr>';
+            $output .= '<tr class="shareholder_row_container"><td>'. $item->cert_number . '</td><td>' . $item->type_name . '</td><td>' . $item->people_name . ' ' . $item->people_last_name . '</td><td>' . $item->people_id . '</td><td>' . $item->people_country_birth_name . '</td><td>' . $item->people_country_nationality_name . '</td><td>' . $item->people_phone_mobile . '</td><td>' . $item->people_email . '</td><td class="share_percentage">' . $item->share_percentage . '</td><td><button type="button" class="btn btn-danger shareholder-delete" data-id="' . $item->cert_id . '">Borrar</button></td></tr>';
+            $total += $item->share_percentage;
         }
-        return $output;
+        $result[] = $output;
+        $result[] = $total;
+        return $result;
     }
 
     public function get_legal_relations_array($id){
@@ -431,7 +436,7 @@ class PeopleController extends Controller
                         ->first();
         $boards = $this->get_boards_rows($legal_relation->id);
         $shareholders = $this->get_shareholders_rows($legal_relation->id);
-        return json_encode(array('legal_relation' => $legal_relation, 'boards' => $boards, 'shareholders' => $shareholders));
+        return json_encode(array('legal_relation' => $legal_relation, 'boards' => $boards, 'shareholders' => $shareholders[0], 'total_shareholders_percetage' => $shareholders[1]));
     }
 
     public function delete_legal_relation(Request $request){
