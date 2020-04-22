@@ -3,6 +3,9 @@
     <!-- New-Log-Section -->
         <form id="add-new-file-form">
             @csrf
+            <fieldset class="col-md-12">
+                <h3>&nbsp;</h3>
+            </fieldset>
             <fieldset class="form-group col-md-6">
                 <label>Imagen</label>
                 <input type="file" name="file-name" id="file-name" required title="Por favor inserte un archivo"/>

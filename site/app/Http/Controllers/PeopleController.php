@@ -63,8 +63,9 @@ class PeopleController extends Controller
         $pep_family_name = null;
         $pep_family_last_name = null;
         $people_persons = null;
-        return view('people/form',compact('people', 'action_type', 'legal_relation_client', 'action_type_text', 'id', 'people_relatedId', 'country_residence', 'country_birth', 'final_recipient', 'country_nationality', 'country_activity_financial', 'product', 'legal_relations','board', 'shareholders', 'share_types', 'file_types', 'files', 'legal_structures', 'products_services', 
-            'new_client', 'pep_family_name', 'pep_family_last_name', 'final_recipient_name','final_recipient_last_name', 'people_persons'));
+        $created_date = null;
+        $generated_id = null;
+        return view('people/form',compact('people', 'action_type', 'legal_relation_client', 'action_type_text', 'id', 'people_relatedId', 'country_residence', 'country_birth', 'final_recipient', 'country_nationality', 'country_activity_financial', 'product', 'legal_relations','board', 'shareholders', 'share_types', 'file_types', 'files', 'legal_structures', 'products_services', 'new_client', 'pep_family_name', 'pep_family_last_name', 'final_recipient_name','final_recipient_last_name', 'people_persons', 'generated_id', 'created_date'));
     }
 
     /**
@@ -77,6 +78,11 @@ class PeopleController extends Controller
     {
         //
         $people = \App\People::find($id);
+
+        if($people->generated_id == null){
+            $people->generated_id = $this->generate_people_id();
+            $people->save();
+        }
         $legal_relation_client = false;
         if($people->type_clientId == 2)
             $legal_relation_client = true;
@@ -132,7 +138,13 @@ class PeopleController extends Controller
 
         $people_persons = $legal_relation_client ? null : $this->get_persons($people->id);
 
-    return view('people/form',compact('people','id', 'action_type', 'legal_relation_client', 'action_type_text', 'country_residence', 'country_birth', 'final_recipient_name','final_recipient_last_name', 'country_nationality', 'country_activity_financial', 'product', 'legal_structures', 'products_services', 'legal_relations', 'shareholders', 'share_types', 'file_types', 'files', 'new_client', 'pep_family_name', 'pep_family_last_name', 'people_persons'));
+        $created_date = 'Fecha de creación: ' . $people->created_at;
+
+        $generated_id = 'Client ID: ' . $people->generated_id;
+
+        $foundation_date_str = date("m/d/Y", strtotime($people->foundation_date));
+
+    return view('people/form',compact('people','id', 'action_type', 'legal_relation_client', 'action_type_text', 'country_residence', 'country_birth', 'final_recipient_name','final_recipient_last_name', 'country_nationality', 'country_activity_financial', 'product', 'legal_structures', 'products_services', 'legal_relations', 'shareholders', 'share_types', 'file_types', 'files', 'new_client', 'pep_family_name', 'pep_family_last_name', 'people_persons', 'generated_id', 'created_date', 'foundation_date_str'));
     }
 
     /**
@@ -145,8 +157,11 @@ class PeopleController extends Controller
     public function update(Request $request)
     {   //
         $people = new \App\People;
-        if($request->client_id > 0)
+        if($request->client_id > 0){
             $people = \App\People::find($request->client_id);
+        }        
+        if($people->generated_id == null)
+            $people->generated_id = $this->generate_people_id();
         if($request->client_relatedId != $request->client_id)
             $people->people_relatedId = $request->client_relatedId;
         $people->type_clientId = $request->client_typeId;
@@ -162,6 +177,8 @@ class PeopleController extends Controller
             $people->genderId = $request->gender;
             $people->occupationId = $request->ocuppation;
             $people->channelId = $request->channel;
+            $people->writing_number = $request->writing_number;
+            $people->foundation_date = $request->foundation_date;
             if($request->final_recipient == '0' && $request->final_recipientId != '0'){
                 $people->final_recipientId = $request->final_recipientId;
             }
@@ -227,6 +244,12 @@ class PeopleController extends Controller
 
         $people->save();
         echo json_encode(array('status'=>'success', 'people_id'=>$people->id));
+    }
+
+    public function generate_people_id(){
+        $number = rand(100,100000);
+        $t=time();
+        return $number . '-' . $t;
     }
 
     public function get_persons($id){
@@ -359,6 +382,7 @@ class PeopleController extends Controller
         $legal_relation->clientID = $request->client_id;
         $legal_relation->legal_person_name = $request->name;
         $legal_relation->ruc = $request->ruc;
+        $legal_relation->writing_number = $request->writing_number;
         if($request->is_agent_resident == '0'){
             if($request->agent_resident_id != '0'){
                 $legal_relation->resident_agent_id = $request->agent_resident_id;

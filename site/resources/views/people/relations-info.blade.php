@@ -3,7 +3,7 @@
 <div class="row" id="legal_relations_people_container">
   <div class="col-xl-12">
     <fieldset class="col-md-12">
-      <h3>Personas Jurídicas</h3>
+      <h3>&nbsp;</h3>
       <a href="#" class="btn btn-warning" id="legal_relation_create_btn">Nuevo</a>
     </fieldset>
     <fieldset class="col-md-12">

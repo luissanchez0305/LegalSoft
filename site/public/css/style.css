@@ -45,6 +45,18 @@ label.error, p.error{
     }
 }
 
+.p-0{
+    padding: 0px !important;
+}
+
+.pt-10{
+    padding-top: 10px;
+}
+
+.pl-15{
+    padding-left: 15px;
+}
+
 #wrapper {
     padding-left: 0;
 }

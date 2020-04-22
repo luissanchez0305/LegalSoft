@@ -16,6 +16,10 @@
               <label for="relation_legal_name">Nombre</label>
               <input type="text" class="form-control" id="legal_person_name" name="legal_person_name" value="" required title="Inserte el nombre">
               <div class="col-md-12">
+                <label for="writing_number" class="persona-natural">Núm. de Escritura</label>
+                <input type="text" class="form-control persona-natural" name="relation_writing_number" id="relation_writing_number" value="" title="Ingrese el número de escritura">                
+              </div>
+              <div class="col-md-12">
                 <label for="is_agent_resident">Es agente residente?</label>
                 <label class="radio-inline">
                     <input type="radio" name="is_agent_resident" id="is_agent_residentYes" value="1" checked="checked">Si

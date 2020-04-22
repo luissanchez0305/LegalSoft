@@ -29,7 +29,12 @@
           </div>
         </fieldset>
         <fieldset class="form-group col-md-12">
-          @if(!$legal_relation_client)
+          @if($legal_relation_client)
+          <div class="col-md-4">
+            <label for="writing_number" class="persona-natural">Núm. de Escritura</label>
+            <input type="text" class="form-control persona-natural" name="writing_number" id="writing_number" value="{{ $people->writing_number }}" title="Ingrese el número de escritura">
+          </div>          
+          @else
           <div class="col-md-4">
             <label for="unique_id" class="persona-natural">Cédula</label>
             <input type="text" class="form-control persona-natural" name="unique_id" id="unique_id" value="{{ $people->unique_id_number }}" title="Ingrese Ruc o Pasaporte">
@@ -162,6 +167,12 @@
             <input type="text" autocomplete="off" class="form-control ac-control" id="nationality" name="nationality" value="{{ $country_nationality }}" ac-method="countries" required title="Ingrese la nacionalidad">
             <div class="ac-container"></div>
           </div>
+          @if($legal_relation_client)
+          <div class="col-md-4">
+            <label for="foundation_date">Fecha de constitución</label>
+            <input type="text" autocomplete="off" class="form-control field_date" id="foundation_date" name="foundation_date" value="{{ $foundation_date_str }}" required title="Ingrese la fecha de constitución">
+          </div>
+          @endif
           <div class="col-md-4">
             <label for="birth" class="{{ $legal_relation_client ? 'hidden' : '' }}">Lugar de Nacimiento</label>
             <input type="hidden" value="{{ $people->country_birthId }}" id="country_birthId" name="country_birthId">

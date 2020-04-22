@@ -2,7 +2,7 @@
   <form id="finance-info">
     <div class="col-xl-6">
       <div class="card card-default">
-        <fieldset class="col-md-12">
+        <fieldset class="col-md-12 pt-10 pl-15">
             <h3>Información Financiera</h3>
         </fieldset>
         <fieldset class="form-group col-md-6">
@@ -38,7 +38,7 @@
     </div>
     <div class="col-xl-6">
       <div class="card card-default">
-        <fieldset class="col-md-12">
+        <fieldset class="col-md-12 pt-10 pl-15">
             <h3>Servicios o Productos Solicitados</h3>
         </fieldset>
         <fieldset class="form-group col-md-6">

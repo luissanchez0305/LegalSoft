@@ -11,7 +11,7 @@
                 {{ $action_type_text }}
             </h1>
         </div>
-        <div class="col-lg-12">
+        <div class="col-lg-12 p-0">
             <ol class="breadcrumb">
                 <li>
                     <i class="fa fa-dashboard"></i>  <a href="/people/{{ $legal_relation_client ? 'juridica' : 'natural' }}">Listado General</a>
@@ -29,6 +29,7 @@
     @endsection
     <div class="row">
         <div>
+
           <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
             <li class="nav-item">
               <a class="nav-link active" id="pills-general-tab" data-toggle="pill" href="#pills-general" role="tab" aria-controls="pills-general" aria-selected="true">General</a>
@@ -37,7 +38,7 @@
               <a class="nav-link {{ $new_client ? 'disabled' : '' }}" id="pills-finance-tab" data-toggle="pill" href="#pills-finance" role="tab" aria-controls="pills-finance" aria-selected="false">Finanzas y Servicios</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link {{ $legal_relation_client ? 'hidden' : '' }} {{ $new_client ? 'disabled' : '' }}" id="pills-services-tab" data-toggle="pill" href="#pills-services" role="tab" aria-controls="pills-services" aria-selected="false">Persona Jurídica</a>
+              <a class="nav-link {{ $legal_relation_client ? 'hidden' : '' }} {{ $new_client ? 'disabled' : '' }}" id="pills-services-tab" data-toggle="pill" href="#pills-services" role="tab" aria-controls="pills-services" aria-selected="false">Personas Jurídicas</a>
             </li>
             <li class="nav-item">
               <a class="nav-link {{ $new_client ? 'disabled' : '' }}" id="pills-files-tab" data-toggle="pill" href="#pills-files" role="tab" aria-controls="pills-files" aria-selected="false">Documentos</a>
@@ -45,6 +46,12 @@
             <li class="nav-item">
               <a class="nav-link {{ $new_client ? 'disabled' : '' }}" id="pills-risk-tab" data-toggle="pill" href="#pills-risk" role="tab" aria-controls="pills-risk" aria-selected="false">Riesgo</a>
             </li>
+            <div style="float: right;">
+              {{ $created_date }}
+            </div>
+            <div style="float: right; padding: 0 10px 0 0;">
+              {{ $generated_id }}
+            </div>
           </ul>
           <div class="tab-content" id="pills-tabContent">
             <div class="tab-pane fade show active in" id="pills-general" role="tabpanel" aria-labelledby="pills-general-tab" form="general-info">
@@ -124,6 +131,11 @@
       }
     });
 
+    $('.field_date').datepicker({
+      maxDate: "0D",
+      changeMonth: true,
+      changeYear: true
+    });
     $('body').on('click','input[name="final_recipient"]', function(e){
       if($(this).val() == "0"){
         $('#final_recipient_container').removeClass('hidden');
@@ -426,6 +438,13 @@
         },
         function(){
           $('#form-general-status').html('Guardando...');
+          let d = new Date($('#foundation_date').val());
+          let _months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+          const ye = new Intl.DateTimeFormat('en', { year: 'numeric' }).format(d)
+          const mo = new Intl.DateTimeFormat('en', { month: 'short' }).format(d)
+          const da = new Intl.DateTimeFormat('en', { day: '2-digit' }).format(d)
+          let foundation_date_format = `${ye}-${_months.indexOf(mo) + 1}-${da}`;
+          console.log(foundation_date_format);
           var _data = {
             _token: $('input[name="_token"]').val(),
             action_type: $('.tab-pane.active').attr('form'),
@@ -443,6 +462,7 @@
             gender: $('#gender').val(),
             ocuppation: $('#ocuppation').val(),
             channel: $('#channel').val(),
+            foundation_date: foundation_date_format,
             final_recipient: $('input[name="final_recipient"]:checked').val(),
             final_recipientId: $('#final_recipientId').val(),
             final_recipient_name: $('#final_recipient_name').val(),
@@ -464,7 +484,8 @@
             legacy_limits: $('#legacy_limits').val(),
             productId: $('#product').val(),
             relation_objectives_txt: $('#relation_objectives_txt').val(),
-            legal_structure:$('#legal_structure').val()
+            legal_structure:$('#legal_structure').val(),
+            writing_number:$('#writing_number').val()
           }
           $.post('{{ route("people.update") }}', _data, function(data){
                 data = $.parseJSON(data);
@@ -808,6 +829,7 @@
             client_id: '{{ $people->id }}',
             name: $('#legal_person_name').val(),
             ruc: $('#relation_objectives').val(),
+            writing_number:$('#relation_writing_number').val(),
             is_agent_resident: $('input[name="is_agent_resident"]:checked').val(),
             agent_resident_id: $('#resident_agent_id').val(),
             agent_resident_name: $('#resident_agent').val(),
@@ -883,6 +905,7 @@
           $('#relation_legalId').val(data.legal_relation.id);
           $('#legal_person_name').val(data.legal_relation.legal_person_name);
           $('#relation_objectives').val(data.legal_relation.ruc);
+          $('#relation_writing_number').val(data.writing_number);
 
           if(data.legal_relation.resident_agent_id != null){
             $('#is_agent_residentYes').prop('checked',false);
